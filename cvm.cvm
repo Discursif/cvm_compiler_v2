@@ -6,27 +6,79 @@ type Bytes {
     fn mul(Bytes other) -> Bytes => return mul(self,other);
     fn div(Bytes other) -> Bytes => return div(self,other);
     fn xor(Bytes other) -> Bytes => return xor(self,other);
-    fn len() -> Byte => return len(self);
+    fn index(Byte position) -> Byte => return read(self,position,1) as Byte;
+    fn index_range(Byte position1,Byte position2) -> Bytes => return read(self,position1,position2-position1);
+    fn len() -> Byte => return len(self) as Byte;
     fn merge(Bytes other) -> Bytes => return merge(self,other);
 }
 
-type Empty = 0 {}
-type Byte = 1 {}
+type Empty = 0 {
+    fn len() -> Byte => return 0;
+}
+type Byte = 1 {
+    fn add(Bytes other) -> Byte => return add(self,other) as Byte;
+    fn sub(Bytes other) -> Byte => return sub(self,other) as Byte;
+    fn mul(Bytes other) -> Byte => return mul(self,other) as Byte;
+    fn div(Bytes other) -> Byte => return div(self,other) as Byte;
+    fn xor(Bytes other) -> Byte => return xor(self,other) as Byte;
+    fn index(Byte position) -> Panic {}
+    fn index_range(Byte position1,Byte position2) -> Panic {}
+    fn len() -> Byte => return 1;
+}
+type Char: Byte = 1 {
+    fn add(Bytes other) -> Char => return add(self,other) as Byte;
+    fn sub(Bytes other) -> Char => return sub(self,other) as Byte;
+    fn mul(Bytes other) -> Char => return mul(self,other) as Byte;
+    fn div(Bytes other) -> Char => return div(self,other) as Byte;
+    fn xor(Bytes other) -> Char => return xor(self,other) as Byte;
+    fn index(Byte position) -> Panic {}
+    fn index_range(Byte position1,Byte position2) -> Panic {}
+    fn len() -> Byte => return 1;
+}
 
-type String {
-    fn join(Bytes a) -> String {
-        return self ~ " " ~ a;
+type Boolean = 1 {
+    ref true = 1;
+    ref false = 0;
+
+    fn to_string() -> String {
+        if self => return "true" as String;
+        return "false" as String;
     }
 
+    fn merge(Bytes other) -> Panic {}
+
+    fn len() -> Byte => return 1;
+}
+
+type String {
+    fn join(String a) -> String {
+        return self ~ " " ~ a;
+    }
+    
+    fn index(Byte position) -> Char => return read(self,position,1) as Char;
+    fn index_range(Byte position1,Byte position2) -> String => return read(self,position1,position2-position1) as String;
+
     static fn new(Bytes bytes) -> String {
-        return bytes;
+        return bytes as string;
     }
 }
 
-allow Byte for String;
-allow String for Byte;
-
 fn main() {
-    String a = "test" ~ 10;
-    print(a.join("malou"));
+    // Byte a = "a";
+    // loop {
+    //     if a == "f" {
+    //         break;
+    //     }
+    //     a += 1;
+    //     if a == "c" => continue;
+    //     print(a);
+    // }
+    for Char i in "a".."f" {
+        print(i)
+    }
+    for Byte i in "abcde" {
+        print(i)
+    }
+    //String a = "test" ~ 10 as String;
+    //print(a.join("malou"[3..5] as String));
 }

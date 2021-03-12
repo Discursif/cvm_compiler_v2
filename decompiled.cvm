@@ -1,0 +1,29 @@
+BLOCK 0
+
+v2 = {"a"}
+
+BLOCK 5
+
+if v2 != {"f"}
+goto 12
+v8 = v8
+v2 = (v2 + {1})
+print(v8)
+goto 5
+
+BLOCK 12
+
+v25 = {0}
+
+BLOCK 13
+
+if {5} == v25
+goto 16
+exit()
+
+BLOCK 16
+
+v8 = {"abcde"}[v25]
+v25 = (v25 + {1})
+print({"abcde"}[v25])
+goto 13

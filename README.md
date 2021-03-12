@@ -32,37 +32,37 @@ fn main() {
 Note: *This example require STD*
 
 ## STD Types
-CVM STD export few types like `Bytes`, `Byte`, `Empty`, `String`, `Char`, `Boolean`
+CVM STD export few types like `Bytes`, `Byte`, `Empty`, `String`, `Char`, `Bool`
 The `Panic` type when constructed will make the compiler panic (This disable a method).
 
 Bytes is the parent of every Type and has few methods:
 ```rust 
 fn len() -> Byte;
 fn as_str() -> String;
-fn add(other: Bytes) -> Bytes;
-fn sub(other: Bytes) -> Bytes;
-fn div(other: Bytes) -> Bytes;
-fn mul(other: Bytes) -> Bytes;
-fn xor(other: Bytes) -> Bytes;
-fn merge(other: Bytes) -> Bytes;
-fn index(index: Byte) -> Byte;
-fn index_range(index: Byte,index1: Byte) -> Bytes;
-fn replace(index: Byte, object: Bytes) -> Bytes;
-fn insert(index: Byte, object: Bytes) -> Bytes;
+fn add(Bytes other) -> Bytes;
+fn sub(Bytes other) -> Bytes;
+fn div(Bytes other) -> Bytes;
+fn mul(Bytes other) -> Bytes;
+fn xor(Bytes other) -> Bytes;
+fn merge(Bytes other) -> Bytes;
+fn index(Byte index) -> Byte;
+fn index_range(Byte index,Byte index1) -> Bytes;
+fn replace(Byte index, object: Bytes) -> Bytes;
+fn insert(Byte index, object: Bytes) -> Bytes;
 ```
 
 String has few methods
 ```rust
-fn char_at(index: Byte) -> Char;
+fn char_at(Byte index) -> Char;
 fn to_lower_case() -> String;
 fn to_upper_case() -> String;
 fn trim() -> String;
-fn substring(start: Byte, end: Byte) -> String;
+fn substring(Byte start, Byte end) -> String;
 fn merge(other: String) -> String;
-fn index(index: Byte) -> Char;
-fn index_range(index: Byte,index1: Byte) -> String;
-fn replace(index: Byte, object: String) -> String;
-fn insert(index: Byte, object: String) -> Bytes;
+fn index(Byte index) -> Char;
+fn index_range(Byte index,Byte index1) -> String;
+fn replace(Byte index, String object) -> String;
+fn insert(Byte index, String object) -> Bytes;
 ```
 
 Char has few methods
@@ -72,10 +72,23 @@ fn to_upper_case() -> String;
 fn is_ascii() -> Bool;
 fn is_number() -> Bool;
 fn parse_hex() -> Byte;
-fn merge(other: Char) -> String;
-fn index(index: Byte) -> Panic;
-fn index_range(index: Byte,index1: Byte) -> Panic;
-fn replace(index: Byte, object: String) -> Panic;
-fn insert(index: Byte, object: String) -> Panic;
+fn merge(Char other) -> String;
+fn index(Byte index) -> Panic;
+fn index_range(Byte index,Byte index1) -> Panic;
+fn replace(Byte index, String object) -> Panic;
+fn insert(Byte index, String object) -> Panic;
 ```
 
+Boolean is defined as follows
+```rust
+type Boolean = 1 {
+    ref true = 1;
+    ref false = 0;
+
+    fn merge(Bytes other) -> Panic;
+    fn index(Byte index) -> Panic;
+    fn index_range(Byte index,Byte index1) -> Panic;
+    fn replace(Byte index, Bytes object) -> Panic;
+    fn insert(Byte index, Bytes object) -> Panic;
+}
+```

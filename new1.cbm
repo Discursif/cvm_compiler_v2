@@ -1,0 +1,22 @@
+l0 CONST v10, 5
+l1 CONST v9, 102
+l2 CONST v8, 97 98 99 100 101
+l3 CONST v7, 1
+l4 CONST v6, 97
+l5 IFN v6, v9
+l6 JUMP 12
+l7 MOV v5, v6
+l8 ADD v4, v6, v7
+l9 MOV v6, v4
+l10 PRINT v5
+l11 JUMP 5
+l12 CONST v3, 0
+l13 IF v10, v3
+l14 JUMP 16
+l15 END
+l16 READ v2, v8, v3, v7
+l17 MOV v5, v2
+l18 ADD v1, v3, v7
+l19 MOV v3, v1
+l20 PRINT v2
+l21 JUMP 13

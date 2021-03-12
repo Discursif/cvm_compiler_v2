@@ -1,0 +1,36 @@
+BLOCK 0
+
+v27 = 5
+v7 = "f"
+v30 = "abcde"
+v37 = 1
+v2 = "a"
+
+BLOCK 5
+
+if v2 != v7
+goto l12
+v8 = v2
+v15 = v2 + v37
+v2 = v15
+print(v8)
+goto l5
+
+BLOCK 12
+
+v25 = 0
+
+BLOCK 13
+
+if v27 == v25
+goto l16
+exit
+
+BLOCK 16
+
+v36 = v30[v25:v37]
+v8 = v36
+v43 = v25 + v37
+v25 = v43
+print(v36)
+goto l13
