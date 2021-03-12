@@ -1,0 +1,32 @@
+use std;
+
+type Bytes {
+    fn add(Bytes other) -> Bytes => return add(self,other);
+    fn sub(Bytes other) -> Bytes => return sub(self,other);
+    fn mul(Bytes other) -> Bytes => return mul(self,other);
+    fn div(Bytes other) -> Bytes => return div(self,other);
+    fn xor(Bytes other) -> Bytes => return xor(self,other);
+    fn len() -> Byte => return len(self);
+    fn merge(Bytes other) -> Bytes => return merge(self,other);
+}
+
+type Empty = 0 {}
+type Byte = 1 {}
+
+type String {
+    fn join(Bytes a) -> String {
+        return self ~ " " ~ a;
+    }
+
+    static fn new(Bytes bytes) -> String {
+        return bytes;
+    }
+}
+
+allow Byte for String;
+allow String for Byte;
+
+fn main() {
+    String a = "test" ~ 10;
+    print(a.join("malou"));
+}

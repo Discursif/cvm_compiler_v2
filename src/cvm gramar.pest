@@ -1,0 +1,99 @@
+int = { ASCII_DIGIT+ }
+
+whitespace = _{ " " | "\t" | "\r" | "\n" }
+
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+
+literal_char = _{ 'a'..'z' | 'A'..'Z' | '0'..'9' | "_" }
+literal = {literal_char+}
+
+// Tokens
+
+operand = _{ add | subtract | multiply | divide | xor | merge}
+add      = { whitespace* ~ "+" ~ whitespace* }
+subtract = { whitespace* ~ "-" ~ whitespace* }
+multiply = { whitespace* ~ "*" ~ whitespace* }
+divide   = { whitespace* ~ "/" ~ whitespace* }
+xor      = { whitespace* ~ "^" ~ whitespace* }
+merge    = { whitespace* ~ "~" ~ whitespace* }
+dot = _{ whitespace* ~ "." ~ whitespace* }
+double_equal    = { whitespace* ~ "==" ~ whitespace* }
+arrow    = _{ whitespace* ~ "=>" ~ whitespace* }
+type_arrow    = _{ whitespace* ~ "->" ~ whitespace* }
+range_operator    = _{ whitespace* ~ ".." ~ whitespace* }
+not_equal    = { whitespace* ~ "!=" ~ whitespace* }
+equal    = { whitespace* ~ "=" ~ whitespace* }
+left_parenthesis = _{whitespace* ~ "(" ~ whitespace*}
+right_parenthesis = _{whitespace* ~ ")" ~ whitespace*}
+left_square_bracket = _{whitespace* ~ "[" ~ whitespace*}
+right_square_bracket = _{whitespace* ~ "]" ~ whitespace*}
+left_bracket = _{whitespace* ~ "{" ~ whitespace*}
+right_bracket = _{whitespace* ~ "}" ~ whitespace*}
+comma = _{whitespace* ~ "," ~ whitespace*}
+keyword_fn = _{whitespace* ~ "fn " ~ whitespace*}
+keyword_if = _{whitespace* ~ "if " ~ whitespace*}
+keyword_for = _{whitespace* ~ "for " ~ whitespace*}
+keyword_type = _{whitespace* ~ "type " ~ whitespace*}
+keyword_in = _{whitespace* ~ "in" ~ whitespace*}
+keyword_static = {whitespace* ~ "static " ~ whitespace*}
+keyword_else = _{whitespace* ~ "else " ~ whitespace*}
+keyword_use = _{whitespace* ~ "use " ~ whitespace*}
+keyword_return = _{whitespace* ~ "return " ~ whitespace*}
+keyword_allow = _{whitespace* ~ "allow " ~ whitespace*}
+semicolon = _{whitespace* ~ ";" ~ whitespace*}
+
+number_array = {int ~ (whitespace+ ~ int)*}
+
+data = _{function_call | indexing | number_array | string | literal}
+
+indexing = {literal~left_square_bracket~expr~right_square_bracket}
+function_call = {literal~left_parenthesis~terms~right_parenthesis}
+
+expr = { term ~ method_call* ~(operand ~ term)* }
+term = _{ data | left_parenthesis ~ expr ~right_parenthesis }
+terms = {(expr ~ (comma~expr)*)?}
+method_call = {dot ~ literal~left_parenthesis~terms~right_parenthesis}
+
+typed_var = {literal~whitespace+~literal}
+functions_params = {(typed_var ~ (comma ~ typed_var)*)?}
+
+instruction = {if_statement | for_statement | (var_declaration~semicolon) | (var_assignement~semicolon) | (return_statement~semicolon) | (expr~semicolon)}
+
+boolean_test = {expr ~ (double_equal | not_equal) ~ expr}
+
+if_statement = {keyword_if~boolean_test~code_block~(keyword_else ~ code_block)?}
+
+use_statement = {keyword_use~literal~semicolon?}
+allow_statement = {keyword_allow~literal~keyword_for~literal~semicolon?}
+
+return_statement = {keyword_return ~ expr}
+
+range = {expr~range_operator~expr}
+
+for_statement = {keyword_for~literal~keyword_in~(expr | range)~code_block}
+
+type_function = {keyword_static? ~ function}
+
+type_statement = {keyword_type~literal~(equal~int)?~left_bracket~(type_function)*~right_bracket} 
+
+var_declaration = {typed_var ~ equal ~ expr}
+var_assignement = {(indexing | literal) ~ operand? ~ equal ~ expr}
+
+instruction_block = _{left_bracket~(instruction ~ (instruction)*)?~right_bracket}
+arrow_block = _{arrow ~ instruction}
+
+code_block = {arrow_block | instruction_block}
+
+function = {keyword_fn~literal~left_parenthesis~functions_params~right_parenthesis~(type_arrow~literal)?~code_block}
+
+file_element = {function | type_statement | allow_statement | use_statement}
+
+file = {file_element*}
+
+line = {SOI ~ file ~ EOI}
