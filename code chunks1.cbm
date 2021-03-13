@@ -1,36 +1,24 @@
 BLOCK 0
 
-v27 = 5
-v7 = "f"
-v30 = "abcde"
-v37 = 1
-v2 = "a"
+v11 = 1
+v23 = "a"
+v6 = 26
+v37 = "test"
+v4 = 0
 
 BLOCK 5
 
-if v2 != v7
-goto l12
-v8 = v2
-v15 = v2 + v37
-v2 = v15
-print(v8)
+if v4 != v6
+goto l14
+v10 = v4
+v18 = v4 + v11
+v4 = v18
+v28 = v23 + v10
+v35 = v37 ~ v28
+v37 = v35
 goto l5
 
-BLOCK 12
+BLOCK 14
 
-v25 = 0
-
-BLOCK 13
-
-if v27 == v25
-goto l16
+print(v37)
 exit
-
-BLOCK 16
-
-v36 = v30[v25:v37]
-v8 = v36
-v43 = v25 + v37
-v25 = v43
-print(v36)
-goto l13

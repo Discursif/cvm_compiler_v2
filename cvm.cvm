@@ -1,15 +1,82 @@
 use std;
 
+fn merge(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        MERGE out, a, b;
+    }
+    return out
+}
+fn add(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        ADD out, a, b;
+    }
+    return out
+}
+fn sub(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        SUB out, a, b;
+    }
+    return out
+}
+fn mul(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        MUL out, a, b;
+    }
+    return out
+}
+fn div(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        DIV out, a, b;
+    }
+    return out
+}
+fn xor(Bytes a, Bytes b) -> Bytes {
+    Bytes out = "";
+    asm {
+        XOR out, a, b;
+    }
+    return out
+}
+fn read(Bytes a, Byte b, Byte c) -> Bytes {
+    Bytes out = "";
+    asm {
+        READ out, a, b, c;
+    }
+    return out
+}
+fn len(Bytes a) -> Bytes {
+    Bytes out = "";
+    asm {
+        LEN out, a;
+    }
+    return out
+}
+fn print(Bytes a) {
+    asm {
+        PRINT a;
+    }
+}
+fn input(Bytes a) {
+    asm {
+        INPUT a;
+    }
+}
+
 type Bytes {
-    fn add(Bytes other) -> Bytes => return add(self,other);
-    fn sub(Bytes other) -> Bytes => return sub(self,other);
-    fn mul(Bytes other) -> Bytes => return mul(self,other);
-    fn div(Bytes other) -> Bytes => return div(self,other);
-    fn xor(Bytes other) -> Bytes => return xor(self,other);
+    fn add(Bytes other) -> Bytes => return add(self,other) as Bytes;
+    fn sub(Bytes other) -> Bytes => return sub(self,other) as Bytes;
+    fn mul(Bytes other) -> Bytes => return mul(self,other) as Bytes;
+    fn div(Bytes other) -> Bytes => return div(self,other) as Bytes;
+    fn xor(Bytes other) -> Bytes => return xor(self,other) as Bytes;
     fn index(Byte position) -> Byte => return read(self,position,1) as Byte;
     fn index_range(Byte position1,Byte position2) -> Bytes => return read(self,position1,position2-position1);
     fn len() -> Byte => return len(self) as Byte;
-    fn merge(Bytes other) -> Bytes => return merge(self,other);
+    fn merge(Bytes other) -> Bytes => return merge(self,other) as Bytes;
 }
 
 type Empty = 0 {
@@ -26,14 +93,16 @@ type Byte = 1 {
     fn len() -> Byte => return 1;
 }
 type Char: Byte = 1 {
-    fn add(Bytes other) -> Char => return add(self,other) as Byte;
-    fn sub(Bytes other) -> Char => return sub(self,other) as Byte;
-    fn mul(Bytes other) -> Char => return mul(self,other) as Byte;
-    fn div(Bytes other) -> Char => return div(self,other) as Byte;
-    fn xor(Bytes other) -> Char => return xor(self,other) as Byte;
+    fn add(Bytes other) -> Char => return add(self,other) as Char;
+    fn sub(Bytes other) -> Char => return sub(self,other) as Char;
+    fn mul(Bytes other) -> Char => return mul(self,other) as Char;
+    fn div(Bytes other) -> Char => return div(self,other) as Char;
+    fn xor(Bytes other) -> Char => return xor(self,other) as Char;
     fn index(Byte position) -> Panic {}
     fn index_range(Byte position1,Byte position2) -> Panic {}
     fn len() -> Byte => return 1;
+    fn merge(Char other) -> String => return merge(self,other) as String;
+    fn merge(String other) -> String => return merge(self,other) as String;
 }
 
 type Boolean = 1 {
@@ -57,9 +126,11 @@ type String {
     
     fn index(Byte position) -> Char => return read(self,position,1) as Char;
     fn index_range(Byte position1,Byte position2) -> String => return read(self,position1,position2-position1) as String;
+    fn merge(String other) -> String => return merge(self,other) as String;
+    fn merge(Char other) -> String => return merge(self,other) as String;
 
     static fn new(Bytes bytes) -> String {
-        return bytes as string;
+        return bytes as String;
     }
 }
 
@@ -73,12 +144,17 @@ fn main() {
     //     if a == "c" => continue;
     //     print(a);
     // }
-    for Char i in "a".."f" {
-        print(i)
+    // for Char i in "a".."f" {
+    //     print(i)
+    // }
+    // for Byte i in "abcde" {
+    //     print(i)
+    // }
+    String a = "test";
+    for Byte i in 0..26 {
+        a ~= "a" + i
     }
-    for Byte i in "abcde" {
-        print(i)
-    }
-    //String a = "test" ~ 10 as String;
-    //print(a.join("malou"[3..5] as String));
+    print(a)
+    // String a = "test" ~ 10 as String;
+    // print(a.join("malou"[3..5] as String));
 }
