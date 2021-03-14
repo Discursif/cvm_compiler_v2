@@ -1,24 +1,82 @@
 BLOCK 0
 
-v11 = 1
-v6 = 26
-v23 = "a"
-v37 = "test"
-v4 = 0
+v103 = "test" 10 " ou"
+v24 = "abcde"
+v48 = 26
+v4 = "f"
+v65 = "test"
+v73 = "z"
+v10 = "c"
+v55 = "a"
+v26 = 5
+v5 = 1
+v2 = "a"
 
-BLOCK 5
+BLOCK 11
 
-if v4 != v6
-goto l14
-v10 = v4
-v18 = v4 + v11
-v4 = v18
-v28 = v23 + v10
-v35 = v37 ~ v28
-v37 = v35
-goto l5
+if v2 != v4
+goto l17
+v2 += v5
+if v2 != v10
+goto l11
+goto l11
 
-BLOCK 14
+BLOCK 17
 
-print(v37)
+print(v2)
+v12 = "a"
+
+BLOCK 19
+
+if v12 != v4
+goto l24
+v12 += v5
+print(v12)
+goto l19
+
+BLOCK 24
+
+v30 = 0
+
+BLOCK 25
+
+if v26 != v30
+goto l30
+v30 += v5
+print(v24)
+goto l25
+
+BLOCK 30
+
+v2 = "test"
+v46 = 0
+
+BLOCK 32
+
+if v46 != v48
+goto l38
+v46 += v5
+v56 = v55 + v46
+v2 ~= v56
+goto l32
+
+BLOCK 38
+
+v66 = v2 ~ v65
+print(v66)
+v71 = "a"
+
+BLOCK 41
+
+if v71 != v73
+goto l46
+v71 += v5
+print(v71)
+goto l41
+
+BLOCK 46
+
+print(v55)
+v2 = "test" 10
+print(v103)
 exit

@@ -1,10 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{
-    instruction::Instruction, variable::Variable, CVMCompCtx, CompilationContext, ANY_TYPE,
-};
-
-use crate::asm::Asm;
+use crate::{ANY_TYPE, CVMCompCtx, CompilationContext, cvmir::IrAsm, instruction::Instruction, variable::Variable};
 
 #[derive(Debug, Clone)]
 pub struct Function {
@@ -16,7 +12,6 @@ pub struct Function {
 
 impl Function {
     pub fn compile(&self, ctx: &mut CVMCompCtx, pos: &[usize], self_pos: Option<usize>) -> usize {
-        let id = ctx.new_function();
         let return_var = ctx.new_var();
         let mut vars = HashMap::new();
         vars.extend(
@@ -29,10 +24,14 @@ impl Function {
             vars.insert("self".to_owned(), e);
             vars.insert("super".to_owned(), e);
         }
+        let tmp = ctx.instructions.clone();
+        ctx.instructions = Vec::new();
         for i in &self.code {
-            i.compile(ctx, &(id, return_var, self.return_type.clone()), &mut vars);
+            i.compile(ctx, &self.return_type, &mut vars);
         }
-        ctx.instructions.push(Asm::Label(format!("fn_end_{}", id)));
+        let out = ctx.instructions.clone();
+        ctx.instructions = tmp;
+        ctx.instructions.push(IrAsm::FunctionBlock(return_var, out));
         return_var
     }
 }

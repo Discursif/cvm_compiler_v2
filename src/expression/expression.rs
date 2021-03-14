@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{
-    asm::Asm, variable::Variable, CVMCompCtx, CompilationContext, ANY_TYPE, BYTE_TYPE, CHAR_TYPE,
-    STRING_TYPE,
-};
+use crate::{ANY_TYPE, BYTE_TYPE, CHAR_TYPE, CVMCompCtx, CompilationContext, STRING_TYPE, cvmir::IrAsm, variable::Variable};
 
 #[derive(Clone, Debug)]
 pub enum Expression {
@@ -76,10 +73,11 @@ impl Expression {
                 let args_pointer: Vec<usize> = args
                     .iter()
                     .map(|x| {
-                        let var = ctx.new_var();
-                        let data = x.compile(ctx, vars);
-                        ctx.instructions.push(Asm::Mov(var, data));
-                        var
+                        // let var = ctx.new_var();
+                        // let data = x.compile(ctx, vars);
+                        // ctx.instructions.push(IrAsm::Mov(var, data));
+                        // data
+                        x.compile(ctx, vars)
                     })
                     .collect();
 
@@ -109,10 +107,11 @@ impl Expression {
                     let args: Vec<usize> = c
                         .iter()
                         .map(|x| {
-                            let var = ctx.new_var();
-                            let tmp = x.compile(ctx, vars);
-                            ctx.instructions.push(Asm::Mov(var, tmp));
-                            var
+                            // let var = ctx.new_var();
+                            // let tmp = x.compile(ctx, vars);
+                            // ctx.instructions.push(IrAsm::Mov(var, tmp));
+                            // var
+                            x.compile(ctx, vars)
                         })
                         .collect();
                     let func = (*ctx
@@ -133,19 +132,20 @@ impl Expression {
                     let args: Vec<usize> = c
                         .iter()
                         .map(|x| {
-                            let var = ctx.new_var();
-                            let data = x.compile(ctx, vars);
-                            ctx.instructions.push(Asm::Mov(var, data));
-                            var
+                            // let var = ctx.new_var();
+                            // let data = x.compile(ctx, vars);
+                            // ctx.instructions.push(IrAsm::Mov(var, data));
+                            // var
+                            x.compile(ctx, vars)
                         })
                         .collect();
                     let compiled = a.compile(ctx, vars);
-                    let self_var = ctx.new_var();
+                    // let self_var = ctx.new_var();
                     let func = (*ctx
                         .ctx
                         .types
                         .get(a.get_type(&ctx.ctx))
-                        .expect("Can't get type in static method call")
+                        .expect("Can't get type in method call")
                         .get_function(
                             b,
                             &c.iter().map(|x| x.get_type(&ctx.ctx).to_owned()).collect(),
@@ -154,14 +154,15 @@ impl Expression {
                         )
                         .expect("Can't get method"))
                     .clone();
-                    ctx.instructions.push(Asm::Mov(self_var, compiled));
-                    func.compile(ctx, &args, Some(self_var))
+                    // ctx.instructions.push(IrAsm::Mov(self_var, compiled));
+                    // func.compile(ctx, &args, Some(self_var))
+                    func.compile(ctx, &args, Some(compiled))
                 }
             }
             Expression::Variable(e) => *vars.get(&e.name).unwrap(),
             Expression::Value(e) => {
                 let var = ctx.new_var();
-                ctx.instructions.push(Asm::Cst(var, e.clone()));
+                ctx.instructions.push(IrAsm::Cst(var, e.clone()));
                 var
             }
             Expression::Type(_) => {
@@ -177,7 +178,7 @@ impl Expression {
                 } else {
                     panic!("Variants can only be used on types not expressions {:?}", e)
                 };
-                ctx.instructions.push(Asm::Cst(
+                ctx.instructions.push(IrAsm::Cst(
                     var,
                     ctx.ctx
                         .types

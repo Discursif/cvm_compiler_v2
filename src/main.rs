@@ -13,15 +13,17 @@ pub mod instruction;
 pub mod types;
 pub mod utils;
 pub mod variable;
+pub mod cvmir;
 
 use asm::Asm;
+use cvmir::{Counter, IrAsm, Optimizer, VariableManager, elide_unused_consts, remove_followed_usages};
 use expression::*;
 use function::{Function, Functions};
 use instruction::file_parser;
 use types::Type;
 use variable::Variable;
 
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}};
 
 use pest::Parser;
 
@@ -64,7 +66,7 @@ pub struct CVMCompCtx {
     pub loops: Vec<usize>,
     pub loop_id: usize,
     pub if_n: usize,
-    pub instructions: Vec<Asm>,
+    pub instructions: Vec<IrAsm>,
 }
 
 impl CVMCompCtx {
@@ -133,7 +135,20 @@ fn main() {
         instructions: Vec::new(),
     };
     func.compile(&mut cctx, &Vec::new(), None);
-    let out = Asm::clean(cctx.instructions)
+    println!("{}",cctx.instructions.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n"));
+    let mut o = 0;
+    while o != cctx.instructions.len() {
+        o = cctx.instructions.len();
+        cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
+        cctx.instructions = elide_unused_consts(cctx.instructions, None);
+        cctx.instructions = remove_followed_usages(cctx.instructions, None);
+    }
+    println!("{}",cctx.instructions.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n"));
+    let mut counter = Counter::default();
+    let mut fors = Vec::new();
+    let asm: Vec<Asm> = cctx.instructions.into_iter().map(|x| x.to_asm(&mut counter, &mut fors, None)).flatten().collect();
+    std::fs::write("new.llasm.cbm", asm.iter().enumerate().map(|(x,y)| format!("l{} {}",x,y)).collect::<Vec<_>>().join("\n")).unwrap();
+    let out = Asm::clean(asm)
         .iter()
         .chain(vec![Asm::End].iter())
         .enumerate()

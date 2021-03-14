@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use crate::{BYTE_TYPE, CVMCompCtx, asm::{Asm, OperationType}, expression::Expression, variable::Variable};
+use crate::{BYTE_TYPE, CVMCompCtx, asm::{OperationType}, expression::Expression, variable::Variable};
+use crate::IrAsm;
 
 #[derive(Clone, Debug)]
 pub enum AsmInstruction {
@@ -49,31 +50,34 @@ impl Instruction {
     pub fn compile(
         &self,
         ctx: &mut CVMCompCtx,
-        function_data: &(usize, usize, String), /* Function id, Function return var location, Function return type */
+        function_data: &String, /* Function id, Function return var location, Function return type */
         vars: &mut HashMap<String, usize>,
     ) {
         match self {
             Instruction::If(a, b, c, d, e) => {
-                let if_id = ctx.new_if();
-                let expr1 = ctx.new_var();
+                //let expr1 = ctx.new_var();
                 let expr1_r = a.compile(ctx, vars);
-                ctx.instructions.push(Asm::Mov(expr1, expr1_r));
-                let expr2 = ctx.new_var();
+                //ctx.instructions.push(IrAsm::Mov(expr1, expr1_r));
+                //let expr2 = ctx.new_var();
                 let expr2_r = c.compile(ctx, vars);
-                ctx.instructions.push(Asm::Mov(expr2, expr2_r));
-                ctx.instructions.push(Asm::If(!*b, expr1, expr2));
-                ctx.instructions
-                    .push(Asm::GtLabel(format!("if_else_{}", if_id)));
+                //ctx.instructions.push(IrAsm::Mov(expr2, expr2_r));
+                let tmp = ctx.instructions.clone();
+                ctx.instructions = Vec::new();
                 d.iter().for_each(|x| x.compile(ctx, function_data, vars));
-                ctx.instructions
-                    .push(Asm::GtLabel(format!("if_end_{}", if_id)));
-                ctx.instructions
-                    .push(Asm::Label(format!("if_else_{}", if_id)));
+                let d = ctx.instructions.clone();
+                ctx.instructions = Vec::new();
                 if let Some(e) = e {
-                    e.iter().for_each(|x| x.compile(ctx, function_data, vars));
+                    e.iter().for_each(|x| (*x).compile(ctx, function_data, vars));
                 }
-                ctx.instructions
-                    .push(Asm::Label(format!("if_end_{}", if_id)));
+                let e = ctx.instructions.clone();
+                ctx.instructions = tmp;
+                let (a,b) = if *b {
+                    (d,e)
+                } else {
+                    (e,d)
+                };
+                //ctx.instructions.push(IrAsm::If(expr1, expr2, a,b));
+                ctx.instructions.push(IrAsm::If(expr1_r, expr2_r, a,b));
             }
             Instruction::Expression(e) => {
                 e.compile(ctx, vars);
@@ -90,8 +94,13 @@ impl Instruction {
                 {
                     panic!("Can't assign a {} with {}", e.var_type, p);
                 }
+                // I'm not sure if I can remove this MOV since if we do
+                // a = "test"
+                // b = a
+                // b = "tast"
+                // print(a) -> "tast"
                 let expr1_r = a.compile(ctx, vars);
-                ctx.instructions.push(Asm::Mov(expr1, expr1_r));
+                ctx.instructions.push(IrAsm::Mov(expr1, expr1_r));
                 vars.insert(e.name.to_owned(), expr1);
             }
             Instruction::Return(e) => {
@@ -100,38 +109,26 @@ impl Instruction {
                     .types
                     .get(e.get_type(&ctx.ctx))
                     .unwrap()
-                    .is_child_of(&function_data.2, &ctx.ctx)
+                    .is_child_of(&function_data, &ctx.ctx)
                 {
                     panic!("Invalid return type {:?}", e)
                 }
                 let expr1_r = e.compile(ctx, vars);
-                ctx.instructions.push(Asm::Mov(function_data.1, expr1_r));
-                ctx.instructions
-                    .push(Asm::GtLabel(format!("fn_end_{}", function_data.0)));
+                ctx.instructions.push(IrAsm::Return(expr1_r));
             }
             Instruction::Loop(e) => {
-                let loop_id = ctx.new_loop();
-                ctx.loops.push(loop_id);
-                ctx.instructions
-                    .push(Asm::Label(format!("loop_start_{}", loop_id)));
+                let tmp = ctx.instructions.clone();
+                ctx.instructions = Vec::new();
                 e.iter().for_each(|x| x.compile(ctx, function_data, vars));
-                ctx.instructions
-                    .push(Asm::GtLabel(format!("loop_start_{}", loop_id)));
-                ctx.instructions
-                    .push(Asm::Label(format!("loop_end_{}", loop_id)));
-                ctx.loops.pop();
+                let out = ctx.instructions.clone();
+                ctx.instructions = tmp;
+                ctx.instructions.push(IrAsm::Loop(out));
             }
             Instruction::Break => {
-                ctx.instructions.push(Asm::GtLabel(format!(
-                    "loop_end_{}",
-                    ctx.loops.last().unwrap()
-                )));
+                ctx.instructions.push(IrAsm::Break());
             }
             Instruction::Continue => {
-                ctx.instructions.push(Asm::GtLabel(format!(
-                    "loop_start_{}",
-                    ctx.loops.last().unwrap()
-                )));
+                ctx.instructions.push(IrAsm::Continue());
             }
             Instruction::ForEach(a, b, c) => {
                 let for_id = ctx.new_if();
@@ -265,16 +262,17 @@ impl Instruction {
                     };
                     e.iter().map(|i| {
                         match i {
-                            AsmInstruction::Mov(e, a) => Asm::Mov(var(e),var(a)),
-                            AsmInstruction::Operation(a, b, c, d) => Asm::Op(a.clone(),var(b),var(c),var(d)),
-                            AsmInstruction::Len(a, b) => Asm::Len(var(a),var(b)),
-                            AsmInstruction::Read(a, b, c, d) => Asm::Read(var(a),var(b),var(c),var(d)),
-                            AsmInstruction::Print(e) => Asm::Prt(var(e)),
-                            AsmInstruction::Input(e) => Asm::Inp(var(e)),
-                            AsmInstruction::NoOp => Asm::Nop,
-                            AsmInstruction::End => Asm::End,
-                            AsmInstruction::If(e, a) => Asm::If(true,var(e),var(a)),
-                            AsmInstruction::IfN(e, a) => Asm::If(false,var(e),var(a)),
+                            AsmInstruction::Mov(e, a) => IrAsm::Mov(var(e),var(a)),
+                            AsmInstruction::Operation(a, b, c, d) => IrAsm::Op(a.clone(),var(b),var(c),var(d)),
+                            AsmInstruction::Len(a, b) => IrAsm::Len(var(a),var(b)),
+                            AsmInstruction::Read(a, b, c, d) => IrAsm::Read(var(a),var(b),var(c),var(d)),
+                            AsmInstruction::Print(e) => IrAsm::Prt(var(e)),
+                            AsmInstruction::Input(e) => IrAsm::Inp(var(e)),
+                            AsmInstruction::NoOp => IrAsm::Nop,
+                            AsmInstruction::End => IrAsm::End,
+                            // AsmInstruction::If(e, a) => IrAsm::If(true,var(e),var(a)),
+                            // AsmInstruction::IfN(e, a) => IrAsm::If(false,var(e),var(a)),
+                            _ => unreachable!() // This hasn't been implemented yet.
                         }
                     }).collect::<Vec<_>>()
                 };

@@ -63,6 +63,7 @@ impl Type {
         is_static: bool,
         ctx: &'a CompilationContext,
     ) -> Option<&'a Function> {
+        println!("NN: {} {}",a,self.functions.keys().map(|x| x.to_owned()).collect::<Vec<_>>().join(", "));
         if let Some(e) = if is_static {
             &self.static_functions
         } else {
@@ -70,10 +71,17 @@ impl Type {
         }
         .get(a)
         .map(|x| {
-            x.get_for_input(
+            println!("YY: {} {} {:?}",&x.name,a,types);
+            if let Some(e) = x.get_for_input(
                 &types.iter().map(|x| x.as_str()).collect::<Vec<&str>>(),
                 ctx,
-            )
+            )  {
+                //println!("ZZ {:?}",e);
+                Some(e)
+            } else {
+                println!("XX");
+                None
+            }
         })
         .flatten()
         {
@@ -83,7 +91,7 @@ impl Type {
             println!("Exiting function search due to parent");
             return None;
         }
-        println!("Searching in parent {} for {}", self.parent, a);
+        println!("Searching in parent {} for {} from {}", self.parent, a,self.name);
         ctx.types
             .get(&self.parent)
             .unwrap()

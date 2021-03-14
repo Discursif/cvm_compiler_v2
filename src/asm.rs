@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
 type Variable = usize;
 
@@ -17,6 +17,30 @@ pub enum Asm {
     Len(Variable, Variable),
     Read(Variable, Variable, Variable, Variable),
     Nop,
+}
+
+impl Display for Asm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Op(a, b, c, d) => write!(f,"v{} = v{} {} v{}",b,c,a.as_operator(),d),
+            Self::End => write!(f,"end"),
+            Self::Prt(e) => write!(f,"print v{}",e),
+            Self::Inp(e) => write!(f,"v{} = input",e),
+            Self::Cst(e, a) => write!(f,"v{} = {}",e,a.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(" ")),
+            Self::Mov(e, a) => write!(f,"v{} = v{}",e,a),
+            Self::Len(e, a) => write!(f,"v{} = len v{}",e,a),
+            Self::Read(a, b, c, d) => write!(f,"v{} = v{}[v{} > v{}]",a,b,c,d),
+            Self::Nop => write!(f,""),
+            Asm::Label(e) => write!(f,"'{}",e),
+            Asm::Gt(e) => write!(f,"goto {}",e),
+            Asm::GtLabel(e) => write!(f,"goto '{}",e),
+            Asm::If(a, b, c) => write!(f,"if {} {}= {}",b,if *a {
+                "!"
+            } else {
+                "="
+            },c),
+        }
+    }
 }
 
 impl Asm {
@@ -76,7 +100,7 @@ impl Asm {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum OperationType {
     Add,
     And,
@@ -99,6 +123,18 @@ impl OperationType {
             OperationType::Mod => "MOD",
             OperationType::Xor => "XOR",
             OperationType::Merge => "MERGE",
+        }
+    }
+    pub fn as_operator(&self) -> &'static str {
+        match self {
+            OperationType::And => "&",
+            OperationType::Add => "+",
+            OperationType::Sub => "-",
+            OperationType::Mul => "*",
+            OperationType::Div => "/",
+            OperationType::Mod => "%",
+            OperationType::Xor => "^",
+            OperationType::Merge => "~",
         }
     }
 }

@@ -1,17 +1,70 @@
 BLOCK 0
 
-v37 = {"test"}
-v4 = {0}
+v2 = {"a"}
 
-BLOCK 5
+BLOCK 11
 
-if v4 != {26}
-goto 14
-v4 = (v4 + {1})
-v37 = (v37 ~ ({"a"} + v10))
-goto 5
+if v2 != {"f"}
+goto 17
+v2 = (v2 + {1})
+if v2 != {"c"}
+goto 11
+goto 11
 
-BLOCK 14
+BLOCK 17
 
-print(v37)
+print(v2)
+v12 = {"a"}
+
+BLOCK 19
+
+if v12 != {"f"}
+goto 24
+v12 = (v12 + {1})
+print(v12)
+goto 19
+
+BLOCK 24
+
+v30 = {0}
+
+BLOCK 25
+
+if {5} != v30
+goto 30
+v30 = (v30 + {1})
+print({"abcde"})
+goto 25
+
+BLOCK 30
+
+v2 = {"test"}
+v46 = {0}
+
+BLOCK 32
+
+if v46 != {26}
+goto 38
+v46 = (v46 + {1})
+v2 = (v2 ~ ({"a"} + v46))
+goto 32
+
+BLOCK 38
+
+print((v2 ~ {"test"}))
+v71 = {"a"}
+
+BLOCK 41
+
+if v71 != {"z"}
+goto 46
+v71 = (v71 + {1})
+print(v71)
+goto 41
+
+BLOCK 46
+
+print({"a"})
+v2 = {"test" 10}
+print({"test" 10 " ou"})
 exit()

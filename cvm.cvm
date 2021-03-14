@@ -113,8 +113,8 @@ type String {
         return self ~ " " ~ a;
     }
     
-    fn index(Byte position) -> Char => return super.read(position,1) as Char;
-    fn index_range(Byte position1,Byte position2) -> String => return super.read(position1,position2-position1) as String;
+    fn index(Byte position) -> Char => return super.index(position) as Char;
+    fn index_range(Byte position1,Byte position2) -> String => return super.index_range(position1,position2) as String;
     fn merge(String other) -> String => return super.merge(other) as String;
     fn merge(Char other) -> String => return super.merge(other) as String;
 
@@ -124,26 +124,32 @@ type String {
 }
 
 fn main() {
-    // Byte a = "a";
-    // loop {
-    //     if a == "f" {
-    //         break;
-    //     }
-    //     a += 1;
-    //     if a == "c" => continue;
-    //     print(a);
-    // }
-    // for Char i in "a".."f" {
-    //     print(i)
-    // }
-    // for Byte i in "abcde" {
-    //     print(i)
-    // }
+    Byte a = "a";
+    loop {
+        if a == "f" {
+            break;
+        }
+        a += 1;
+        if a == "c" => continue;
+    }
+    print(a);
+    for Byte i in "a".."f" {
+        print(i)
+    }
+    for Byte ix in "abcde" {
+        print("abcde")
+    }
     String a = "test";
     for Byte i in 0..26 {
         a ~= "a" + i
     }
-    print(a)
-    // String a = "test" ~ 10 as String;
-    // print(a.join("malou"[3..5] as String));
+    print(a ~ "test")
+    for Byte i in "a".."z" {
+        print(i)
+    }
+    if "test" == "test" {
+        print("a");
+    }
+    String a = "test" ~ 10 as String;
+    print(a.join("malou"[3..5] as String));
 }
