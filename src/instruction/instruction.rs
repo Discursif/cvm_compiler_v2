@@ -20,6 +20,7 @@ pub enum AsmInstruction {
 pub enum AsmVariable {
     External(String),
     Internal(String),
+    TypedExternal(Variable)
 }
 
 #[derive(Debug, Clone)]
@@ -254,6 +255,11 @@ impl Instruction {
                                     refs.insert(e.clone(), i);
                                     i
                                 }
+                            }
+                            AsmVariable::TypedExternal(e) => {
+                                let i = ctx.new_var();
+                                vars.insert(e.name.clone(), i);
+                                i
                             }
                         }
                     };

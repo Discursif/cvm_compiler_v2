@@ -97,10 +97,10 @@ impl TryFromRule<&mut ParseExpressionContext> for Vec<Instruction> {
     }
 }
 
-impl TryFromRule<(Option<String>, &CompilationContext)> for Function {
+impl TryFromRule<(Option<(String,String)>, &CompilationContext)> for Function {
     fn extract(
         rule: Pair<Rule>,
-        (in_type, context): (Option<String>, &CompilationContext),
+        (in_type, context): (Option<(String,String)>, &CompilationContext),
     ) -> Self {
         match rule.as_rule() {
             Rule::function => {
@@ -117,12 +117,19 @@ impl TryFromRule<(Option<String>, &CompilationContext)> for Function {
                     types: context.types.iter().map(|(x, _)| x.to_owned()).collect(),
                     variables: {
                         let mut map = HashMap::new();
-                        if let Some(e) = in_type {
+                        if let Some((e,parent)) = in_type {
                             map.insert(
                                 "self".to_owned(),
                                 Variable {
                                     name: "self".to_owned(),
                                     var_type: e,
+                                },
+                            );
+                            map.insert(
+                                "super".to_owned(),
+                                Variable {
+                                    name: "super".to_owned(),
+                                    var_type: parent,
                                 },
                             );
                         }
@@ -176,61 +183,66 @@ impl TryFromRule<&ParseExpressionContext> for (Expression, bool, Expression) {
     }
 }
 
-impl TryFromRule<()> for AsmVariable {
-    fn extract(rule: Pair<Rule>, _: ()) -> Self {
+impl TryFromRule<&mut ParseExpressionContext> for AsmVariable {
+    fn extract(rule: Pair<Rule>, ctx: &mut ParseExpressionContext) -> Self {
         match rule.as_rule() {
-            Rule::asm_variable => rule.into_inner().extract(()),
+            Rule::asm_variable => rule.into_inner().extract(ctx),
             Rule::asm_local => {
                 Self::Internal(rule.into_inner().next().unwrap().extract(()))
             }
             Rule::literal => {
                 Self::External(rule.extract(()))
             }
+            Rule::typed_var => {
+                let var: Variable = rule.extract(());
+                ctx.variables.insert(var.name.clone(), var.clone());
+                Self::TypedExternal(var)
+            }
             _ => unreachable!(),
         }
     }
 }
 
-impl TryFromRule<()> for AsmInstruction {
-    fn extract(rule: Pair<Rule>, _: ()) -> Self {
+impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
+    fn extract(rule: Pair<Rule>, ctx: &mut ParseExpressionContext) -> Self {
         match rule.as_rule() {
-            Rule::asm_instruction => rule.into_inner().extract(()),
+            Rule::asm_instruction => rule.into_inner().extract(&mut *ctx),
             Rule::i_four => {
                 let mut po = rule.into_inner();
                 match po.next().unwrap().as_str().trim() {
-                    "READ" => Self::Read(po.extract(()),po.extract(()),po.extract(()),po.extract(())),
+                    "READ" => Self::Read(po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
                     _ => unreachable!()
                 }
             }
             Rule::i_three => {
                 let mut po = rule.into_inner();
                 match po.next().unwrap().as_str().trim() {
-                    "ADD" => Self::Operation(OperationType::Add,po.extract(()),po.extract(()),po.extract(())),
-                    "SUB" => Self::Operation(OperationType::Sub,po.extract(()),po.extract(()),po.extract(())),
-                    "MUL" => Self::Operation(OperationType::Mul,po.extract(()),po.extract(()),po.extract(())),
-                    "DIV" => Self::Operation(OperationType::Div,po.extract(()),po.extract(()),po.extract(())),
-                    "XOR" => Self::Operation(OperationType::Xor,po.extract(()),po.extract(()),po.extract(())),
-                    "MERGE" => Self::Operation(OperationType::Merge,po.extract(()),po.extract(()),po.extract(())),
-                    "AND" => Self::Operation(OperationType::And,po.extract(()),po.extract(()),po.extract(())),
-                    "MOD" => Self::Operation(OperationType::Mod,po.extract(()),po.extract(()),po.extract(())),
+                    "ADD" => Self::Operation(OperationType::Add,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "SUB" => Self::Operation(OperationType::Sub,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "MUL" => Self::Operation(OperationType::Mul,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "DIV" => Self::Operation(OperationType::Div,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "XOR" => Self::Operation(OperationType::Xor,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "MERGE" => Self::Operation(OperationType::Merge,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "AND" => Self::Operation(OperationType::And,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "MOD" => Self::Operation(OperationType::Mod,po.extract(&mut *ctx),po.extract(&mut *ctx),po.extract(&mut *ctx)),
                     _ => unreachable!()
                 }
             }
             Rule::i_two => {
                 let mut po = rule.into_inner();
                 match po.next().unwrap().as_str().trim() {
-                    "MOV" => Self::Mov(po.extract(()),po.extract(())),
-                    "IF" => Self::If(po.extract(()),po.extract(())),
-                    "IFN" => Self::IfN(po.extract(()),po.extract(())),
-                    "LEN" => Self::Len(po.extract(()),po.extract(())),
+                    "MOV" => Self::Mov(po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "IF" => Self::If(po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "IFN" => Self::IfN(po.extract(&mut *ctx),po.extract(&mut *ctx)),
+                    "LEN" => Self::Len(po.extract(&mut *ctx),po.extract(&mut *ctx)),
                     _ => unreachable!()
                 }
             }
             Rule::i_one => {
                 let mut po = rule.into_inner();
                 match po.next().unwrap().as_str().trim() {
-                    "INPUT" => Self::Input(po.extract(())),
-                    "PRINT" => Self::Print(po.extract(())),
+                    "INPUT" => Self::Input(po.extract(&mut *ctx)),
+                    "PRINT" => Self::Print(po.extract(&mut *ctx)),
                     _ => unreachable!()
                 }
             }

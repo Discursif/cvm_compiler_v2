@@ -1,14 +1,14 @@
 l0 CONST v9, 1
-l1 CONST v8, 97
-l2 CONST v7, 26
+l1 CONST v8, 26
+l2 CONST v7, 97
 l3 CONST v6, 116 101 115 116
 l4 CONST v5, 0
-l5 IFN v5, v7
+l5 IFN v5, v8
 l6 JUMP 14
 l7 MOV v4, v5
 l8 ADD v3, v5, v9
 l9 MOV v5, v3
-l10 ADD v2, v8, v4
+l10 ADD v2, v7, v4
 l11 MERGE v1, v6, v2
 l12 MOV v6, v1
 l13 JUMP 5

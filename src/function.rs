@@ -27,6 +27,7 @@ impl Function {
         );
         if let Some(e) = self_pos {
             vars.insert("self".to_owned(), e);
+            vars.insert("super".to_owned(), e);
         }
         for i in &self.code {
             i.compile(ctx, &(id, return_var, self.return_type.clone()), &mut vars);

@@ -145,7 +145,7 @@ pub fn parse_instructions(
             }
         }
         Rule::asm_statement => {
-            Instruction::AsmStatement(cvm.into_inner().map(|x| x.extract(())).collect())
+            Instruction::AsmStatement(cvm.into_inner().map(|x| x.extract(&mut *context)).collect())
         }
         e => {
             panic!("Unexpected token in instruction {:?}", e)
@@ -153,7 +153,7 @@ pub fn parse_instructions(
     }]
 }
 
-pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, type_name: &str) {
+pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, type_name: &str, type_parent: &str) {
     let mut cvm = cvm.into_inner();
     let a = cvm.next().unwrap();
     let is_static = a.as_rule() == Rule::keyword_static;
@@ -165,7 +165,7 @@ pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, ty
             .expect("Can't get type")
             .add_static_function(func);
     } else {
-        let func: Function = a.extract((Some(type_name.to_owned()), &*context));
+        let func: Function = a.extract((Some((type_name.to_owned(), type_parent.to_owned())), &*context));
         context
             .types
             .get_mut(type_name)
@@ -205,8 +205,9 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext) {
             } else {
                 p
             };
-            parse_type_insides(p, context, name);
-            cvm.for_each(|x| parse_type_insides(x, context, name));
+            let parent = &context.types.get_mut(name).unwrap().parent.to_owned();
+            parse_type_insides(p, context, name,parent);
+            cvm.for_each(|x| parse_type_insides(x, context, name,parent));
         }
         e => {
             panic!("Unexpected {:?} token in file parse", e)
@@ -214,10 +215,10 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext) {
     }
 }
 
-pub fn parse_type_insides(inside: Pair<Rule>, context: &mut CompilationContext, name: &str) {
+pub fn parse_type_insides(inside: Pair<Rule>, context: &mut CompilationContext, name: &str,parent: &str) {
     let inside = inside.into_inner().next().unwrap();
     if inside.as_rule() == Rule::type_function {
-        parse_type_function(inside, context, name);
+        parse_type_function(inside, context, name,parent);
     } else if inside.as_rule() == Rule::type_ref {
         let mut inside = inside.into_inner();
         let ref_name = inside.next().unwrap().as_str().trim();

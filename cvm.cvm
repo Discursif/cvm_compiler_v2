@@ -1,58 +1,50 @@
 use std;
 
 fn merge(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        MERGE out, a, b;
+        MERGE Bytes out, a, b;
     }
     return out
 }
 fn add(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        ADD out, a, b;
+        ADD Bytes out, a, b;
     }
     return out
 }
 fn sub(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        SUB out, a, b;
+        SUB Bytes out, a, b;
     }
     return out
 }
 fn mul(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        MUL out, a, b;
+        MUL Bytes out, a, b;
     }
     return out
 }
 fn div(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        DIV out, a, b;
+        DIV Bytes out, a, b;
     }
     return out
 }
 fn xor(Bytes a, Bytes b) -> Bytes {
-    Bytes out = "";
     asm {
-        XOR out, a, b;
+        XOR Bytes out, a, b;
     }
     return out
 }
 fn read(Bytes a, Byte b, Byte c) -> Bytes {
-    Bytes out = "";
     asm {
-        READ out, a, b, c;
+        READ Bytes out, a, b, c;
     }
     return out
 }
 fn len(Bytes a) -> Bytes {
-    Bytes out = "";
     asm {
-        LEN out, a;
+        LEN Bytes out, a;
     }
     return out
 }
@@ -83,26 +75,23 @@ type Empty = 0 {
     fn len() -> Byte => return 0;
 }
 type Byte = 1 {
-    fn add(Bytes other) -> Byte => return add(self,other) as Byte;
-    fn sub(Bytes other) -> Byte => return sub(self,other) as Byte;
-    fn mul(Bytes other) -> Byte => return mul(self,other) as Byte;
-    fn div(Bytes other) -> Byte => return div(self,other) as Byte;
-    fn xor(Bytes other) -> Byte => return xor(self,other) as Byte;
+    fn add(Bytes other) -> Byte => return super.add(other) as Byte;
+    fn sub(Bytes other) -> Byte => return super.sub(other) as Byte;
+    fn mul(Bytes other) -> Byte => return super.mul(other) as Byte;
+    fn div(Bytes other) -> Byte => return super.div(other) as Byte;
+    fn xor(Bytes other) -> Byte => return super.xor(other) as Byte;
     fn index(Byte position) -> Panic {}
     fn index_range(Byte position1,Byte position2) -> Panic {}
     fn len() -> Byte => return 1;
 }
 type Char: Byte = 1 {
-    fn add(Bytes other) -> Char => return add(self,other) as Char;
-    fn sub(Bytes other) -> Char => return sub(self,other) as Char;
-    fn mul(Bytes other) -> Char => return mul(self,other) as Char;
-    fn div(Bytes other) -> Char => return div(self,other) as Char;
-    fn xor(Bytes other) -> Char => return xor(self,other) as Char;
-    fn index(Byte position) -> Panic {}
-    fn index_range(Byte position1,Byte position2) -> Panic {}
-    fn len() -> Byte => return 1;
-    fn merge(Char other) -> String => return merge(self,other) as String;
-    fn merge(String other) -> String => return merge(self,other) as String;
+    fn add(Bytes other) -> Char => return super.add(other) as Char;
+    fn sub(Bytes other) -> Char => return super.sub(other) as Char;
+    fn mul(Bytes other) -> Char => return super.mul(other) as Char;
+    fn div(Bytes other) -> Char => return super.div(other) as Char;
+    fn xor(Bytes other) -> Char => return super.xor(other) as Char;
+    fn merge(Char other) -> String => return super.merge(other) as String;
+    fn merge(String other) -> String => return super.merge(other) as String;
 }
 
 type Boolean = 1 {
@@ -124,10 +113,10 @@ type String {
         return self ~ " " ~ a;
     }
     
-    fn index(Byte position) -> Char => return read(self,position,1) as Char;
-    fn index_range(Byte position1,Byte position2) -> String => return read(self,position1,position2-position1) as String;
-    fn merge(String other) -> String => return merge(self,other) as String;
-    fn merge(Char other) -> String => return merge(self,other) as String;
+    fn index(Byte position) -> Char => return super.read(position,1) as Char;
+    fn index_range(Byte position1,Byte position2) -> String => return super.read(position1,position2-position1) as String;
+    fn merge(String other) -> String => return super.merge(other) as String;
+    fn merge(Char other) -> String => return super.merge(other) as String;
 
     static fn new(Bytes bytes) -> String {
         return bytes as String;
