@@ -20,10 +20,11 @@ use cvmir::{Counter, IrAsm, Optimizer, VariableManager, elide_unused_consts, rem
 use expression::*;
 use function::{Function, Functions};
 use instruction::file_parser;
+use path_absolutize::Absolutize;
 use types::Type;
 use variable::Variable;
 
-use std::{collections::{HashMap, HashSet}};
+use std::{collections::{HashMap, HashSet}, path::Path};
 
 use pest::Parser;
 
@@ -39,6 +40,7 @@ pub struct CVMParser;
 
 #[derive(Default, Debug)]
 pub struct CompilationContext {
+    pub files: HashSet<String>,
     pub types: HashMap<String, Type>,
     pub functions: HashMap<String, Functions>,
 }
@@ -99,8 +101,12 @@ pub struct ParseExpressionContext {
 
 // Rule::expr
 
-fn main() {
-    let file = std::fs::read_to_string("cvm.cvm").unwrap();
+pub fn compile_file(file: &str, context: &mut CompilationContext) {
+    if context.files.contains(file) {
+        return;
+    }context.files.insert(file.to_owned());
+    let path = Path::new(file).absolutize().unwrap();
+    let file = std::fs::read_to_string(&path).unwrap();
     let json = match CVMParser::parse(Rule::line, &file) {
         Ok(e) => e,
         Err(e) => {
@@ -110,13 +116,17 @@ fn main() {
     }
     .next()
     .unwrap();
+    file_parser(json, context, path.as_ref());
+}
+
+fn main() {
     let mut context = CompilationContext::default();
+    compile_file("cvm.cvm", &mut context);
     // context.types.insert(ANY_TYPE.to_owned(), Type {
     //     functions: HashMap::new(),
     //     allowed_from: Vec::new(),
     //     static_functions: HashMap::new(),
     // });
-    file_parser(json, &mut context);
 
     let func = context
         .functions

@@ -1,15 +1,15 @@
 BLOCK 0
 
-v103 = "test" 10 " ou"
-v24 = "abcde"
-v48 = 26
-v4 = "f"
-v65 = "test"
-v73 = "z"
 v10 = "c"
-v55 = "a"
-v26 = 5
 v5 = 1
+v24 = "abcde"
+v103 = "test" 10 " ou"
+v73 = "z"
+v48 = 26
+v65 = "test"
+v55 = "a"
+v4 = "f"
+v26 = 5
 v2 = "a"
 
 BLOCK 11

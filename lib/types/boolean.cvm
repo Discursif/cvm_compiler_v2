@@ -1,0 +1,13 @@
+type Boolean = 1 {
+    ref true = 1;
+    ref false = 0;
+
+    fn to_string() -> String {
+        if self => return "true" as String;
+        return "false" as String;
+    }
+
+    fn merge(Bytes other) -> Panic {}
+
+    fn len() -> Byte => return 1;
+}

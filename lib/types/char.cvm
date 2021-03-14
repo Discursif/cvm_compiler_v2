@@ -1,0 +1,10 @@
+
+type Char: Byte = 1 {
+    fn add(Bytes other) -> Char => return super.add(other) as Char;
+    fn sub(Bytes other) -> Char => return super.sub(other) as Char;
+    fn mul(Bytes other) -> Char => return super.mul(other) as Char;
+    fn div(Bytes other) -> Char => return super.div(other) as Char;
+    fn xor(Bytes other) -> Char => return super.xor(other) as Char;
+    fn merge(Char other) -> String => return super.merge(other) as String;
+    fn merge(String other) -> String => return super.merge(other) as String;
+}

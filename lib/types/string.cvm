@@ -1,0 +1,14 @@
+type String {
+    fn join(String a) -> String {
+        return self ~ " " ~ a;
+    }
+    
+    fn index(Byte position) -> Char => return super.index(position) as Char;
+    fn index_range(Byte position1,Byte position2) -> String => return super.index_range(position1,position2) as String;
+    fn merge(String other) -> String => return super.merge(other) as String;
+    fn merge(Char other) -> String => return super.merge(other) as String;
+
+    static fn new(Bytes bytes) -> String {
+        return bytes as String;
+    }
+}

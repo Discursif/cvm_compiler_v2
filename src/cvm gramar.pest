@@ -84,7 +84,7 @@ boolean_test = {(not | empty_operator) ~ expr ~ ((double_equal | not_equal) ~ ex
 
 if_statement = {keyword_if~boolean_test~code_block~(keyword_else ~ code_block)?}
 
-use_statement = {keyword_use~literal~semicolon?}
+use_statement = {keyword_use~string~semicolon?}
 
 return_statement = {keyword_return ~ expr}
 

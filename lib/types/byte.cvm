@@ -1,0 +1,11 @@
+
+type Byte = 1 {
+    fn add(Bytes other) -> Byte => return super.add(other) as Byte;
+    fn sub(Bytes other) -> Byte => return super.sub(other) as Byte;
+    fn mul(Bytes other) -> Byte => return super.mul(other) as Byte;
+    fn div(Bytes other) -> Byte => return super.div(other) as Byte;
+    fn xor(Bytes other) -> Byte => return super.xor(other) as Byte;
+    fn index(Byte position) -> Panic {}
+    fn index_range(Byte position1,Byte position2) -> Panic {}
+    fn len() -> Byte => return 1;
+}

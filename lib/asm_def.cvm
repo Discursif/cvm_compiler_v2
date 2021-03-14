@@ -1,0 +1,59 @@
+
+fn merge(Bytes a, Bytes b) -> Bytes {
+    asm {
+        MERGE Bytes out, a, b;
+    }
+    return out
+}
+fn add(Bytes a, Bytes b) -> Bytes {
+    asm {
+        ADD Bytes out, a, b;
+    }
+    return out
+}
+fn sub(Bytes a, Bytes b) -> Bytes {
+    asm {
+        SUB Bytes out, a, b;
+    }
+    return out
+}
+fn mul(Bytes a, Bytes b) -> Bytes {
+    asm {
+        MUL Bytes out, a, b;
+    }
+    return out
+}
+fn div(Bytes a, Bytes b) -> Bytes {
+    asm {
+        DIV Bytes out, a, b;
+    }
+    return out
+}
+fn xor(Bytes a, Bytes b) -> Bytes {
+    asm {
+        XOR Bytes out, a, b;
+    }
+    return out
+}
+fn read(Bytes a, Byte b, Byte c) -> Bytes {
+    asm {
+        READ Bytes out, a, b, c;
+    }
+    return out
+}
+fn len(Bytes a) -> Bytes {
+    asm {
+        LEN Bytes out, a;
+    }
+    return out
+}
+fn print(Bytes a) {
+    asm {
+        PRINT a;
+    }
+}
+fn input(Bytes a) {
+    asm {
+        INPUT a;
+    }
+}

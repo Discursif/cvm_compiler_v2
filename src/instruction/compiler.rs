@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use pest::iterators::Pair;
 
 use crate::utils::PairsTrait;
@@ -174,13 +176,23 @@ pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, ty
     };
 }
 
-pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext) {
+pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext,file: &Path) {
     match cvm.as_rule() {
-        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context),
-        Rule::file => cvm.into_inner().for_each(|x| file_parser(x, context)),
-        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context),
+        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context,file),
+        Rule::file => cvm.into_inner().for_each(|x| file_parser(x, context,file)),
+        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context,file),
         Rule::use_statement => {
-            println!("Uses aren't implemented yet");
+            let string: Vec<u8> = cvm.into_inner().extract(());
+            let string = String::from_utf8(string).unwrap();
+            let mut buf = file.to_path_buf();
+            buf.pop();
+            let mut s: &str = &string;
+            while s.starts_with("../") {
+                s = &s[3..];
+                buf.pop();
+            }
+            format!("{}.cvm",s).split("/").for_each(|x| buf.push(x));
+            crate::compile_file(buf.to_str().unwrap(), context);
         }
         Rule::function => {
             context.add_function(cvm.extract((None, &*context)));
