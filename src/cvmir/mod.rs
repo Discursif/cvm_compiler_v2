@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::{HashMap, HashSet}, fmt::Display, rc::Rc};
+use std::{collections::{HashMap, HashSet}, fmt::Display, rc::Rc};
 
 use crate::asm::{Asm, OperationType};
 
@@ -481,7 +481,7 @@ impl Optimizer for Vec<IrAsm> {
                 IrAsm::FunctionBlock(e, i) => {
                     // TODO: Remove RA functions (Function that have only a return at the end)
                     if x.is_inlinable() {
-                        println!("{:?}",i);
+                        //println!("{:?}",i);
                         let mut p = false;
                         let mut i = i.clone();
                         i.iter_mut().for_each(|x| {
@@ -531,7 +531,7 @@ pub fn elide_unused_consts(i: Vec<IrAsm>, set: Option<Rc<HashSet<usize>>>) -> Ve
     i.into_iter().flat_map(|x| {
         if let Some(e) = x.get_write() {
             if refs.contains(&e) {
-                    println!("{} elided",e);
+                    //println!("{} elided",e);
                     return None;
             }
         }

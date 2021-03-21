@@ -1,5 +1,9 @@
 use "lib/std";
 
+fn adde(Bytes a) -> String {
+    return a + 1 10 as String;
+}
+
 fn main() {
     Byte a = "a";
     loop {
@@ -27,6 +31,7 @@ fn main() {
     if "test" == "test" {
         print("a");
     }
+    adde( 10 12 13);
     String a = "test" ~ 10 as String;
     print(a.join("malou"[3..5] as String));
 }

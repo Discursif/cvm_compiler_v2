@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
-use crate::{ANY_TYPE, CVMCompCtx, CompilationContext, cvmir::IrAsm, instruction::Instruction, variable::Variable};
+use crate::{ANY_TYPE, CVMCompCtx, CompilationContext, cvmir::IrAsm, error::ParseError, instruction::Instruction, types::Type, variable::Variable};
 
 #[derive(Debug, Clone)]
 pub struct Function {
@@ -10,8 +10,14 @@ pub struct Function {
     pub code: Vec<Instruction>,
 }
 
+impl Display for Function {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}({}) -> {}",self.name, self.arguments.iter().map(|x| format!("{} {}",x.var_type,x.name)).collect::<Vec<_>>().join(", "),self.return_type)
+    }
+}
+
 impl Function {
-    pub fn compile(&self, ctx: &mut CVMCompCtx, pos: &[usize], self_pos: Option<usize>) -> usize {
+    pub fn compile(&self, ctx: &mut CVMCompCtx, pos: &[usize], self_pos: Option<usize>) -> Result<usize, ParseError> {
         let return_var = ctx.new_var();
         let mut vars = HashMap::new();
         vars.extend(
@@ -27,12 +33,12 @@ impl Function {
         let tmp = ctx.instructions.clone();
         ctx.instructions = Vec::new();
         for i in &self.code {
-            i.compile(ctx, &self.return_type, &mut vars);
+            i.compile(ctx, &self.return_type, &mut vars)?;
         }
         let out = ctx.instructions.clone();
         ctx.instructions = tmp;
         ctx.instructions.push(IrAsm::FunctionBlock(return_var, out));
-        return_var
+        Ok(return_var)
     }
 }
 
@@ -45,18 +51,20 @@ pub struct Functions {
 impl Functions {
     pub fn get_for_input<'a>(
         &'a self,
-        arguments: &[&str],
+        arguments: &[&Type],
         context: &CompilationContext,
     ) -> Option<&'a Function> {
         self.functions.iter().find(|x| {
             if x.arguments.len() != arguments.len() {
                 return false;
             }
-            !x.arguments.iter().zip(arguments.iter()).any(|(x, y)| {
-                !(x.var_type == ANY_TYPE
-                    || &x.var_type == y
-                    || context.types.get(*y).unwrap().is_child_of(&x.name, context))
-            })
+            for (x,y) in x.arguments.iter().zip(arguments.iter()) {
+                if x.var_type == ANY_TYPE || &x.var_type == &y.name || y.is_child_of(&x.name, context) {
+                    continue;
+                }
+                return false;
+            }
+            true
         })
     }
 }

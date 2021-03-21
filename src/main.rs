@@ -14,9 +14,11 @@ pub mod types;
 pub mod utils;
 pub mod variable;
 pub mod cvmir;
+pub mod error;
 
 use asm::Asm;
 use cvmir::{Counter, IrAsm, Optimizer, VariableManager, elide_unused_consts, remove_followed_usages};
+use error::ParseError;
 use expression::*;
 use function::{Function, Functions};
 use instruction::file_parser;
@@ -32,6 +34,7 @@ const ANY_TYPE: &'static str = "Bytes";
 const VOID_TYPE: &'static str = "Empty";
 const BYTE_TYPE: &'static str = "Byte";
 const CHAR_TYPE: &'static str = "Char";
+const PANIC_TYPE: &'static str = "Panic";
 const STRING_TYPE: &'static str = "String";
 
 #[derive(Parser, Debug)]
@@ -101,9 +104,9 @@ pub struct ParseExpressionContext {
 
 // Rule::expr
 
-pub fn compile_file(file: &str, context: &mut CompilationContext) {
+pub fn compile_file(file: &str, context: &mut CompilationContext) -> Result<(), ParseError> {
     if context.files.contains(file) {
-        return;
+        return Ok(());
     }context.files.insert(file.to_owned());
     let path = Path::new(file).absolutize().unwrap();
     let file = std::fs::read_to_string(&path).unwrap();
@@ -116,12 +119,17 @@ pub fn compile_file(file: &str, context: &mut CompilationContext) {
     }
     .next()
     .unwrap();
-    file_parser(json, context, path.as_ref());
+    file_parser(json, context, path.as_ref())
 }
 
 fn main() {
     let mut context = CompilationContext::default();
-    compile_file("cvm.cvm", &mut context);
+    match compile_file("cvm.cvm", &mut context) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("{}",e);
+        }
+    };
     // context.types.insert(ANY_TYPE.to_owned(), Type {
     //     functions: HashMap::new(),
     //     allowed_from: Vec::new(),
@@ -144,8 +152,12 @@ fn main() {
         if_n: 0,
         instructions: Vec::new(),
     };
-    func.compile(&mut cctx, &Vec::new(), None);
-    println!("{}",cctx.instructions.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n"));
+    match func.compile(&mut cctx, &Vec::new(), None) {
+        Ok(_) => {},
+        Err(e) => {
+            println!("{}",e);
+        }
+    };
     let mut o = 0;
     while o != cctx.instructions.len() {
         o = cctx.instructions.len();
@@ -153,7 +165,6 @@ fn main() {
         cctx.instructions = elide_unused_consts(cctx.instructions, None);
         cctx.instructions = remove_followed_usages(cctx.instructions, None);
     }
-    println!("{}",cctx.instructions.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n"));
     let mut counter = Counter::default();
     let mut fors = Vec::new();
     let asm: Vec<Asm> = cctx.instructions.into_iter().map(|x| x.to_asm(&mut counter, &mut fors, None)).flatten().collect();
@@ -166,5 +177,4 @@ fn main() {
         .collect::<Vec<_>>()
         .join("\n");
     std::fs::write("new.cbm", &out).unwrap();
-    println!("{}", out);
 }

@@ -1,3 +1,11 @@
 type Empty = 0 {
     fn len() -> Byte => return 0;
+    fn add(Bytes other) -> Panic {}
+    fn sub(Bytes other) -> Panic {}
+    fn mul(Bytes other) -> Panic {}
+    fn div(Bytes other) -> Panic {}
+    fn xor(Bytes other) -> Panic {}
+    fn index(Byte position) -> Panic {}
+    fn index_range(Byte position1,Byte position2) -> Panic {}
+    fn merge(Bytes other) -> Panic {}
 }
