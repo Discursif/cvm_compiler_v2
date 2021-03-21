@@ -89,23 +89,32 @@ impl IrAsm {
         }
     }
 
-    fn is_inlinable(&self) -> bool {
+    fn is_inlinable(&self, is_out: bool) -> bool {
         match self {
             IrAsm::Op(_, _, _, _) => true,
             IrAsm::End => true,
             IrAsm::If(_, _, c, d) => {
-                !c.into_iter().filter(|x| matches!(x, IrAsm::If(..) | IrAsm::Loop(_))).any(|x| !x.is_inlinable()) && 
-                !d.into_iter().filter(|x| matches!(x, IrAsm::If(..) | IrAsm::Loop(_))).any(|x| !x.is_inlinable())
+                for a in c.iter().chain(d.iter()) {
+                    if !a.is_inlinable(false) {
+                        return false;
+                    }
+                }
+                true
             }
             IrAsm::Loop(e) => {
-                !e.into_iter().filter(|x| matches!(x, IrAsm::If(..) | IrAsm::Loop(_))).any(|x| !x.is_inlinable())
+                for a in e {
+                    if !a.is_inlinable(false) {
+                        return false;
+                    }
+                }
+                true
             },
             IrAsm::Break() => true,
             IrAsm::Continue() => true,
-            IrAsm::FunctionBlock(_, b) => {
-                !b.into_iter().filter(|x| matches!(x, IrAsm::If(..) | IrAsm::Loop(_))).any(|x| !x.is_inlinable())
-            }
-            IrAsm::Return(_) => true,
+            IrAsm::FunctionBlock(_, _) => true,
+            IrAsm::Return(e) => {
+                is_out
+            },
             IrAsm::Prt(_) => true,
             IrAsm::Inp(_) => true,
             IrAsm::Cst(_, _) => true,
@@ -479,9 +488,7 @@ impl Optimizer for Vec<IrAsm> {
                 }
                 IrAsm::Nop => return vec![],
                 IrAsm::FunctionBlock(e, i) => {
-                    // TODO: Remove RA functions (Function that have only a return at the end)
-                    if x.is_inlinable() {
-                        //println!("{:?}",i);
+                    if !i.iter().any(|x| !x.is_inlinable(true)) {
                         let mut p = false;
                         let mut i = i.clone();
                         i.iter_mut().for_each(|x| {

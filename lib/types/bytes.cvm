@@ -3,9 +3,19 @@ type Bytes {
     fn sub(Bytes other) -> Bytes => return sub(self,other) as Bytes;
     fn mul(Bytes other) -> Bytes => return mul(self,other) as Bytes;
     fn div(Bytes other) -> Bytes => return div(self,other) as Bytes;
+    fn mod(Bytes other) -> Bytes => return mod(self,other) as Bytes;
     fn xor(Bytes other) -> Bytes => return xor(self,other) as Bytes;
     fn index(Byte position) -> Byte => return read(self,position,1) as Byte;
     fn index_range(Byte position1,Byte position2) -> Bytes => return read(self,position1,position2-position1);
     fn len() -> Byte => return len(self) as Byte;
     fn merge(Bytes other) -> Bytes => return merge(self,other) as Bytes;
+
+    fn to_string() -> String {
+        String out = "";
+        for Byte i in self {
+            if out.len() != 0 => out ~= " ";
+            out ~= i.to_string();
+        }
+        return out;
+    }
 }

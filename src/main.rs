@@ -158,15 +158,17 @@ fn main() {
             println!("{}",e);
         }
     };
-    let mut o = 0;
-    while o != cctx.instructions.len() {
-        o = cctx.instructions.len();
-        cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
-        cctx.instructions = elide_unused_consts(cctx.instructions, None);
-        cctx.instructions = remove_followed_usages(cctx.instructions, None);
-    }
+    std::fs::write("new.mlasm.cbm", cctx.instructions.iter().map(|x| format!("{}",x)).collect::<Vec<_>>().join("\n")).unwrap();
+    // let mut o = 0;
+    // while o != cctx.instructions.len() {
+    //     o = cctx.instructions.len();
+    //     cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
+    //     cctx.instructions = elide_unused_consts(cctx.instructions, None);
+    //     cctx.instructions = remove_followed_usages(cctx.instructions, None);
+    // }
     let mut counter = Counter::default();
     let mut fors = Vec::new();
+    std::fs::write("new.optimized.mlasm.cbm", cctx.instructions.iter().map(|x| format!("{}",x)).collect::<Vec<_>>().join("\n")).unwrap();
     let asm: Vec<Asm> = cctx.instructions.into_iter().map(|x| x.to_asm(&mut counter, &mut fors, None)).flatten().collect();
     std::fs::write("new.llasm.cbm", asm.iter().enumerate().map(|(x,y)| format!("l{} {}",x,y)).collect::<Vec<_>>().join("\n")).unwrap();
     let out = Asm::clean(asm)

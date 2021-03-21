@@ -1,0 +1,48 @@
+type u32 = 4 {
+    fn add(u32 other) -> u32 {
+        Bytes out = "";
+        Byte p = 4;
+        Byte rem = 0;
+        loop {
+            if p == 0 => break;
+            p -= 1;
+            Byte a = self[p]; // 145 
+            Byte b = other[p]; // 250
+            Byte c = a + b + rem; // 139
+            out = c ~ out;
+            rem = c.lower(a.min(b)) as Byte;
+        }
+        return out as u32;
+    }
+    fn sub(u32 other) -> u32 {
+        return 0 0 0 0;
+    }
+    fn add(Bytes other) -> Panic {}
+    fn sub(Bytes other) -> Panic {}
+    fn mul(Bytes other) -> Panic {}
+    fn div(Bytes other) -> Panic {}
+    fn xor(Bytes other) -> Panic {}
+    fn len() -> Byte => return 4;
+
+    fn to_string() -> String {
+        // String out = "";
+        // Byte reminder = 0;
+        // Byte index = 3;
+        // loop {
+        //     Byte i = self[index];
+        //     Byte lby = i % 100 + reminder;
+        //     reminder = i / 100 + (99.lower(lby) as Byte);
+        //     lby = lby % 100;
+        //     String formatted = lby.to_string();
+        //     if formatted.len() == 1 => formatted = "0" ~ formatted;
+        //     out = formatted ~ out;
+        //     if index == 0 {
+        //         break;
+        //     }
+        //     index -= 1;
+        // }
+        // out = reminder.to_string() ~ out;
+        // return out;
+        return 0; // TODO
+    }
+}

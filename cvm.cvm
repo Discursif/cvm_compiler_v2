@@ -5,33 +5,9 @@ fn adde(Bytes a) -> String {
 }
 
 fn main() {
-    Byte a = "a";
-    loop {
-        if a == "f" {
-            break;
-        }
-        a += 1;
-        if a == "c" => continue;
-    }
-    print(a);
-    for Byte i in "a".."f" {
-        print(i)
-    }
-    for Byte ix in "abcde" {
-        print("abcde")
-    }
-    String a = "test";
-    for Byte i in 0..26 {
-        a ~= "a" + i
-    }
-    print(a ~ "test")
-    for Byte i in "a".."z" {
-        print(i)
-    }
-    if "test" == "test" {
-        print("a");
-    }
-    adde( 10 12 13);
-    String a = "test" ~ 10 as String;
-    print(a.join("malou"[3..5] as String));
+    u32 test1 = 0 236 145 1 as u32;
+    u32 test2 = 0 17 250 2 as u32;
+
+    print((test1 + test2).to_string() ~ 10);
+    print((test1 + test2 as Bytes).to_string() ~ 10);
 }

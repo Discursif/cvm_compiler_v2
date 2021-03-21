@@ -15,9 +15,10 @@ literal = {literal_char+}
 
 // Tokens
 
-operand = _{ add | subtract | multiply | divide | xor | merge}
+operand = _{ add | subtract | multiply | divide | xor | merge | modulo}
 add      = { whitespace* ~ "+" ~ whitespace* }
 subtract = { whitespace* ~ "-" ~ whitespace* }
+modulo   = { whitespace* ~ "%" ~ whitespace* }
 multiply = { whitespace* ~ "*" ~ whitespace* }
 divide   = { whitespace* ~ "/" ~ whitespace* }
 xor      = { whitespace* ~ "^" ~ whitespace* }

@@ -4,8 +4,36 @@ type Byte = 1 {
     fn sub(Bytes other) -> Byte => return super.sub(other) as Byte;
     fn mul(Bytes other) -> Byte => return super.mul(other) as Byte;
     fn div(Bytes other) -> Byte => return super.div(other) as Byte;
+    fn mod(Bytes other) -> Byte => return super.mod(other) as Byte;
     fn xor(Bytes other) -> Byte => return super.xor(other) as Byte;
     fn index(Byte position) -> Panic {}
     fn index_range(Byte position1,Byte position2) -> Panic {}
     fn len() -> Byte => return 1;
+    fn lower(Char other) -> Boolean {
+        return self.lower(other as Byte);
+    }
+    fn lower(Byte other) -> Boolean {
+        if other == 0 {
+            return Boolean.false;
+        } else {
+            if self / other == 0 {
+                return Boolean.true;
+            } else {
+                return Boolean.false;
+            }
+        }
+    }
+    fn min(Byte other) -> Byte {
+        if self.lower(other) => return self;
+        return other;
+    }
+    fn to_string() -> String {
+        String out = "";
+        loop {
+            out = ((self % 10) + 48 as Char) ~ out;
+            self /= 10;
+            if self == 0 => break;
+        }
+        return out;
+    }
 }

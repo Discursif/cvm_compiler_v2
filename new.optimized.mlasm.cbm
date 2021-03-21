@@ -1,0 +1,731 @@
+v1 = fn {
+  v3 = 0 236 145 1
+  v2 = v3
+  v5 = 0 17 250 2
+  v4 = v5
+  v6 = 10
+  v7 = fn {
+    v9 = 
+    v8 = v9
+    v11 = 4
+    v10 = v11
+    v13 = 0
+    v12 = v13
+    loop {
+      v14 = 0
+      if v10 == v14 {
+        break
+      } else {
+        
+      }
+      v15 = 1
+      v16 = fn {
+        v17 = fn {
+          v18 = fn {
+            v19 = v10 - v15
+            return v19
+          }
+          return v18
+        }
+        return v17
+      }
+      v10 = v16
+      v21 = fn {
+        v22 = 1
+        v23 = fn {
+          v24 = v2[v10 > v22]
+          return v24
+        }
+        return v23
+      }
+      v20 = v21
+      v26 = fn {
+        v27 = 1
+        v28 = fn {
+          v29 = v4[v10 > v27]
+          return v29
+        }
+        return v28
+      }
+      v25 = v26
+      v31 = fn {
+        v32 = fn {
+          v33 = fn {
+            v34 = v20 + v25
+            return v34
+          }
+          return v33
+        }
+        return v32
+      }
+      v35 = fn {
+        v36 = fn {
+          v37 = fn {
+            v38 = v31 + v12
+            return v38
+          }
+          return v37
+        }
+        return v36
+      }
+      v30 = v35
+      v39 = fn {
+        v40 = fn {
+          v41 = v30 ~ v8
+          return v41
+        }
+        return v40
+      }
+      v8 = v39
+      v42 = fn {
+        v43 = fn {
+          v44 = 0
+          if v25 == v44 {
+            v45 = 0
+            return v45
+          } else {
+            v46 = fn {
+              v47 = fn {
+                v48 = fn {
+                  v49 = v20 / v25
+                  return v49
+                }
+                return v48
+              }
+              return v47
+            }
+            v50 = 0
+            if v46 == v50 {
+              v51 = 1
+              return v51
+            } else {
+              v52 = 0
+              return v52
+            }
+          }
+        }
+        v53 = 1
+        if v43 == v53 {
+          return v20
+        } else {
+          
+        }
+        return v25
+      }
+      v54 = fn {
+        v55 = 0
+        if v42 == v55 {
+          v56 = 0
+          return v56
+        } else {
+          v57 = fn {
+            v58 = fn {
+              v59 = fn {
+                v60 = v30 / v42
+                return v60
+              }
+              return v59
+            }
+            return v58
+          }
+          v61 = 0
+          if v57 == v61 {
+            v62 = 1
+            return v62
+          } else {
+            v63 = 0
+            return v63
+          }
+        }
+      }
+      v12 = v54
+    }
+    return v8
+  }
+  v64 = fn {
+    v66 = 
+    v65 = v66
+    v68 = 0
+    v67 = v68
+    v70 = 3
+    v69 = v70
+    loop {
+      v72 = fn {
+        v73 = 1
+        v74 = fn {
+          v75 = v7[v69 > v73]
+          return v75
+        }
+        return v74
+      }
+      v71 = v72
+      v77 = 100
+      v78 = fn {
+        v79 = fn {
+          v80 = fn {
+            v81 = v71 % v77
+            return v81
+          }
+          return v80
+        }
+        return v79
+      }
+      v82 = fn {
+        v83 = fn {
+          v84 = fn {
+            v85 = v78 + v67
+            return v85
+          }
+          return v84
+        }
+        return v83
+      }
+      v76 = v82
+      v86 = 99
+      v87 = fn {
+        v88 = 0
+        if v76 == v88 {
+          v89 = 0
+          return v89
+        } else {
+          v90 = fn {
+            v91 = fn {
+              v92 = fn {
+                v93 = v86 / v76
+                return v93
+              }
+              return v92
+            }
+            return v91
+          }
+          v94 = 0
+          if v90 == v94 {
+            v95 = 1
+            return v95
+          } else {
+            v96 = 0
+            return v96
+          }
+        }
+      }
+      v97 = 100
+      v98 = fn {
+        v99 = fn {
+          v100 = fn {
+            v101 = v71 / v97
+            return v101
+          }
+          return v100
+        }
+        return v99
+      }
+      v102 = fn {
+        v103 = fn {
+          v104 = fn {
+            v105 = v98 + v87
+            return v105
+          }
+          return v104
+        }
+        return v103
+      }
+      v67 = v102
+      v106 = 100
+      v107 = fn {
+        v108 = fn {
+          v109 = fn {
+            v110 = v76 % v106
+            return v110
+          }
+          return v109
+        }
+        return v108
+      }
+      v76 = v107
+      v112 = fn {
+        v114 = 
+        v113 = v114
+        loop {
+          v115 = 48
+          v116 = 10
+          v117 = fn {
+            v118 = fn {
+              v119 = fn {
+                v120 = v76 % v116
+                return v120
+              }
+              return v119
+            }
+            return v118
+          }
+          v121 = fn {
+            v122 = fn {
+              v123 = fn {
+                v124 = v117 + v115
+                return v124
+              }
+              return v123
+            }
+            return v122
+          }
+          v125 = fn {
+            v126 = fn {
+              v127 = fn {
+                v128 = v121 ~ v113
+                return v128
+              }
+              return v127
+            }
+            return v126
+          }
+          v113 = v125
+          v129 = 10
+          v130 = fn {
+            v131 = fn {
+              v132 = fn {
+                v133 = v76 / v129
+                return v133
+              }
+              return v132
+            }
+            return v131
+          }
+          v76 = v130
+          v134 = 0
+          if v76 == v134 {
+            break
+          } else {
+            
+          }
+        }
+        return v113
+      }
+      v111 = v112
+      v135 = fn {
+        v136 = fn {
+          v137 = len v111
+          return v137
+        }
+        return v136
+      }
+      v138 = 1
+      if v135 == v138 {
+        v139 = 48
+        v140 = fn {
+          v141 = fn {
+            v142 = fn {
+              v143 = v139 ~ v111
+              return v143
+            }
+            return v142
+          }
+          return v141
+        }
+        v111 = v140
+      } else {
+        
+      }
+      v144 = fn {
+        v145 = fn {
+          v146 = fn {
+            v147 = v111 ~ v65
+            return v147
+          }
+          return v146
+        }
+        return v145
+      }
+      v65 = v144
+      v148 = 0
+      if v69 == v148 {
+        break
+      } else {
+        
+      }
+      v149 = 1
+      v150 = fn {
+        v151 = fn {
+          v152 = fn {
+            v153 = v69 - v149
+            return v153
+          }
+          return v152
+        }
+        return v151
+      }
+      v69 = v150
+    }
+    v154 = fn {
+      v156 = 
+      v155 = v156
+      loop {
+        v157 = 48
+        v158 = 10
+        v159 = fn {
+          v160 = fn {
+            v161 = fn {
+              v162 = v67 % v158
+              return v162
+            }
+            return v161
+          }
+          return v160
+        }
+        v163 = fn {
+          v164 = fn {
+            v165 = fn {
+              v166 = v159 + v157
+              return v166
+            }
+            return v165
+          }
+          return v164
+        }
+        v167 = fn {
+          v168 = fn {
+            v169 = fn {
+              v170 = v163 ~ v155
+              return v170
+            }
+            return v169
+          }
+          return v168
+        }
+        v155 = v167
+        v171 = 10
+        v172 = fn {
+          v173 = fn {
+            v174 = fn {
+              v175 = v67 / v171
+              return v175
+            }
+            return v174
+          }
+          return v173
+        }
+        v67 = v172
+        v176 = 0
+        if v67 == v176 {
+          break
+        } else {
+          
+        }
+      }
+      return v155
+    }
+    v177 = fn {
+      v178 = fn {
+        v179 = fn {
+          v180 = v154 ~ v65
+          return v180
+        }
+        return v179
+      }
+      return v178
+    }
+    v65 = v177
+    return v65
+  }
+  v181 = fn {
+    v182 = fn {
+      v183 = fn {
+        v184 = v64 ~ v6
+        return v184
+      }
+      return v183
+    }
+    return v182
+  }
+  v185 = fn {
+    print v181
+  }
+  v186 = 10
+  v187 = fn {
+    v189 = 
+    v188 = v189
+    v191 = 4
+    v190 = v191
+    v193 = 0
+    v192 = v193
+    loop {
+      v194 = 0
+      if v190 == v194 {
+        break
+      } else {
+        
+      }
+      v195 = 1
+      v196 = fn {
+        v197 = fn {
+          v198 = fn {
+            v199 = v190 - v195
+            return v199
+          }
+          return v198
+        }
+        return v197
+      }
+      v190 = v196
+      v201 = fn {
+        v202 = 1
+        v203 = fn {
+          v204 = v2[v190 > v202]
+          return v204
+        }
+        return v203
+      }
+      v200 = v201
+      v206 = fn {
+        v207 = 1
+        v208 = fn {
+          v209 = v4[v190 > v207]
+          return v209
+        }
+        return v208
+      }
+      v205 = v206
+      v211 = fn {
+        v212 = fn {
+          v213 = fn {
+            v214 = v200 + v205
+            return v214
+          }
+          return v213
+        }
+        return v212
+      }
+      v215 = fn {
+        v216 = fn {
+          v217 = fn {
+            v218 = v211 + v192
+            return v218
+          }
+          return v217
+        }
+        return v216
+      }
+      v210 = v215
+      v219 = fn {
+        v220 = fn {
+          v221 = v210 ~ v188
+          return v221
+        }
+        return v220
+      }
+      v188 = v219
+      v222 = fn {
+        v223 = fn {
+          v224 = 0
+          if v205 == v224 {
+            v225 = 0
+            return v225
+          } else {
+            v226 = fn {
+              v227 = fn {
+                v228 = fn {
+                  v229 = v200 / v205
+                  return v229
+                }
+                return v228
+              }
+              return v227
+            }
+            v230 = 0
+            if v226 == v230 {
+              v231 = 1
+              return v231
+            } else {
+              v232 = 0
+              return v232
+            }
+          }
+        }
+        v233 = 1
+        if v223 == v233 {
+          return v200
+        } else {
+          
+        }
+        return v205
+      }
+      v234 = fn {
+        v235 = 0
+        if v222 == v235 {
+          v236 = 0
+          return v236
+        } else {
+          v237 = fn {
+            v238 = fn {
+              v239 = fn {
+                v240 = v210 / v222
+                return v240
+              }
+              return v239
+            }
+            return v238
+          }
+          v241 = 0
+          if v237 == v241 {
+            v242 = 1
+            return v242
+          } else {
+            v243 = 0
+            return v243
+          }
+        }
+      }
+      v192 = v234
+    }
+    return v188
+  }
+  v244 = fn {
+    v246 = 
+    v245 = v246
+    v247 = v187
+    v249 = fn {
+      v250 = fn {
+        v251 = len v247
+        return v251
+      }
+      return v250
+    }
+    v248 = v249
+    v253 = 0
+    v252 = v253
+    loop {
+      if v248 == v252 {
+        break
+      } else {
+        
+      }
+      v255 = fn {
+        v256 = 1
+        v257 = fn {
+          v258 = v247[v252 > v256]
+          return v258
+        }
+        return v257
+      }
+      v254 = v255
+      v259 = 1
+      v260 = fn {
+        v261 = fn {
+          v262 = fn {
+            v263 = v252 + v259
+            return v263
+          }
+          return v262
+        }
+        return v261
+      }
+      v252 = v260
+      v264 = fn {
+        v265 = fn {
+          v266 = len v245
+          return v266
+        }
+        return v265
+      }
+      v267 = 0
+      if v264 == v267 {
+        
+      } else {
+        v268 = 32
+        v269 = fn {
+          v270 = fn {
+            v271 = fn {
+              v272 = v245 ~ v268
+              return v272
+            }
+            return v271
+          }
+          return v270
+        }
+        v245 = v269
+      }
+      v273 = fn {
+        v275 = 
+        v274 = v275
+        loop {
+          v276 = 48
+          v277 = 10
+          v278 = fn {
+            v279 = fn {
+              v280 = fn {
+                v281 = v254 % v277
+                return v281
+              }
+              return v280
+            }
+            return v279
+          }
+          v282 = fn {
+            v283 = fn {
+              v284 = fn {
+                v285 = v278 + v276
+                return v285
+              }
+              return v284
+            }
+            return v283
+          }
+          v286 = fn {
+            v287 = fn {
+              v288 = fn {
+                v289 = v282 ~ v274
+                return v289
+              }
+              return v288
+            }
+            return v287
+          }
+          v274 = v286
+          v290 = 10
+          v291 = fn {
+            v292 = fn {
+              v293 = fn {
+                v294 = v254 / v290
+                return v294
+              }
+              return v293
+            }
+            return v292
+          }
+          v254 = v291
+          v295 = 0
+          if v254 == v295 {
+            break
+          } else {
+            
+          }
+        }
+        return v274
+      }
+      v296 = fn {
+        v297 = fn {
+          v298 = fn {
+            v299 = v245 ~ v273
+            return v299
+          }
+          return v298
+        }
+        return v297
+      }
+      v245 = v296
+    }
+    return v245
+  }
+  v300 = fn {
+    v301 = fn {
+      v302 = fn {
+        v303 = v244 ~ v186
+        return v303
+      }
+      return v302
+    }
+    return v301
+  }
+  v304 = fn {
+    print v300
+  }
+}

@@ -1,6 +1,7 @@
 use "bytes";
 use "string";
+use "boolean";
 use "byte";
 use "char";
 use "empty";
-use "boolean";
+use "u32";

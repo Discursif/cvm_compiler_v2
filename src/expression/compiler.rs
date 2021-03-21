@@ -119,6 +119,7 @@ pub fn rule_to_operator(rule: &Rule) -> Option<&'static str> {
         Rule::add => "add",
         Rule::subtract => "sub",
         Rule::multiply => "mul",
+        Rule::modulo => "mod",
         Rule::divide => "div",
         Rule::xor => "xor",
         Rule::merge => "merge",

@@ -135,7 +135,7 @@ impl Expression {
                         .clone();
                         func.compile(ctx, &args_pointer, None)?
                     }
-            Expression::MethodCall(_,a, b, c) => {
+            Expression::MethodCall(i,a, b, c) => {
                 if let box Expression::Type(_,a) = a {
                     let args: Vec<usize> = c
                         .iter()
@@ -174,14 +174,18 @@ impl Expression {
                         .collect::<Result<_, ParseError>>()?;
                     let compiled = a.compile(ctx, vars)?;
                     // let self_var = ctx.new_var();
-                    let func = (*a.get_type(&ctx.ctx)?
+                    let on_type = a.get_type(&ctx.ctx)?;
+                    let args_type: Vec<&Type> = c.iter().map(|x| x.get_type(&ctx.ctx).map(|x| x.to_owned())).collect::<Result<_,_>>()?;
+                    let func = (*on_type
                         .get_function(
                             b,
-                            &c.iter().map(|x| x.get_type(&ctx.ctx).map(|x| x.to_owned())).collect::<Result<_,_>>()?,
+                            &args_type,
                             false,
                             &ctx.ctx,
                         )
-                        .expect("Can't get method"))
+                        .ok_or_else(|| {
+                            ParseError::MethodNotFound(i.clone(), b.clone(),on_type.name.clone(), args_type.iter().map(|x| x.name.to_owned()).collect())
+                        })?)
                     .clone();
                     // ctx.instructions.push(IrAsm::Mov(self_var, compiled));
                     // func.compile(ctx, &args, Some(self_var))

@@ -17,6 +17,12 @@ fn sub(Bytes a, Bytes b) -> Bytes {
     }
     return out
 }
+fn mod(Bytes a, Bytes b) -> Bytes {
+    asm {
+        MOD Bytes out, a, b;
+    }
+    return out
+}
 fn mul(Bytes a, Bytes b) -> Bytes {
     asm {
         MUL Bytes out, a, b;

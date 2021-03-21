@@ -1,82 +1,238 @@
 BLOCK 0
 
-v4 = "f"
-v5 = 1
-v48 = 26
-v24 = "abcde"
-v73 = "z"
-v65 = "test"
-v26 = 5
-v10 = "c"
-v104 = "test" 10 " ou"
-v55 = "a"
-v2 = "a"
+v15 = 1
+v268 = " "
+v4 = 0 17 250 2
+v86 = "c"
+v6 = 10
+v115 = "0"
+v192 = 0
+v2 = 0 236 145 1
+v77 = "d"
+v7 = 
+v10 = 4
 
 BLOCK 11
 
-if v2 != v4
-goto l17
-v2 += v5
-if v2 != v10
+if v10 != v192
+goto l43
+v19 = v10 - v15
+v10 = v19
+v24 = v2[v19:v15]
+v20 = v24
+v29 = v4[v19:v15]
+v25 = v29
+v34 = v24 + v29
+v38 = v34 + v192
+v30 = v38
+v41 = v38 ~ v7
+v7 = v41
+if v29 == v192
+goto l28
+v43 = 0
+goto l34
+
+BLOCK 28
+
+v49 = v20 / v25
+if v49 == v192
+goto l33
+v43 = 1
+goto l34
+
+BLOCK 33
+
+v43 = 0
+
+BLOCK 34
+
+if v43 == v15
+goto l37
+v42 = v20
+
+BLOCK 37
+
+v42 = v25
+if v25 != v192
 goto l11
+v60 = v30 / v42
+if v60 == v192
 goto l11
 
-BLOCK 17
+BLOCK 43
 
-print(v2)
-v12 = "a"
-
-BLOCK 19
-
-if v12 != v4
-goto l24
-v12 += v5
-print(v12)
-goto l19
-
-BLOCK 24
-
-v30 = 0
-
-BLOCK 25
-
-if v26 != v30
-goto l30
-v30 += v5
-print(v24)
-goto l25
-
-BLOCK 30
-
-v2 = "test"
-v46 = 0
-
-BLOCK 32
-
-if v46 != v48
-goto l38
-v46 += v5
-v56 = v55 + v46
-v2 ~= v56
-goto l32
-
-BLOCK 38
-
-v66 = v2 ~ v65
-print(v66)
-v71 = "a"
-
-BLOCK 41
-
-if v71 != v73
-goto l46
-v71 += v5
-print(v71)
-goto l41
+v64 = 
+v67 = 0
+v69 = 3
 
 BLOCK 46
 
-print(v55)
-v2 = "test" 10
-print(v104)
+v75 = v7[v69:v15]
+v71 = v75
+v81 = v75 % v77
+v85 = v81 + v67
+v76 = v85
+if v85 == v192
+goto l55
+v87 = 0
+goto l62
+
+BLOCK 55
+
+v93 = v86 / v76
+v91 = v93
+if v91 == v192
+goto l61
+v87 = 1
+goto l62
+
+BLOCK 61
+
+v87 = 0
+
+BLOCK 62
+
+v101 = v71 / v77
+v105 = v101 + v87
+v67 = v105
+v110 = v76 % v77
+v76 = v110
+v113 = 
+
+BLOCK 68
+
+v120 = v76 % v6
+v124 = v120 + v115
+v128 = v124 ~ v113
+v113 = v128
+v133 = v76 / v6
+v76 = v133
+if v133 == v192
+goto l68
+v111 = v113
+v137 = v113.length
+if v137 == v15
+goto l82
+v143 = v115 ~ v111
+v111 = v143
+
+BLOCK 82
+
+v147 = v111 ~ v64
+v64 = v147
+if v69 != v192
+goto l89
+v153 = v69 - v15
+v69 = v153
+goto l46
+
+BLOCK 89
+
+v154 = 
+
+BLOCK 90
+
+v162 = v67 % v6
+v166 = v162 + v115
+v170 = v166 ~ v154
+v154 = v170
+v175 = v67 / v6
+v67 = v175
+if v175 == v192
+goto l90
+v64 = v154 ~ v64
+v181 = v64 ~ v6
+print(v181)
+v247 = 
+v190 = 4
+
+BLOCK 103
+
+if v190 != v192
+goto l135
+v199 = v190 - v15
+v190 = v199
+v204 = v2[v199:v15]
+v200 = v204
+v209 = v4[v199:v15]
+v205 = v209
+v214 = v204 + v209
+v218 = v214 + v192
+v210 = v218
+v221 = v218 ~ v247
+v247 = v221
+if v209 == v192
+goto l120
+v223 = 0
+goto l126
+
+BLOCK 120
+
+v229 = v200 / v205
+if v229 == v192
+goto l125
+v223 = 1
+goto l126
+
+BLOCK 125
+
+v223 = 0
+
+BLOCK 126
+
+if v223 == v15
+goto l129
+v222 = v200
+
+BLOCK 129
+
+v222 = v205
+if v205 != v192
+goto l103
+v240 = v210 / v222
+if v240 == v192
+goto l103
+
+BLOCK 135
+
+v244 = 
+v248 = v247.length
+v252 = 0
+
+BLOCK 138
+
+if v248 != v252
+goto l161
+v258 = v247[v252:v15]
+v254 = v258
+v263 = v252 + v15
+v252 = v263
+v266 = v244.length
+if v266 != v192
+goto l149
+v272 = v244 ~ v268
+v244 = v272
+
+BLOCK 149
+
+v274 = 
+
+BLOCK 150
+
+v281 = v254 % v6
+v285 = v281 + v115
+v289 = v285 ~ v274
+v274 = v289
+v294 = v254 / v6
+v254 = v294
+if v294 == v192
+goto l150
+v299 = v244 ~ v274
+v244 = v299
+goto l138
+
+BLOCK 161
+
+v300 = v244 ~ v6
+print(v300)
 exit
