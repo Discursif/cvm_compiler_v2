@@ -45,16 +45,20 @@ impl Display for Asm {
 
 impl Asm {
     pub fn clean(mut selfs: Vec<Self>) -> Vec<Self> {
-        let labels_pos: HashMap<String, usize> = selfs
-            .iter_mut()
-            .enumerate()
-            .flat_map(|(line, x)| {
+        let mut line = 0;
+        let mut labels_pos: HashMap<String, usize> = HashMap::new();
+        selfs = selfs
+            .into_iter()
+            .flat_map(|x| {
                 let o = match x {
                     Self::Label(e) => e.to_owned(),
-                    _ => return None,
+                    e => {
+                        line += 1;
+                        return Some(e);
+                    },
                 };
-                *x = Self::Nop;
-                Some((o, line))
+                labels_pos.insert(o, line);
+                None
             })
             .collect();
 

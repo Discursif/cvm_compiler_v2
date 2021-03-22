@@ -522,36 +522,111 @@ impl Optimizer for Vec<IrAsm> {
     }
 }
 
-pub fn elide_unused_consts(i: Vec<IrAsm>, set: Option<Rc<HashSet<usize>>>) -> Vec<IrAsm> {
-    let refs = if let Some(e) = set {
-        e
-    } else {
-        Rc::new(i.iter().flat_map(|x| {
-            let write= x.get_write()?;
-            if i.iter().any(|x| x.count_reads(write) != 0) {
-                None
-            } else {
-                Some(write)
-            }
-        }).collect())
-    };
-    i.into_iter().flat_map(|x| {
-        if let Some(e) = x.get_write() {
-            if refs.contains(&e) {
-                    //println!("{} elided",e);
-                    return None;
-            }
+pub fn get_what_to_elide(i: &Vec<IrAsm>, set: &mut HashMap<usize,usize>) {
+    fn add(i: &usize,set: &mut HashMap<usize,usize>) {
+        if let Some(e) = set.get_mut(i) {
+            *e += 1;
+        } else {
+            set.insert(*i, 1);
         }
-        Some(match x {
-            IrAsm::If(a, b, c, d) => {
-                IrAsm::If(a, b, elide_unused_consts(c, Some(refs.clone())), elide_unused_consts(d, Some(refs.clone())))
+    }
+    for i in i {
+        match i {
+            IrAsm::Op(_, _, a, b) => {
+                add(a,set);
+                add(b,set);
             }
-            IrAsm::Loop(e) => IrAsm::Loop(elide_unused_consts(e, Some(refs.clone()))),
-            IrAsm::FunctionBlock(a, e) => IrAsm::FunctionBlock(a,elide_unused_consts(e, Some(refs.clone()))),
-            e => e
-        })
-    }).collect()
+            IrAsm::End => {
+            }
+            IrAsm::If(a, b, c, d) => {
+                add(a,set);
+                add(b,set);
+                get_what_to_elide(c,set);
+                get_what_to_elide(d,set);
+            }
+            IrAsm::Loop(c) => {
+                get_what_to_elide(c,set);
+            }
+            IrAsm::Break() => {}
+            IrAsm::Continue() => {}
+            IrAsm::FunctionBlock(_, c) => {
+                get_what_to_elide(c,set);
+            }
+            IrAsm::Return(a) => {
+                add(a,set);
+            }
+            IrAsm::Prt(a) => {
+                add(a,set);
+            }
+            IrAsm::Inp(_) => {}
+            IrAsm::Cst(_, _) => {}
+            IrAsm::Mov(_, a) => {
+                add(a,set);
+            }
+            IrAsm::Len(_, a) => {
+                add(a,set);
+            }
+            IrAsm::Read(_, a, b, c) => {
+                add(a,set);
+                add(b,set);
+                add(c,set);
+            }
+            IrAsm::Nop => {}
+        }
+    }
 }
+
+pub fn elide_unused_writes(i: Vec<IrAsm>) -> Vec<IrAsm> {
+    let mut elidable = HashMap::new();
+    get_what_to_elide(&i, &mut elidable);
+    fn rec(i: Vec<IrAsm>, elidable: &HashMap<usize,usize>) -> Vec<IrAsm> {
+        i.into_iter().flat_map(|i| {
+            if let Some(e) = i.get_write() {
+                if !elidable.contains_key(&e) {
+                    return None;
+                }
+            }
+            Some(match i {
+                IrAsm::If(a, b, c, d) => IrAsm::If(a, b, rec(c,elidable), rec(d,elidable)),
+                IrAsm::Loop(a) => IrAsm::Loop(rec(a,elidable)),
+                IrAsm::FunctionBlock(a, b) => IrAsm::FunctionBlock(a, rec(b,elidable)),
+                i => i
+            })
+        }).collect()
+    }
+    rec(i,&elidable)
+}
+
+// pub fn elide_unused_consts(i: Vec<IrAsm>, set: Option<Rc<HashSet<usize>>>) -> Vec<IrAsm> {
+//     let refs = if let Some(e) = set {
+//         e
+//     } else {
+//         Rc::new(i.iter().flat_map(|x| {
+//             let write= x.get_write()?;
+//             if i.iter().any(|x| x.count_reads(write) != 0) {
+//                 None
+//             } else {
+//                 Some(write)
+//             }
+//         }).collect())
+//     };
+//     i.into_iter().flat_map(|x| {
+//         if let Some(e) = x.get_write() {
+//             if refs.contains(&e) {
+//                 println!("{} elided",e);
+//                 return None;
+//             }
+//         }
+//         Some(match x {
+//             IrAsm::If(a, b, c, d) => {
+//                 IrAsm::If(a, b, elide_unused_consts(c, Some(refs.clone())), elide_unused_consts(d, Some(refs.clone())))
+//             }
+//             IrAsm::Loop(e) => IrAsm::Loop(elide_unused_consts(e, Some(refs.clone()))),
+//             IrAsm::FunctionBlock(a, e) => IrAsm::FunctionBlock(a,elide_unused_consts(e, Some(refs.clone()))),
+//             e => e
+//         })
+//     }).collect()
+// }
 
 pub fn count_refs(i: &IrAsm, map: &mut HashMap<usize,(usize,usize)>) {
     let mut add = |var: &usize, is_write: bool| {
