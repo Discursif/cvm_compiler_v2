@@ -42,7 +42,22 @@ type u32 = 4 {
     }
 
     fn div(u32 other) -> u32 {
+        u32 out = self;
+        if other[0] == 0 {
+            if other[1] == 0 {
+                if other[2] == 0 {
+                    out = out.__div_inner(other[3] ~ 0 0 0 as u32);
+                }
+                out = out.__div_inner((other[2]) ~ (other[3]) ~ 0 0 as u32);
+            }
+            out = out.__div_inner((other[1]) ~ (other[2]) ~ (other[3]) ~ 0 as u32);
+        }
+        out = out.__div_inner(other);
+        return out;
+    }
 
+    fn __div_inner(u32 other) -> u32 {
+        if other == 0 0 0 0 => return self;
         u32 out = u32.null;
         u32 active = self;
 
@@ -50,7 +65,10 @@ type u32 = 4 {
             if active.lower((other + (u32.one))) {
                 break;
             }
+            print(((active as Bytes).to_string()) ~ " - " ~ ((other as Bytes).to_string()) ~ " = ");
+
             active -= other;
+            print(((active as Bytes).to_string()) ~ 10);
             out += u32.one;
         }
         return out;
