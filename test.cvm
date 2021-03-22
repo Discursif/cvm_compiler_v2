@@ -1,0 +1,10 @@
+use "lib/std";
+
+fn chare(Byte u) -> Byte{
+    return u;
+}
+
+fn main() {
+    Char i = "a";
+    print(chare(i))
+}

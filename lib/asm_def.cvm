@@ -47,9 +47,9 @@ fn read(Bytes a, Byte b, Byte c) -> Bytes {
     }
     return out
 }
-fn len(Bytes a) -> Bytes {
+fn len(Bytes a) -> Byte {
     asm {
-        LEN Bytes out, a;
+        LEN Byte out, a;
     }
     return out
 }
@@ -58,8 +58,15 @@ fn print(Bytes a) {
         PRINT a;
     }
 }
-fn input(Bytes a) {
+fn input() -> Bytes{
     asm {
-        INPUT a;
+        INPUT Bytes a;
+    }
+    return a;
+}
+
+fn exit() {
+    asm {
+        END;
     }
 }

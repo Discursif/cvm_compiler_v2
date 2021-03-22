@@ -63,7 +63,7 @@ indexing = {left_square_bracket~(range | expr)~right_square_bracket}
 function_call = {literal~left_parenthesis~terms~right_parenthesis}
 
 variant_access = {cdot ~ literal}
-operation = {operand ~ term}
+operation = {operand ~ expr}
 
 expr = { term ~indexing?~(method_call | variant_access)?~(method_call | indexing)* ~ operation* ~ (keyword_as ~ literal)?}
 term = _{ data | left_parenthesis ~ expr ~right_parenthesis }
@@ -104,7 +104,8 @@ type_inside = {type_function | type_ref}
 type_statement = {keyword_type~literal~(double_dots~literal)?~(equal~int)?~left_bracket~type_inside*~right_bracket} 
 
 var_declaration = {typed_var ~ equal ~ expr}
-var_assignement = {(indexing | literal) ~ operand? ~ equal ~ expr}
+var_index = {literal ~ indexing}
+var_assignement = {(var_index | literal) ~ operand? ~ equal ~ expr}
 
 instruction_block = _{left_bracket~(instruction ~ (instruction)*)?~right_bracket}
 arrow_block = _{arrow ~ instruction}
@@ -137,3 +138,5 @@ asm_one_type = {"INPUT" | "PRINT"}
 i_one = {asm_one_type ~ asm_variable}
 i_zero = {"END" | "NOOP"}
 asm_statement = {asm_keyword ~ left_bracket ~ asm_instruction* ~  right_bracket}
+
+pest_test = {SOI ~ expr ~ EOI}

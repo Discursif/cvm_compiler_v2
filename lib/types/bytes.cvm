@@ -9,6 +9,9 @@ type Bytes {
     fn index_range(Byte position1,Byte position2) -> Bytes => return read(self,position1,position2-position1);
     fn len() -> Byte => return len(self) as Byte;
     fn merge(Bytes other) -> Bytes => return merge(self,other) as Bytes;
+    fn replace(Byte index,Bytes otherlist) -> Bytes {
+        return self.index_range(0,index) ~ otherlist ~ read(self, index + len(otherlist), len(self));
+    }
 
     fn to_string() -> String {
         String out = "";
@@ -17,5 +20,12 @@ type Bytes {
             out ~= i.to_string();
         }
         return out;
+    }
+
+    fn contains(Byte byte) -> Boolean {
+        for Byte i in self {
+            if i == byte => return Boolean.true;
+        }
+        return Boolean.false;
     }
 }

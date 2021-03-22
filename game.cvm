@@ -1,0 +1,75 @@
+use "lib/std";
+
+type Table = 9 {
+    ref empty = "         ";
+
+    fn display() {
+        print(self[0]~" | "~self[1]~" | "~self[2]~10);
+        print("---------"~10);
+        print(self[3]~" | "~self[4]~" | "~self[5]~10);
+        print("---------"~10);
+        print(self[6]~" | "~self[7]~" | "~self[8]~10);
+    }
+
+    fn won() -> Char {
+        for Byte i in 0..3 {
+            if self[i] == " " => continue;
+            Byte added = self[i] + self[i + 3] + self[i + 6];
+            if added == "X" * 3 => return "X";
+            if added == "O" * 3 => return "O";
+            Byte times3 = i * 3;
+            Byte added1 = self[times3] + self[times3 + 1] + self[times3 + 3];
+            if added1 == "X" * 3 => return "X";
+            if added1 == "O" * 3 => return "O";
+        }
+        return " "
+    }
+
+    fn update(Byte current,Byte number) -> Boolean {
+        if self[number] != " " => return Boolean.true;
+        self[number] = current;
+        Char char = self.won();
+        if char != " " {
+            print(char~" has won!"~10);
+            exit();
+        }
+        if !self.contains(" ") {
+            print("Nobody won!"~10);
+            exit();
+        }
+        return Boolean.false;
+    }
+}
+
+fn main() {
+    Table table = Table.empty; // This copies Table.empty into a new var named table
+    Char current = "X";
+    loop {
+        table.display(); // This will display the current grid
+        print("Enter a position to play in : ");
+        Bytes a = input(); // We get the input
+        print(10); // This print new line (\n)
+
+        if a.len() != 1 { // We check if the given input is of size 1
+            print("Invalid input"~10);
+            continue;
+        }
+
+        Byte a = a as Byte; // Now that we know that a as for length 1 we can transmute memory safely
+
+        // We check if `a` is a number
+        if !"123456789".contains(a) {
+            print("Invalid input"~10);
+            continue;
+        }
+
+        // We update the grid with the input and if the case is already taken we print a message and continue the loop
+        if table.update(current as Byte, a - "1" ) { // We set the "1" as 0
+            print("Aldready something placed here"~10);
+            continue;
+        }
+
+        if current == "O" => current = "X";
+        else => current = "O";
+    }
+}

@@ -59,10 +59,13 @@ impl Functions {
                 return false;
             }
             for (x,y) in x.arguments.iter().zip(arguments.iter()) {
-                if x.var_type == ANY_TYPE || &x.var_type == &y.name || y.is_child_of(&x.name, context) {
-                    continue;
+                if !context.types.get(&x.var_type).unwrap().is_assignable_from(*y, context) {
+                    return false;
                 }
-                return false;
+                // if x.var_type == ANY_TYPE || &x.var_type == &y.name || x.is_child_of(&y.name, context) {
+                //     continue;
+                // }
+                // return false;
             }
             true
         })

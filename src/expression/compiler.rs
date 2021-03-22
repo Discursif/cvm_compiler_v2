@@ -89,7 +89,7 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
             let st = to_static(&cvm);
             let mut v = cvm.into_inner();
             Expression::MethodCall(
-                st,
+                st.clone(),
                 Box::new(parse_expression(v.next().unwrap(), context)?),
                 "index".to_owned(),
                 vec![parse_expression(v.next().unwrap(), context)?],

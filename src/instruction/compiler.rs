@@ -78,12 +78,13 @@ pub fn parse_instructions(
                     )
                 } else {
                     let mut a = a.into_inner();
+                    println!("{}",a);
                     let i = context
                         .variables
                         .get(&a.extract::<String, ()>(())?)
                         .expect("Can't find variable")
                         .clone();
-                    let inside = parse_expression(a.next().unwrap(), context)?;
+                    let inside = parse_expression(a.next().unwrap().into_inner().next().unwrap(), context)?;
                     Instruction::Assign(
                         st.clone(),
                         i.clone(),
@@ -112,12 +113,15 @@ pub fn parse_instructions(
                         context
                             .variables
                             .get(a.as_str().trim())
-                            .expect("Can't find variable")
+                            .ok_or_else(||{
+                                ParseError::CantGetVariable(to_static(&a), a.as_str().trim().to_owned())
+                            })?
                             .clone(),
                         parse_expression(c, context)?,
                     )
                 } else {
                     let mut a = a.into_inner();
+                    println!("{}",a);
                     let b = context
                         .variables
                         .get(&a.extract::<String, ()>(())?)
@@ -126,11 +130,14 @@ pub fn parse_instructions(
                     Instruction::Assign(
                         st.clone(),
                         b.clone(),
-                        Expression::MethodCall(st.clone(),
-                            box Expression::Variable(st,b),
+                        Expression::Cast(st.clone(),
+                        box Expression::MethodCall(st.clone(),
+                            box Expression::Variable(st,b.clone()),
                             "replace".to_owned(),
-                            vec![parse_expression(a.next().unwrap(), context)?],
+                            vec![parse_expression(a.next().unwrap().into_inner().next().unwrap(), context)?,parse_expression(c, context)?],
                         ),
+                        b.var_type
+                        )
                     )
                 }
             }

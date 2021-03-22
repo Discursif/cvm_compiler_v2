@@ -124,7 +124,7 @@ pub fn compile_file(file: &str, context: &mut CompilationContext) -> Result<(), 
 
 fn main() {
     let mut context = CompilationContext::default();
-    match compile_file("cvm.cvm", &mut context) {
+    match compile_file("game.cvm", &mut context) {
         Ok(_) => (),
         Err(e) => {
             println!("{}",e);
@@ -135,6 +135,8 @@ fn main() {
     //     allowed_from: Vec::new(),
     //     static_functions: HashMap::new(),
     // });
+
+    context.types.iter().for_each(|(x,y)| println!("{} {}",x,y.parent));
 
     let func = context
         .functions

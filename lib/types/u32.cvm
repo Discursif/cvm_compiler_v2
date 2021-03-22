@@ -42,36 +42,49 @@ type u32 = 4 {
     }
 
     fn div(u32 other) -> u32 {
-        u32 out = self;
+        u32 active = self;
+        u32 out = u32.null;
         if other[0] == 0 {
             if other[1] == 0 {
                 if other[2] == 0 {
-                    out = out.__div_inner(other[3] ~ 0 0 0 as u32);
+                    print("A ---"~10);
+                    Bytes tmp = active.__div_inner(other[3] ~ 0 0 0 as u32, out, 1 0 0 0 as u32);
+                    active = tmp[0..4] as u32;
+                    out = tmp[4..8] as u32;
                 }
-                out = out.__div_inner((other[2]) ~ (other[3]) ~ 0 0 as u32);
+                print("B ---"~10);
+                Bytes tmp = active.__div_inner(other[2] ~ other[3] ~ 0 0 as u32, out, 0 1 0 0 as u32);
+                active = tmp[0..4] as u32;
+                out = tmp[4..8] as u32;
             }
-            out = out.__div_inner((other[1]) ~ (other[2]) ~ (other[3]) ~ 0 as u32);
+            print("C ---"~10);
+            Bytes tmp = active.__div_inner(other[1] ~ other[2] ~ other[3] ~ 0 as u32, out, 0 0 1 0 as u32);
+            active = tmp[0..4] as u32;
+            out = tmp[4..8] as u32;
         }
-        out = out.__div_inner(other);
+        print("D ---"~10);
+        Bytes tmp = active.__div_inner(other, out, 0 0 0 1 as u32);
+        active = tmp[0..4] as u32;
+        out = tmp[4..8] as u32;
         return out;
     }
 
-    fn __div_inner(u32 other) -> u32 {
+    fn __div_inner(u32 other, u32 out, u32 multiplicator) -> Bytes {
+        print("div--inner:"~(self as Bytes).to_string()~" - "~(other as Bytes).to_string()~10);
         if other == 0 0 0 0 => return self;
-        u32 out = u32.null;
         u32 active = self;
 
         loop {
-            if active.lower((other + (u32.one))) {
+            if active.lower(other + u32.one) {
                 break;
             }
-            print(((active as Bytes).to_string()) ~ " - " ~ ((other as Bytes).to_string()) ~ " = ");
+            print((active as Bytes).to_string() ~ " - " ~ (other as Bytes).to_string() ~ " = ");
 
             active -= other;
-            print(((active as Bytes).to_string()) ~ 10);
-            out += u32.one;
+            print((active as Bytes).to_string() ~ 10);
+            out += multiplicator;
         }
-        return out;
+        return active ~ out;
     }
 
     fn mod(u32 other) -> u32 {
@@ -79,7 +92,7 @@ type u32 = 4 {
         u32 out = u32.null;
         u32 active = self;
         loop {
-            if active.lower((other + (u32.one))) {
+            if active.lower(other + (u32.one)) {
                 break;
             }
             active -= other;
@@ -113,7 +126,7 @@ type u32 = 4 {
         u32 nb = 59 154 202 0 as u32;
 
         loop {
-            print( (nb as Bytes).to_string() ~ " --- " ~ (( out as Bytes).to_string()) ~ 10);
+            print( (nb as Bytes).to_string() ~ " --- " ~ ( out as Bytes).to_string() ~ 10);
             print("---"~ 10);
             out = out ~ ((self % nb)[3] as Char);
             print("---  ss"~ 10);

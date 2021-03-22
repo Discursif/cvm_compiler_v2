@@ -1,6 +1,8 @@
+
+use "boolean";
+
 use "bytes";
 use "string";
-use "boolean";
 use "byte";
 use "char";
 use "empty";

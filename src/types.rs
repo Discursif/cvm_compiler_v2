@@ -29,6 +29,16 @@ impl Type {
 }
 
 impl Type {
+
+    pub fn is_assignable_from(&self, other_type: &Type, ctx: &CompilationContext) -> bool {
+        if self.name == ANY_TYPE || other_type.name == self.name {
+            return true;
+        }
+        if other_type.name == ANY_TYPE {
+            return false;
+        }
+        self.is_assignable_from(ctx.types.get(&other_type.parent).unwrap(),ctx)
+    }
     pub fn is_child_of(&self, other_type: &str, ctx: &CompilationContext) -> bool {
         if other_type == self.name {
             return true;
