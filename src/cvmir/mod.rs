@@ -180,7 +180,7 @@ impl IrAsm {
             IrAsm::Read(a, b, c, d) => Asm::Read(a,b,c,d),
             IrAsm::Nop => Asm::Nop,
             IrAsm::Return(e) => {
-                return vec![Asm::Mov(func_ret.unwrap().0,e),Asm::Label(format!("func_end{}",func_ret.unwrap().1))]
+                return vec![Asm::Mov(func_ret.unwrap().0,e),Asm::GtLabel(format!("func_end{}",func_ret.unwrap().1))]
             },
             IrAsm::FunctionBlock(into, block) => {
                 let if_id = counter.get();

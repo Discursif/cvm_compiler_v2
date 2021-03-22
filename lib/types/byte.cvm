@@ -23,6 +23,17 @@ type Byte = 1 {
             }
         }
     }
+    fn greater(Byte other) -> Boolean {
+        if self == 0 {
+            return Boolean.false;
+        } else {
+            if other / self == 0 {
+                return Boolean.true;
+            } else {
+                return Boolean.false;
+            }
+        }
+    }
     fn min(Byte other) -> Byte {
         if self.lower(other) => return self;
         return other;

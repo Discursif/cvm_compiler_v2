@@ -4,10 +4,15 @@ fn adde(Bytes a) -> String {
     return a + 1 10 as String;
 }
 
-fn main() {
-    u32 test1 = 0 236 145 1 as u32;
-    u32 test2 = 0 17 250 2 as u32;
 
-    print((test1 + test2).to_string() ~ 10);
-    print((test1 + test2 as Bytes).to_string() ~ 10);
+fn main() {
+    u32 test1 = 230 236 145 1 as u32; // 15382876 or with 230 in first place 3874263152
+    u32 test2 = 0 2 250 2 as u32; // 195074
+
+
+    print((test1 - test2 as Bytes).to_string() ~ 10);
+    print((test1 / test2 as Bytes).to_string() ~ 10);
+    print((test1 % test2 as Bytes).to_string() ~ 10);
+    print(test1.to_string() ~ 10);
+    //print((test2 / test1 as Bytes).to_string() ~ 10);
 }

@@ -1,21 +1,86 @@
 type u32 = 4 {
+    ref null = 0 0 0 0;
+    ref one = 0 0 0 1;
+
+
     fn add(u32 other) -> u32 {
         Bytes out = "";
         Byte p = 4;
         Byte rem = 0;
+        // We loop through all the bytes
         loop {
             if p == 0 => break;
             p -= 1;
-            Byte a = self[p]; // 145 
-            Byte b = other[p]; // 250
-            Byte c = a + b + rem; // 139
+            Byte a = self[p];
+            Byte b = other[p];
+            // We add them together with reminder
+            Byte c = a + b + rem;
             out = c ~ out;
             rem = c.lower(a.min(b)) as Byte;
         }
         return out as u32;
     }
+
     fn sub(u32 other) -> u32 {
-        return 0 0 0 0;
+        Bytes out = "";
+        Byte p = 4;
+        Byte rem = 0;
+        // We loop through all the bytes
+        loop {
+            if p == 0 => break;
+            p -= 1;
+
+            // We sub them together with reminder
+            Byte t = other[p] + rem;
+            Byte ele = self[p] - t;
+
+            rem = self[p].lower(t) as Byte;
+
+            out = ele ~ out;
+        }
+        return out as u32;
+    }
+
+    fn div(u32 other) -> u32 {
+
+        u32 out = u32.null;
+        u32 active = self;
+
+        loop {
+            if active.lower((other + (u32.one))) {
+                break;
+            }
+            active -= other;
+            out += u32.one;
+        }
+        return out;
+    }
+
+    fn mod(u32 other) -> u32 {
+
+        u32 out = u32.null;
+        u32 active = self;
+        loop {
+            if active.lower((other + (u32.one))) {
+                break;
+            }
+            active -= other;
+            out += u32.one;
+        }
+        return active;
+    }
+
+    fn lower(u32 other) -> Boolean {
+        for Byte i in 0..4 {
+            if self[i].lower(other[i]) {
+                return Boolean.true;
+            }
+            if other[i] != self[i] {
+                return Boolean.false;
+            }
+        }
+        return Boolean.false;
+
     }
     fn add(Bytes other) -> Panic {}
     fn sub(Bytes other) -> Panic {}
@@ -25,6 +90,25 @@ type u32 = 4 {
     fn len() -> Byte => return 4;
 
     fn to_string() -> String {
+
+        String out = "";
+        u32 nb = 59 154 202 0 as u32;
+
+        loop {
+            print( (nb as Bytes).to_string() ~ " --- " ~ (( out as Bytes).to_string()) ~ 10);
+            print("---"~ 10);
+            out = out ~ ((self % nb)[3] as Char);
+            print("---  ss"~ 10);
+            self /= nb;
+            print("--- sssss"~ 10);
+            nb /= (0 0 0 10 as u32);
+            print("--- sssssssssss"~ 10);
+            if nb == 0 0 0 0 {break;}
+        }
+        return out
+
+
+
         // String out = "";
         // Byte reminder = 0;
         // Byte index = 3;
@@ -43,6 +127,6 @@ type u32 = 4 {
         // }
         // out = reminder.to_string() ~ out;
         // return out;
-        return 0; // TODO
+        // return 0; // TODO
     }
 }
