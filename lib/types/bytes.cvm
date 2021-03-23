@@ -28,4 +28,26 @@ type Bytes {
         }
         return Boolean.false;
     }
+
+    fn not_equals(Bytes a) -> Boolean {
+        asm {
+            IF self, a {
+                CONST $a, 0;
+            } ELSE {
+                CONST $a, 1;
+            }
+            RETURN $a;
+        }
+    }
+
+    fn equals(Bytes a) -> Boolean {
+        asm {
+            IF self, a {
+                CONST $a, 1;
+            } ELSE {
+                CONST $a, 0;
+            }
+            RETURN $a;
+        }
+    }
 }

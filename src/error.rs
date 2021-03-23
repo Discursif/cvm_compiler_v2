@@ -1,4 +1,4 @@
-use std::{fmt::{self, Display}, rc::Rc};
+use std::{fmt, rc::Rc};
 
 use pest::{RuleType, Span, error::{self, ErrorVariant}, iterators::{Pair, Pairs, pairs, queueable_token::QueueableToken}};
 

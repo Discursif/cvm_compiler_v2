@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use pest::iterators::{Pair, Pairs};
 
-use crate::{error::{ParseError, to_static}, instruction::{AsmInstruction, AsmVariable}, parse_expression};
+use crate::{error::{ParseError, to_static}, instruction::{AsmInstruction, AsmVariable}};
 use crate::{
-    expression::Expression, function::Function, instruction::parse_instructions,
+    function::Function, instruction::parse_instructions,
     CompilationContext, VOID_TYPE,
 };
 use crate::asm::OperationType;
@@ -151,45 +151,6 @@ impl TryFromRule<(Option<(String,String)>, &CompilationContext)> for Function {
     }
 }
 
-impl <'a> TryFromRule<&ParseExpressionContext> for (Expression, bool, Expression) {
-    fn extract(rule: Pair<Rule>, context: &ParseExpressionContext) -> Result<Self>{
-        Ok(match rule.as_rule() {
-            Rule::boolean_test => {
-                let st = to_static(&rule);
-                let mut boolean_test = rule.into_inner();
-                let inverted = boolean_test.next().unwrap().as_rule() == Rule::not;
-                let a = boolean_test.next().unwrap();
-                let a = parse_expression(a, context)?;
-                let b = boolean_test
-                    .next()
-                    .map(|x| {
-                        if inverted {
-                            x.as_rule() != Rule::double_equal
-                        } else {
-                            x.as_rule() == Rule::double_equal
-                        }
-                    })
-                    .unwrap_or(!inverted);
-                let c = if let Some(x) = boolean_test
-                    .next() {
-                        Some(parse_expression(x, context)?)
-                    } else {
-                        None
-                    }
-                    .unwrap_or_else(|| {
-                        Expression::VariantAccess(
-                            st.clone(),
-                            box Expression::Type(st,"Boolean".to_owned()),
-                            "true".to_owned(),
-                        )
-                    });
-                (a, b, c)
-            }
-            _ => unreachable!(),
-        })
-    }
-}
-
 impl TryFromRule<&mut ParseExpressionContext> for AsmVariable {
     fn extract<'a>(rule: Pair<'a,Rule>, ctx: &mut ParseExpressionContext) -> Result<Self>{
         Ok(match rule.as_rule() {
@@ -206,6 +167,17 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmVariable {
                 Self::TypedExternal(var)
             }
             _ => unreachable!(),
+        })
+    }
+}
+
+impl TryFromRule<&mut ParseExpressionContext> for Vec<AsmInstruction> {
+    fn extract<'a>(rule: Pair<'a,Rule>, ctx: &mut ParseExpressionContext) -> Result<Self>{
+        Ok(match rule.as_rule() {
+            Rule::asm_block => {
+                rule.into_inner().map(|x| x.extract(&mut *ctx)).collect::<Result<_>>()?
+            },
+            _ => unreachable!()
         })
     }
 }
@@ -239,8 +211,6 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
                 let mut po = rule.into_inner();
                 match po.next().unwrap().as_str().trim() {
                     "MOV" => Self::Mov(po.extract(&mut *ctx)?,po.extract(&mut *ctx)?),
-                    "IF" => Self::If(po.extract(&mut *ctx)?,po.extract(&mut *ctx)?),
-                    "IFN" => Self::IfN(po.extract(&mut *ctx)?,po.extract(&mut *ctx)?),
                     "LEN" => Self::Len(po.extract(&mut *ctx)?,po.extract(&mut *ctx)?),
                     _ => unreachable!()
                 }
@@ -250,6 +220,7 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
                 match po.next().unwrap().as_str().trim() {
                     "INPUT" => Self::Input(po.extract(&mut *ctx)?),
                     "PRINT" => Self::Print(po.extract(&mut *ctx)?),
+                    "RETURN" => Self::Return(po.extract(&mut *ctx)?),
                     _ => unreachable!()
                 }
             }
@@ -257,10 +228,30 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
                 match rule.as_str().trim() {
                     "END" => Self::End,
                     "NOOP" => Self::NoOp,
+                    "BREAK" => Self::Break,
+                    "CONTINUE" => Self::Continue,
                     _ => unreachable!()
                 }
             }
-            _ => unreachable!(),
+            Rule::asm_if => {
+                let mut po = rule.into_inner();
+                AsmInstruction::If(po.extract(&mut *ctx)?,po.extract(&mut *ctx)?,po.extract(&mut *ctx)?, {
+                    let n = po.next().unwrap();
+                    if n.as_rule() == Rule::asm_else {
+                        n.into_inner().extract(&mut *ctx)?
+                    } else {
+                        Vec::new()
+                    }
+                })
+            }
+            Rule::asm_const => {
+                let mut po = rule.into_inner();
+                AsmInstruction::Const(po.extract(&mut *ctx)?,po.extract(())?)
+            }
+            e => {
+                println!("Unexpected {:?}",e);
+                unreachable!();
+            },
         })
     }
 }

@@ -12,10 +12,13 @@ pub enum AsmInstruction {
     Read(AsmVariable,AsmVariable,AsmVariable,AsmVariable),
     Print(AsmVariable),
     Input(AsmVariable),
+    Return(AsmVariable),
+    Const(AsmVariable, Vec<u8>),
     NoOp,
     End,
-    If(AsmVariable,AsmVariable),
-    IfN(AsmVariable,AsmVariable),
+    Continue,
+    Break,
+    If(AsmVariable,AsmVariable,Vec<AsmInstruction>,Vec<AsmInstruction>),
 }
 
 #[derive(Clone, Debug)]
@@ -248,46 +251,55 @@ impl Instruction {
             Instruction::AsmStatement(_,e) => {
                 let mut refs: HashMap<String, usize> = HashMap::new();
                 let mut i = {
-                    let mut var = |v: &AsmVariable| -> usize {
-                        match v {
-                            AsmVariable::External(e) => {
-                                *vars.get(e).unwrap()
-                            }
-                            AsmVariable::Internal(e) => {
-                                if let Some(e) = refs.get(e) {
-                                    *e
-                                } else {
-                                    let i = ctx.new_var();
-                                    refs.insert(e.clone(), i);
-                                    i
-                                }
-                            }
-                            AsmVariable::TypedExternal(e) => {
-                                let i = ctx.new_var();
-                                vars.insert(e.name.clone(), i);
-                                i
-                            }
-                        }
-                    };
+                    
                     e.iter().map(|i| {
-                        match i {
-                            AsmInstruction::Mov(e, a) => IrAsm::Mov(var(e),var(a)),
-                            AsmInstruction::Operation(a, b, c, d) => IrAsm::Op(a.clone(),var(b),var(c),var(d)),
-                            AsmInstruction::Len(a, b) => IrAsm::Len(var(a),var(b)),
-                            AsmInstruction::Read(a, b, c, d) => IrAsm::Read(var(a),var(b),var(c),var(d)),
-                            AsmInstruction::Print(e) => IrAsm::Prt(var(e)),
-                            AsmInstruction::Input(e) => IrAsm::Inp(var(e)),
-                            AsmInstruction::NoOp => IrAsm::Nop,
-                            AsmInstruction::End => IrAsm::End,
-                            // AsmInstruction::If(e, a) => IrAsm::If(true,var(e),var(a)),
-                            // AsmInstruction::IfN(e, a) => IrAsm::If(false,var(e),var(a)),
-                            _ => unreachable!() // This hasn't been implemented yet.
-                        }
+                        compile(i,vars,&mut refs,ctx)
                     }).collect::<Vec<_>>()
                 };
                 ctx.instructions.append(&mut i);
             }
         }
         Ok(())
+    }
+}
+
+fn compile(i: &AsmInstruction, vars: &mut HashMap<String, usize>, refs: &mut HashMap<String, usize>, ctx: &mut CVMCompCtx) -> IrAsm{
+    let mut var = |v: &AsmVariable| -> usize {
+        match v {
+            AsmVariable::External(e) => {
+                *vars.get(e).unwrap()
+            }
+            AsmVariable::Internal(e) => {
+                if let Some(e) = refs.get(e) {
+                    *e
+                } else {
+                    let i = ctx.new_var();
+                    refs.insert(e.clone(), i);
+                    i
+                }
+            }
+            AsmVariable::TypedExternal(e) => {
+                let i = ctx.new_var();
+                vars.insert(e.name.clone(), i);
+                i
+            }
+        }
+    };
+    match i {
+        AsmInstruction::Mov(e, a) => IrAsm::Mov(var(e),var(a)),
+        AsmInstruction::Operation(a, b, c, d) => IrAsm::Op(a.clone(),var(b),var(c),var(d)),
+        AsmInstruction::Len(a, b) => IrAsm::Len(var(a),var(b)),
+        AsmInstruction::Read(a, b, c, d) => IrAsm::Read(var(a),var(b),var(c),var(d)),
+        AsmInstruction::Print(e) => IrAsm::Prt(var(e)),
+        AsmInstruction::Input(e) => IrAsm::Inp(var(e)),
+        AsmInstruction::NoOp => IrAsm::Nop,
+        AsmInstruction::End => IrAsm::End,
+        AsmInstruction::If(a, b, c, d) => {
+            IrAsm::If(var(a),var(b),c.iter().map(|x| compile(x,vars, refs, ctx)).collect(),d.iter().map(|x| compile(x,vars, refs, ctx)).collect())
+        }
+        AsmInstruction::Const(e, a) => IrAsm::Cst(var(e),a.clone()),
+        AsmInstruction::Return(e) => IrAsm::Return(var(e)),
+        AsmInstruction::Continue => IrAsm::Continue(),
+        AsmInstruction::Break => IrAsm::Break(),
     }
 }

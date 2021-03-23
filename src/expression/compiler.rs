@@ -9,8 +9,11 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
     Ok(match cvm.as_rule() {
         Rule::expr => {
             let mut expr = cvm.into_inner();
+            let pom = expr.next().unwrap();
             let mut ex = parse_expression(expr.next().unwrap(), context)?;
-
+            if pom.as_rule() == Rule::not {
+                ex = Expression::MethodCall(to_static(&pom), box ex, "not".to_owned(), vec![]);
+            }
             for i in expr {
                 match i.as_rule() {
                     Rule::operation => {
@@ -123,6 +126,13 @@ pub fn rule_to_operator(rule: &Rule) -> Option<&'static str> {
         Rule::divide => "div",
         Rule::xor => "xor",
         Rule::merge => "merge",
+        Rule::lower => "lower",
+        Rule::greater => "greater",
+        Rule::greater_equals => "greater_equals",
+        Rule::boolean_and => "double_and",
+        Rule::boolean_or => "double_or",
+        Rule::double_equal => "equals",
+        Rule::not_equal => "not_equals",
         _ => return None,
     })
 }

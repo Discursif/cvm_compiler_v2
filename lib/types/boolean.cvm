@@ -10,4 +10,36 @@ type Boolean = 1 {
     fn merge(Bytes other) -> Panic {}
 
     fn len() -> Byte => return 1;
+
+    fn not() -> Boolean {
+        return self.equals(Boolean.false);
+    }
+
+    fn double_and(Boolean other) -> Boolean {
+        asm {
+            CONST $a, 0
+            IF self, $a {
+            } ELSE {
+                IF other, $a {
+                } ELSE {
+                    CONST $a, 1
+                }
+            }
+            RETURN $a
+        }
+    }
+
+    fn double_or(Boolean other) -> Boolean {
+        asm {
+            CONST $a, 1
+            IF self, $a {
+                RETURN $a
+            }
+            IF other, $a {
+                RETURN $a
+            }
+            CONST $b, 0
+            RETURN $b
+        }
+    }
 }

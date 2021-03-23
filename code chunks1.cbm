@@ -1,1153 +1,369 @@
 BLOCK 0
 
-v4 = 0 2 250 2
-v121 = 0 0 0 1
-v1241 = "--- sssss" 10
-v800 = 3
-v12 = 0
-v6 = 10
-v723 = " --- "
-v87 = "0"
-v15 = 1
-v1024 = "---  ss" 10
-v798 = "---" 10
-v79 = " "
-v803 = 0 0 0 0
-v1243 = 0 0 0 10
-v1459 = "--- sssssssssss" 10
-v126 = 4
-v2 = 230 236 145 1
-v58 = 
-v10 = 4
+v10 = 1
+v43 = "---------" 10
+v90 = 8
+v102 = 7
+v7 = 10
+v8 = 2
+v16 = " | "
+v32 = 0
+v220 = " "
+v114 = 6
+v123 = "Enter a position to play in : "
+v410 = "Aldready something placed here" 10
+v284 = 237
+v180 = "1"
+v147 = 9
+v61 = 4
+v292 = "O"
+v139 = "Invalid input" 10
+v363 = "  has won!" 10
+v146 = "123456789"
+v400 = "Nobody won!" 10
+v49 = 5
+v73 = 3
+v2 = "         "
+v4 = "X"
 
-BLOCK 19
+BLOCK 25
 
-if v10 != v12
-goto l33
-v10 -= v15
-v21 = v4[v10:v15]
-v20 = v21 + v12
-v30 = v2[v10:v15]
-v29 = v30 - v20
-v38 = v2[v10:v15]
-if v20 != v12
-goto l31
-v45 = v38 / v20
-if v45 == v12
+v9 = v2[v8:v10]
+v13 = v9 ~ v7
+v17 = v16 ~ v13
+v21 = v2[v10:v10]
+v25 = v21 ~ v17
+v29 = v16 ~ v25
+v33 = v2[v32:v10]
+v37 = v33 ~ v29
+print(v37)
+print(v43)
+v50 = v2[v49:v10]
+v54 = v50 ~ v7
+v58 = v16 ~ v54
+v62 = v2[v61:v10]
+v66 = v62 ~ v58
+v70 = v16 ~ v66
+v74 = v2[v73:v10]
+v78 = v74 ~ v70
+print(v78)
+print(v43)
+v91 = v2[v90:v10]
+v95 = v91 ~ v7
+v99 = v16 ~ v95
+v103 = v2[v102:v10]
+v107 = v103 ~ v99
+v111 = v16 ~ v107
+v115 = v2[v114:v10]
+v119 = v115 ~ v111
+print(v119)
+print(v123)
+v125 = input()
+print(v7)
+v131 = v125.length
+if v131 == v10
+goto l62
+v135 = 0
+goto l63
 
-BLOCK 31
+BLOCK 62
 
-v58 = v29 ~ v58
-goto l19
+v135 = 1
 
-BLOCK 33
+BLOCK 63
 
-v55 = 
-v59 = v58.length
-v63 = 0
+if v135 == v10
+goto l67
+print(v139)
+goto l25
 
-BLOCK 36
+BLOCK 67
 
-if v59 != v63
-goto l52
-v65 = v58[v63:v15]
-v63 += v15
-v75 = v55.length
-if v75 == v12
-v55 ~= v79
-v85 = 
+v151 = 0
 
-BLOCK 44
+BLOCK 68
 
-v89 = v65 % v6
-v93 = v89 + v87
-v85 = v93 ~ v85
-v65 /= v6
-if v65 == v12
-goto l44
-v55 ~= v85
-goto l36
-
-BLOCK 52
-
-v111 = v55 ~ v6
-print(v111)
-v330 = 0 0 0 0
-v120 = 230 236 145 1
-
-BLOCK 56
-
-v123 = 
-v125 = 4
-
-BLOCK 58
-
-if v125 != v12
-goto l86
-v125 -= v15
-v135 = v4[v125:v15]
-v140 = v121[v125:v15]
-v146 = v135 + v140
-v145 = v146 + v12
-v123 = v145 ~ v123
-if v140 == v12
-goto l70
-v158 = 0
+if v147 != v151
+goto l81
+v153 = v146[v151:v10]
+v151 += v10
+if v153 == v125
 goto l76
-
-BLOCK 70
-
-v164 = v135 / v140
-if v164 == v12
-goto l75
-v158 = 1
-goto l76
-
-BLOCK 75
-
-v158 = 0
+v164 = 1
+goto l77
 
 BLOCK 76
 
-if v158 == v15
-goto l80
-v157 = v135
-goto l81
+v164 = 0
 
-BLOCK 80
+BLOCK 77
 
-v157 = v140
+if v164 == v10
+goto l68
+v145 = 1
+goto l82
 
 BLOCK 81
 
-if v157 != v12
-goto l58
-v172 = v145 / v157
-if v172 == v12
-goto l58
+v145 = 0
+
+BLOCK 82
+
+if v145 == v32
+goto l86
+v171 = 1
+goto l87
 
 BLOCK 86
 
-v122 = v123
-v180 = 0
+v171 = 0
 
-BLOCK 88
+BLOCK 87
 
-if v180 != v126
-goto l114
-v184 = v180
-v180 += v15
-v190 = v122[v180:v15]
-v194 = v120[v180:v15]
-if v190 == v12
+if v171 == v10
+goto l91
+print(v139)
+goto l25
+
+BLOCK 91
+
+v181 = v125 - v180
+v187 = v2[v181:v10]
+if v187 == v220
+goto l97
+v192 = 0
 goto l98
-v198 = 0
-goto l104
+
+BLOCK 97
+
+v192 = 1
 
 BLOCK 98
 
-v201 = v194 / v190
-if v201 == v12
-goto l103
-v198 = 1
-goto l104
+if v192 == v10
+goto l102
+v185 = 1
+goto l211
 
-BLOCK 103
+BLOCK 102
 
-v198 = 0
+v196 = v4.length
+v198 = v181 + v196
+v202 = v2.length
+v204 = v2[v198:v202]
+v206 = v4 ~ v204
+v211 = v181 - v32
+v210 = v2[v32:v211]
+v2 = v210 ~ v206
+v222 = 0
 
-BLOCK 104
+BLOCK 111
 
-if v198 == v15
-goto l108
-v179 = 1
-goto l115
+if v222 != v73
+goto l174
+v226 = v222
+v222 += v10
+v233 = v2[v222:v10]
+if v233 == v220
+goto l120
+v238 = 1
+goto l121
 
-BLOCK 108
+BLOCK 120
 
-v210 = v122[v184:v15]
-v214 = v120[v184:v15]
-if v210 != v214
-goto l88
-v179 = 0
-goto l115
+v238 = 0
 
-BLOCK 114
+BLOCK 121
 
-v179 = 0
+if v238 != v10
+goto l111
+v242 = v226 + v114
+v246 = v2[v242:v10]
+v251 = v226 + v73
+v255 = v2[v251:v10]
+v259 = v255 + v246
+v263 = v2[v226:v10]
+v240 = v263 + v259
+if v240 == v90
+goto l134
+v279 = 1
+goto l135
 
-BLOCK 115
+BLOCK 134
 
-if v179 != v15
-goto l166
-v222 = 
-v224 = 4
+v279 = 0
 
-BLOCK 119
+BLOCK 135
 
-if v224 != v12
-goto l133
-v224 -= v15
-v235 = v4[v224:v15]
-v234 = v235 + v12
-v244 = v222[v224:v15]
-v243 = v244 - v234
-v252 = v222[v224:v15]
-if v234 != v12
-goto l131
-v259 = v252 / v234
-if v259 == v12
+if v279 == v10
+goto l139
+v221 = "X"
+goto l175
 
-BLOCK 131
+BLOCK 139
 
-v222 = v243 ~ v222
-goto l119
+if v240 == v284
+goto l143
+v290 = 1
+goto l144
 
-BLOCK 133
+BLOCK 143
 
-v120 = v222
-v271 = 
-v273 = 4
+v290 = 0
 
-BLOCK 136
+BLOCK 144
 
-if v273 != v12
-goto l164
-v273 -= v15
-v283 = v271[v273:v15]
-v288 = v121[v273:v15]
-v294 = v283 + v288
-v293 = v294 + v12
-v271 = v293 ~ v271
-if v288 == v12
+if v290 == v10
 goto l148
-v306 = 0
-goto l154
+v221 = "O"
+goto l175
 
 BLOCK 148
 
-v312 = v283 / v288
-if v312 == v12
-goto l153
-v306 = 1
-goto l154
+v293 = v226 * v73
+v301 = v293 + v73
+v305 = v2[v301:v10]
+v310 = v293 + v10
+v314 = v2[v310:v10]
+v318 = v314 + v305
+v322 = v2[v293:v10]
+v299 = v322 + v318
+if v299 == v90
+goto l160
+v338 = 1
+goto l161
 
-BLOCK 153
+BLOCK 160
 
-v306 = 0
+v338 = 0
 
-BLOCK 154
+BLOCK 161
 
-if v306 == v15
-goto l158
-v305 = v283
-goto l159
+if v338 == v10
+goto l165
+v221 = "X"
+goto l175
 
-BLOCK 158
+BLOCK 165
 
-v305 = v288
-
-BLOCK 159
-
-if v305 != v12
-goto l136
-v320 = v293 / v305
-if v320 == v12
-goto l136
-
-BLOCK 164
-
-v330 = v271
-goto l56
-
-BLOCK 166
-
-v327 = 
-v331 = v330.length
-v335 = 0
+if v299 == v284
+goto l169
+v349 = 1
+goto l170
 
 BLOCK 169
 
-if v331 != v335
-goto l185
-v337 = v330[v335:v15]
-v335 += v15
-v347 = v327.length
-if v347 == v12
-v327 ~= v79
-v357 = 
+v349 = 0
 
-BLOCK 177
+BLOCK 170
 
-v361 = v337 % v6
-v365 = v361 + v87
-v357 = v365 ~ v357
-v337 /= v6
-if v337 == v12
-goto l177
-v327 ~= v357
-goto l169
+if v349 == v10
+goto l111
+v221 = "O"
+goto l175
 
-BLOCK 185
+BLOCK 174
 
-v383 = v327 ~ v6
-print(v383)
-v602 = 230 236 145 1
+v221 = " "
 
-BLOCK 188
+BLOCK 175
 
-v395 = 
-v397 = 4
+if v221 == v220
+goto l179
+v355 = 0
+goto l180
 
-BLOCK 190
+BLOCK 179
 
-if v397 != v12
-goto l218
-v397 -= v15
-v407 = v4[v397:v15]
-v412 = v121[v397:v15]
-v418 = v407 + v412
-v417 = v418 + v12
-v395 = v417 ~ v395
-if v412 == v12
-goto l202
-v430 = 0
-goto l208
+v355 = 1
 
-BLOCK 202
+BLOCK 180
 
-v436 = v407 / v412
-if v436 == v12
-goto l207
-v430 = 1
-goto l208
+if v355 == v10
+goto l184
+print(v363)
+exit
 
-BLOCK 207
+BLOCK 184
 
-v430 = 0
+v371 = v2
+v372 = v2.length
+v376 = 0
 
-BLOCK 208
+BLOCK 187
 
-if v430 == v15
-goto l212
-v429 = v407
-goto l213
+if v372 != v376
+goto l200
+v378 = v371[v376:v10]
+v376 += v10
+if v378 == v220
+goto l195
+v389 = 1
+goto l196
 
-BLOCK 212
+BLOCK 195
 
-v429 = v412
+v389 = 0
 
-BLOCK 213
+BLOCK 196
 
-if v429 != v12
-goto l190
-v444 = v417 / v429
-if v444 == v12
-goto l190
+if v389 == v10
+goto l187
+v370 = 1
+goto l201
 
-BLOCK 218
+BLOCK 200
 
-v394 = v395
-v452 = 0
+v370 = 0
+
+BLOCK 201
+
+if v370 == v32
+goto l205
+v396 = 1
+goto l206
+
+BLOCK 205
+
+v396 = 0
+
+BLOCK 206
+
+if v396 == v10
+goto l210
+print(v400)
+exit
+
+BLOCK 210
+
+v185 = 0
+
+BLOCK 211
+
+if v185 == v10
+goto l215
+print(v410)
+goto l25
+
+BLOCK 215
+
+if v4 == v292
+goto l219
+v417 = 1
+goto l220
+
+BLOCK 219
+
+v417 = 0
 
 BLOCK 220
 
-if v452 != v126
-goto l246
-v456 = v452
-v452 += v15
-v462 = v394[v452:v15]
-v466 = v602[v452:v15]
-if v462 == v12
-goto l230
-v470 = 0
-goto l236
-
-BLOCK 230
-
-v473 = v466 / v462
-if v473 == v12
-goto l235
-v470 = 1
-goto l236
-
-BLOCK 235
-
-v470 = 0
-
-BLOCK 236
-
-if v470 == v15
-goto l240
-v451 = 1
-goto l247
-
-BLOCK 240
-
-v482 = v394[v456:v15]
-v486 = v602[v456:v15]
-if v482 != v486
-goto l220
-v451 = 0
-goto l247
-
-BLOCK 246
-
-v451 = 0
-
-BLOCK 247
-
-if v451 != v15
-goto l296
-v494 = 
-v496 = 4
-
-BLOCK 251
-
-if v496 != v12
-goto l265
-v496 -= v15
-v507 = v4[v496:v15]
-v506 = v507 + v12
-v516 = v494[v496:v15]
-v515 = v516 - v506
-v524 = v494[v496:v15]
-if v506 != v12
-goto l263
-v531 = v524 / v506
-if v531 == v12
-
-BLOCK 263
-
-v494 = v515 ~ v494
-goto l251
-
-BLOCK 265
-
-v602 = v494
-v543 = 
-v545 = 4
-
-BLOCK 268
-
-if v545 != v12
-goto l188
-v545 -= v15
-v555 = v543[v545:v15]
-v560 = v121[v545:v15]
-v566 = v555 + v560
-v565 = v566 + v12
-v543 = v565 ~ v543
-if v560 == v12
-goto l280
-v578 = 0
-goto l286
-
-BLOCK 280
-
-v584 = v555 / v560
-if v584 == v12
-goto l285
-v578 = 1
-goto l286
-
-BLOCK 285
-
-v578 = 0
-
-BLOCK 286
-
-if v578 == v15
-goto l290
-v577 = v555
-goto l291
-
-BLOCK 290
-
-v577 = v560
-
-BLOCK 291
-
-if v577 != v12
-goto l268
-v592 = v565 / v577
-if v592 == v12
-goto l268
-
-BLOCK 296
-
-v599 = 
-v603 = v602.length
-v607 = 0
-
-BLOCK 299
-
-if v603 != v607
-goto l315
-v609 = v602[v607:v15]
-v607 += v15
-v619 = v599.length
-if v619 == v12
-v599 ~= v79
-v629 = 
-
-BLOCK 307
-
-v633 = v609 % v6
-v637 = v633 + v87
-v629 = v637 ~ v629
-v609 /= v6
-if v609 == v12
-goto l307
-v599 ~= v629
-goto l299
-
-BLOCK 315
-
-v655 = v599 ~ v6
-print(v655)
-v661 = 
-v664 = ";" 154 202 0
-
-BLOCK 319
-
-v668 = 
-v670 = v661
-v671 = v661.length
-v675 = 0
-
-BLOCK 323
-
-if v671 != v675
-goto l339
-v677 = v670[v675:v15]
-v675 += v15
-v687 = v668.length
-if v687 == v12
-v668 ~= v79
-v697 = 
-
-BLOCK 331
-
-v701 = v677 % v6
-v705 = v701 + v87
-v697 = v705 ~ v697
-v677 /= v6
-if v677 == v12
-goto l331
-v668 ~= v697
-goto l323
-
-BLOCK 339
-
-v667 = v668
-v725 = 
-v727 = v664
-v728 = v664.length
-v732 = 0
-
-BLOCK 344
-
-if v728 != v732
-goto l360
-v734 = v727[v732:v15]
-v732 += v15
-v744 = v725.length
-if v744 == v12
-v725 ~= v79
-v754 = 
-
-BLOCK 352
-
-v758 = v734 % v6
-v762 = v758 + v87
-v754 = v762 ~ v754
-v734 /= v6
-if v734 == v12
-goto l352
-v725 ~= v754
-goto l344
-
-BLOCK 360
-
-v780 = v725 ~ v723
-v784 = v780 ~ v667
-v788 = v784 ~ v6
-print(v788)
-print(v798)
-v804 = v2
-
-BLOCK 366
-
-v807 = 
-v809 = 4
-
-BLOCK 368
-
-if v809 != v12
-goto l396
-v809 -= v15
-v819 = v664[v809:v15]
-v824 = v121[v809:v15]
-v830 = v819 + v824
-v829 = v830 + v12
-v807 = v829 ~ v807
-if v824 == v12
-goto l380
-v842 = 0
-goto l386
-
-BLOCK 380
-
-v848 = v819 / v824
-if v848 == v12
-goto l385
-v842 = 1
-goto l386
-
-BLOCK 385
-
-v842 = 0
-
-BLOCK 386
-
-if v842 == v15
-goto l390
-v841 = v819
-goto l391
-
-BLOCK 390
-
-v841 = v824
-
-BLOCK 391
-
-if v841 != v12
-goto l368
-v856 = v829 / v841
-if v856 == v12
-goto l368
-
-BLOCK 396
-
-v806 = v807
-v864 = 0
-
-BLOCK 398
-
-if v864 != v126
-goto l424
-v868 = v864
-v864 += v15
-v874 = v806[v864:v15]
-v878 = v804[v864:v15]
-if v874 == v12
-goto l408
-v882 = 0
-goto l414
-
-BLOCK 408
-
-v885 = v878 / v874
-if v885 == v12
-goto l413
-v882 = 1
-goto l414
-
-BLOCK 413
-
-v882 = 0
-
-BLOCK 414
-
-if v882 == v15
-goto l418
-v863 = 1
-goto l425
-
-BLOCK 418
-
-v894 = v806[v868:v15]
-v898 = v804[v868:v15]
-if v894 != v898
-goto l398
-v863 = 0
-goto l425
-
-BLOCK 424
-
-v863 = 0
-
-BLOCK 425
-
-if v863 != v15
-goto l474
-v906 = 
-v908 = 4
-
-BLOCK 429
-
-if v908 != v12
-goto l443
-v908 -= v15
-v919 = v664[v908:v15]
-v918 = v919 + v12
-v928 = v906[v908:v15]
-v927 = v928 - v918
-v936 = v906[v908:v15]
-if v918 != v12
-goto l441
-v943 = v936 / v918
-if v943 == v12
-
-BLOCK 441
-
-v906 = v927 ~ v906
-goto l429
-
-BLOCK 443
-
-v804 = v906
-v955 = 
-v957 = 4
-
-BLOCK 446
-
-if v957 != v12
-goto l366
-v957 -= v15
-v967 = v955[v957:v15]
-v972 = v121[v957:v15]
-v978 = v967 + v972
-v977 = v978 + v12
-v955 = v977 ~ v955
-if v972 == v12
-goto l458
-v990 = 0
-goto l464
-
-BLOCK 458
-
-v996 = v967 / v972
-if v996 == v12
-goto l463
-v990 = 1
-goto l464
-
-BLOCK 463
-
-v990 = 0
-
-BLOCK 464
-
-if v990 == v15
-goto l468
-v989 = v967
-goto l469
-
-BLOCK 468
-
-v989 = v972
-
-BLOCK 469
-
-if v989 != v12
-goto l446
-v1004 = v977 / v989
-if v1004 == v12
-goto l446
-
-BLOCK 474
-
-v1011 = v804[v800:v15]
-v661 ~= v1011
-print(v1024)
-v1027 = 0 0 0 0
-v1029 = v2
-
-BLOCK 479
-
-v1032 = 
-v1034 = 4
-
-BLOCK 481
-
-if v1034 != v12
-goto l509
-v1034 -= v15
-v1044 = v664[v1034:v15]
-v1049 = v121[v1034:v15]
-v1055 = v1044 + v1049
-v1054 = v1055 + v12
-v1032 = v1054 ~ v1032
-if v1049 == v12
-goto l493
-v1067 = 0
-goto l499
-
-BLOCK 493
-
-v1073 = v1044 / v1049
-if v1073 == v12
-goto l498
-v1067 = 1
-goto l499
-
-BLOCK 498
-
-v1067 = 0
-
-BLOCK 499
-
-if v1067 == v15
-goto l503
-v1066 = v1044
-goto l504
-
-BLOCK 503
-
-v1066 = v1049
-
-BLOCK 504
-
-if v1066 != v12
-goto l481
-v1081 = v1054 / v1066
-if v1081 == v12
-goto l481
-
-BLOCK 509
-
-v1031 = v1032
-v1089 = 0
-
-BLOCK 511
-
-if v1089 != v126
-goto l537
-v1093 = v1089
-v1089 += v15
-v1099 = v1031[v1089:v15]
-v1103 = v1029[v1089:v15]
-if v1099 == v12
-goto l521
-v1107 = 0
-goto l527
-
-BLOCK 521
-
-v1110 = v1103 / v1099
-if v1110 == v12
-goto l526
-v1107 = 1
-goto l527
-
-BLOCK 526
-
-v1107 = 0
-
-BLOCK 527
-
-if v1107 == v15
-goto l531
-v1088 = 1
-goto l538
-
-BLOCK 531
-
-v1119 = v1031[v1093:v15]
-v1123 = v1029[v1093:v15]
-if v1119 != v1123
-goto l511
-v1088 = 0
-goto l538
-
-BLOCK 537
-
-v1088 = 0
-
-BLOCK 538
-
-if v1088 != v15
-goto l589
-v1131 = 
-v1133 = 4
-
-BLOCK 542
-
-if v1133 != v12
-goto l556
-v1133 -= v15
-v1144 = v664[v1133:v15]
-v1143 = v1144 + v12
-v1153 = v1131[v1133:v15]
-v1152 = v1153 - v1143
-v1161 = v1131[v1133:v15]
-if v1143 != v12
-goto l554
-v1168 = v1161 / v1143
-if v1168 == v12
-
-BLOCK 554
-
-v1131 = v1152 ~ v1131
-goto l542
-
-BLOCK 556
-
-v1029 = v1131
-v1180 = 
-v1182 = 4
-
-BLOCK 559
-
-if v1182 != v12
-goto l587
-v1182 -= v15
-v1192 = v1180[v1182:v15]
-v1197 = v121[v1182:v15]
-v1203 = v1192 + v1197
-v1202 = v1203 + v12
-v1180 = v1202 ~ v1180
-if v1197 == v12
-goto l571
-v1215 = 0
-goto l577
-
-BLOCK 571
-
-v1221 = v1192 / v1197
-if v1221 == v12
-goto l576
-v1215 = 1
-goto l577
-
-BLOCK 576
-
-v1215 = 0
-
-BLOCK 577
-
-if v1215 == v15
-goto l581
-v1214 = v1192
-goto l582
-
-BLOCK 581
-
-v1214 = v1197
-
-BLOCK 582
-
-if v1214 != v12
-goto l559
-v1229 = v1202 / v1214
-if v1229 == v12
-goto l559
-
-BLOCK 587
-
-v1027 = v1180
-goto l479
-
-BLOCK 589
-
-v2 = v1027
-print(v1241)
-v1245 = 0 0 0 0
-v1247 = v664
-
-BLOCK 593
-
-v1250 = 
-v1252 = 4
-
-BLOCK 595
-
-if v1252 != v12
-goto l623
-v1252 -= v15
-v1262 = v1243[v1252:v15]
-v1267 = v121[v1252:v15]
-v1273 = v1262 + v1267
-v1272 = v1273 + v12
-v1250 = v1272 ~ v1250
-if v1267 == v12
-goto l607
-v1285 = 0
-goto l613
-
-BLOCK 607
-
-v1291 = v1262 / v1267
-if v1291 == v12
-goto l612
-v1285 = 1
-goto l613
-
-BLOCK 612
-
-v1285 = 0
-
-BLOCK 613
-
-if v1285 == v15
-goto l617
-v1284 = v1262
-goto l618
-
-BLOCK 617
-
-v1284 = v1267
-
-BLOCK 618
-
-if v1284 != v12
-goto l595
-v1299 = v1272 / v1284
-if v1299 == v12
-goto l595
-
-BLOCK 623
-
-v1249 = v1250
-v1307 = 0
-
-BLOCK 625
-
-if v1307 != v126
-goto l651
-v1311 = v1307
-v1307 += v15
-v1317 = v1249[v1307:v15]
-v1321 = v1247[v1307:v15]
-if v1317 == v12
-goto l635
-v1325 = 0
-goto l641
-
-BLOCK 635
-
-v1328 = v1321 / v1317
-if v1328 == v12
-goto l640
-v1325 = 1
-goto l641
-
-BLOCK 640
-
-v1325 = 0
-
-BLOCK 641
-
-if v1325 == v15
-goto l645
-v1306 = 1
-goto l652
-
-BLOCK 645
-
-v1337 = v1249[v1311:v15]
-v1341 = v1247[v1311:v15]
-if v1337 != v1341
-goto l625
-v1306 = 0
-goto l652
-
-BLOCK 651
-
-v1306 = 0
-
-BLOCK 652
-
-if v1306 != v15
-goto l703
-v1349 = 
-v1351 = 4
-
-BLOCK 656
-
-if v1351 != v12
-goto l670
-v1351 -= v15
-v1362 = v1243[v1351:v15]
-v1361 = v1362 + v12
-v1371 = v1349[v1351:v15]
-v1370 = v1371 - v1361
-v1379 = v1349[v1351:v15]
-if v1361 != v12
-goto l668
-v1386 = v1379 / v1361
-if v1386 == v12
-
-BLOCK 668
-
-v1349 = v1370 ~ v1349
-goto l656
-
-BLOCK 670
-
-v1247 = v1349
-v1398 = 
-v1400 = 4
-
-BLOCK 673
-
-if v1400 != v12
-goto l701
-v1400 -= v15
-v1410 = v1398[v1400:v15]
-v1415 = v121[v1400:v15]
-v1421 = v1410 + v1415
-v1420 = v1421 + v12
-v1398 = v1420 ~ v1398
-if v1415 == v12
-goto l685
-v1433 = 0
-goto l691
-
-BLOCK 685
-
-v1439 = v1410 / v1415
-if v1439 == v12
-goto l690
-v1433 = 1
-goto l691
-
-BLOCK 690
-
-v1433 = 0
-
-BLOCK 691
-
-if v1433 == v15
-goto l695
-v1432 = v1410
-goto l696
-
-BLOCK 695
-
-v1432 = v1415
-
-BLOCK 696
-
-if v1432 != v12
-goto l673
-v1447 = v1420 / v1432
-if v1447 == v12
-goto l673
-
-BLOCK 701
-
-v1245 = v1398
-goto l593
-
-BLOCK 703
-
-v664 = v1245
-print(v1459)
-if v1245 == v803
-goto l319
-v1462 = v661 ~ v6
-print(v1462)
-exit
+if v417 == v10
+goto l224
+v4 = "X"
+goto l25
+
+BLOCK 224
+
+v4 = "O"
+goto l25

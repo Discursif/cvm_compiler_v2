@@ -24,12 +24,12 @@ pub fn parse_instructions(
         Rule::if_statement => {
             let st= to_static(&cvm);
             let mut inner = cvm.into_inner();
-            let (a, b, c) = inner.extract(&*context)?;
+            let expr: Expression = parse_expression(inner.next().unwrap(), context)?;
             Instruction::If(
-                st,
-                a,
-                b,
-                c,
+                st.clone(),
+                expr,
+                true,
+                Expression::VariantAccess(st.clone(), box Expression::Type(st, "Boolean".to_owned()),"true".to_owned()),
                 inner.extract(&mut *context)?,
                 if let Some(e) = inner.next() {
                     Some(e.extract(&mut *context)?)
@@ -78,7 +78,6 @@ pub fn parse_instructions(
                     )
                 } else {
                     let mut a = a.into_inner();
-                    println!("{}",a);
                     let i = context
                         .variables
                         .get(&a.extract::<String, ()>(())?)
@@ -121,7 +120,6 @@ pub fn parse_instructions(
                     )
                 } else {
                     let mut a = a.into_inner();
-                    println!("{}",a);
                     let b = context
                         .variables
                         .get(&a.extract::<String, ()>(())?)
@@ -172,7 +170,7 @@ pub fn parse_instructions(
             }
         }
         Rule::asm_statement => {
-            Instruction::AsmStatement(to_static(&cvm),cvm.into_inner().map(|x| x.extract(&mut *context)).collect::<Result<_>>()?)
+            Instruction::AsmStatement(to_static(&cvm),cvm.into_inner().extract(&mut *context)?)
         }
         e => {
             panic!("Unexpected token in instruction {:?}", e)
@@ -280,7 +278,6 @@ pub fn parse_type_insides(inside: Pair<Rule>, context: &mut CompilationContext, 
             .unwrap()
             .variants
             .insert(ref_name.to_owned(), ref_value);
-        //println!("REFERING1");
     } else {
         panic!("Invalid type_inside token {:?}", inside)
     }

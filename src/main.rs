@@ -130,13 +130,6 @@ fn main() {
             println!("{}",e);
         }
     };
-    // context.types.insert(ANY_TYPE.to_owned(), Type {
-    //     functions: HashMap::new(),
-    //     allowed_from: Vec::new(),
-    //     static_functions: HashMap::new(),
-    // });
-
-    context.types.iter().for_each(|(x,y)| println!("{} {}",x,y.parent));
 
     let func = context
         .functions

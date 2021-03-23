@@ -33,7 +33,7 @@ type Table = 9 {
             print(char~" has won!"~10);
             exit();
         }
-        if !self.contains(" ") {
+        if !(self.contains(" ")) {
             print("Nobody won!"~10);
             exit();
         }
@@ -58,7 +58,7 @@ fn main() {
         Byte a = a as Byte; // Now that we know that a as for length 1 we can transmute memory safely
 
         // We check if `a` is a number
-        if !"123456789".contains(a) {
+        if !("123456789".contains(a)) {
             print("Invalid input"~10);
             continue;
         }

@@ -64,30 +64,30 @@ impl Counter {
 
 impl IrAsm {
 
-    fn count_reads(&self, var: usize) -> usize {
-        let ie = |x: &usize| -> usize {
-            if *x == var {
-                1
-            } else {
-                0
-            }
-        };
-        match self {
-            IrAsm::Op(_, _, a, b)  => ie(a) + ie(b),
-            IrAsm::If(a, b, c, d) => {
-                ie(a) + ie(b) + c.iter().map(|x| x.count_reads(var)).sum::<usize>() + d.iter().map(|x| x.count_reads(var)).sum::<usize>()
-            },
-            IrAsm::End | IrAsm::Break() | IrAsm::Continue() | IrAsm::Inp(_) | IrAsm::Cst(_, _) | IrAsm::Nop => 0,
-            IrAsm::Loop(e) => {
-                e.iter().map(|x| x.count_reads(var)).sum()
-            },
-            IrAsm::FunctionBlock(_, e) => {
-                e.iter().map(|x| x.count_reads(var)).sum()
-            }
-            IrAsm::Return(a) | IrAsm::Prt(a) | IrAsm::Mov(_, a) | IrAsm::Len(_, a) => ie(a),
-            IrAsm::Read(_, a, b, c) => ie(a) + ie(b) + ie(c),
-        }
-    }
+    // fn count_reads(&self, var: usize) -> usize {
+    //     let ie = |x: &usize| -> usize {
+    //         if *x == var {
+    //             1
+    //         } else {
+    //             0
+    //         }
+    //     };
+    //     match self {
+    //         IrAsm::Op(_, _, a, b)  => ie(a) + ie(b),
+    //         IrAsm::If(a, b, c, d) => {
+    //             ie(a) + ie(b) + c.iter().map(|x| x.count_reads(var)).sum::<usize>() + d.iter().map(|x| x.count_reads(var)).sum::<usize>()
+    //         },
+    //         IrAsm::End | IrAsm::Break() | IrAsm::Continue() | IrAsm::Inp(_) | IrAsm::Cst(_, _) | IrAsm::Nop => 0,
+    //         IrAsm::Loop(e) => {
+    //             e.iter().map(|x| x.count_reads(var)).sum()
+    //         },
+    //         IrAsm::FunctionBlock(_, e) => {
+    //             e.iter().map(|x| x.count_reads(var)).sum()
+    //         }
+    //         IrAsm::Return(a) | IrAsm::Prt(a) | IrAsm::Mov(_, a) | IrAsm::Len(_, a) => ie(a),
+    //         IrAsm::Read(_, a, b, c) => ie(a) + ie(b) + ie(c),
+    //     }
+    // }
 
     fn is_inlinable(&self, is_out: bool) -> bool {
         match self {
@@ -112,9 +112,7 @@ impl IrAsm {
             IrAsm::Break() => true,
             IrAsm::Continue() => true,
             IrAsm::FunctionBlock(_, _) => true,
-            IrAsm::Return(e) => {
-                is_out
-            },
+            IrAsm::Return(_) => is_out,
             IrAsm::Prt(_) => true,
             IrAsm::Inp(_) => true,
             IrAsm::Cst(_, _) => true,
@@ -613,7 +611,6 @@ pub fn elide_unused_writes(i: Vec<IrAsm>) -> Vec<IrAsm> {
 //     i.into_iter().flat_map(|x| {
 //         if let Some(e) = x.get_write() {
 //             if refs.contains(&e) {
-//                 println!("{} elided",e);
 //                 return None;
 //             }
 //         }

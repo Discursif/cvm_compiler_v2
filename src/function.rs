@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fmt::Display};
 
-use crate::{ANY_TYPE, CVMCompCtx, CompilationContext, cvmir::IrAsm, error::ParseError, instruction::Instruction, types::Type, variable::Variable};
+use crate::{CVMCompCtx, CompilationContext, cvmir::IrAsm, error::ParseError, instruction::Instruction, types::Type, variable::Variable};
 
 #[derive(Debug, Clone)]
 pub struct Function {

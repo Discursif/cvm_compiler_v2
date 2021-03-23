@@ -15,7 +15,7 @@ literal = {literal_char+}
 
 // Tokens
 
-operand = _{ add | subtract | multiply | divide | xor | merge | modulo}
+operand = _{ double_equal | not_equal | add | subtract | multiply | divide | xor | merge | modulo | lower_equals | boolean_and | greater_equals | boolean_or | greater | lower }
 add      = { whitespace* ~ "+" ~ whitespace* }
 subtract = { whitespace* ~ "-" ~ whitespace* }
 modulo   = { whitespace* ~ "%" ~ whitespace* }
@@ -24,6 +24,12 @@ divide   = { whitespace* ~ "/" ~ whitespace* }
 xor      = { whitespace* ~ "^" ~ whitespace* }
 merge    = { whitespace* ~ "~" ~ whitespace* }
 not    = { whitespace* ~ "!" ~ whitespace* }
+lower    = { whitespace* ~ "<" ~ whitespace* }
+greater    = { whitespace* ~ ">" ~ whitespace* }
+lower_equals    = { whitespace* ~ "<=" ~ whitespace* }
+greater_equals    = { whitespace* ~ ">=" ~ whitespace* }
+boolean_and    = { whitespace* ~ "&&" ~ whitespace* }
+boolean_or    = { whitespace* ~ "||" ~ whitespace* }
 dot = _{ whitespace* ~ "." ~ whitespace* }
 double_dots = _{ whitespace* ~ ":" ~ whitespace* }
 cdot = _{ whitespace* ~ "." ~ whitespace* }
@@ -65,7 +71,7 @@ function_call = {literal~left_parenthesis~terms~right_parenthesis}
 variant_access = {cdot ~ literal}
 operation = {operand ~ expr}
 
-expr = { term ~indexing?~(method_call | variant_access)?~(method_call | indexing)* ~ operation* ~ (keyword_as ~ literal)?}
+expr = { (not | empty_operator) ~ term ~indexing?~(method_call | variant_access)?~(method_call | indexing)* ~ operation* ~ (keyword_as ~ literal)?}
 term = _{ data | left_parenthesis ~ expr ~right_parenthesis }
 terms = {(expr ~ (comma~expr)*)?}
 method_call = {dot ~ literal~left_parenthesis~terms~right_parenthesis}
@@ -81,9 +87,9 @@ break_instruction = {whitespace*~"break"~whitespace*}
 comment_char = {!"\n" ~ ANY}
 comment = {"//" ~ comment_char* ~ "\n"}
 
-boolean_test = {(not | empty_operator) ~ expr ~ ((double_equal | not_equal) ~ expr)?}
+//boolean_test = {(not | empty_operator) ~ expr ~ ((double_equal | not_equal) ~ expr)?}
 
-if_statement = {keyword_if~boolean_test~code_block~(keyword_else ~ code_block)?}
+if_statement = {keyword_if~expr~code_block~(keyword_else ~ code_block)?}
 
 use_statement = {keyword_use~string~semicolon?}
 
@@ -122,21 +128,25 @@ line = {SOI ~ file ~ EOI}
 
 // ASM 
 asm_keyword= _{whitespace* ~ "asm"~whitespace*}
-asm_instruction = {whitespace* ~ (i_zero | i_one | i_two | i_three | i_four) ~ semicolon ~ whitespace*}
+asm_instruction = {whitespace* ~ (asm_if | asm_const | i_zero | i_one | i_two | i_three | i_four) ~ semicolon? ~ whitespace*}
 asm_local = {"$"~literal}
 asm_variable = {whitespace*~(typed_var | asm_local | literal)~whitespace*}
 asm_two_arg = _{asm_variable~ "," ~ asm_variable}
 asm_three_arg = _{asm_two_arg~ "," ~ asm_variable}
 asm_four_arg = _{asm_three_arg~ "," ~ asm_variable}
-asm_second_type = {"MOV" | "IF" | "IFN" | "LEN"}
+asm_second_type = {"MOV" | "LEN"}
 i_two = {asm_second_type~" " ~ asm_two_arg}
+asm_const = {"CONST"~asm_variable~","~whitespace* ~(number_array | string) ~ whitespace*}
 asm_three_type = {"ADD" | "SUB" | "MUL" | "DIV" | "XOR" | "MERGE" | "AND" | "MOD"}
 i_three = {asm_three_type~" "~asm_three_arg}
 asm_four_type = {"READ"}
 i_four = {asm_four_type~" "~asm_four_arg}
-asm_one_type = {"INPUT" | "PRINT"}
+asm_one_type = {"INPUT" | "PRINT" | "RETURN"}
 i_one = {asm_one_type ~ asm_variable}
-i_zero = {"END" | "NOOP"}
-asm_statement = {asm_keyword ~ left_bracket ~ asm_instruction* ~  right_bracket}
+i_zero = {"END" | "NOOP" | "CONTINUE" | "BREAK"}
+asm_block = {left_bracket ~ asm_instruction* ~  right_bracket}
+asm_else = {whitespace*~"ELSE" ~ asm_block}
+asm_if = {"IF"~asm_two_arg~asm_block~(asm_else|empty_operator)}
+asm_statement = {asm_keyword ~ asm_block}
 
 pest_test = {SOI ~ expr ~ EOI}
