@@ -16,7 +16,7 @@ type u32 = 4 {
             // We add them together with reminder
             Byte c = a + b + rem;
             out = c ~ out;
-            rem = c.lower(a.min(b)) as Byte;
+            rem = (c < a.min(b)) as Byte;
         }
         return out as u32;
     }
@@ -34,7 +34,7 @@ type u32 = 4 {
             Byte t = other[p] + rem;
             Byte ele = self[p] - t;
 
-            rem = self[p].lower(t) as Byte;
+            rem = self[p] < t as Byte;
 
             out = ele ~ out;
         }
@@ -75,7 +75,7 @@ type u32 = 4 {
         u32 active = self;
 
         loop {
-            if active.lower(other + u32.one) {
+            if active < other + u32.one {
                 break;
             }
             print((active as Bytes).to_string() ~ " - " ~ (other as Bytes).to_string() ~ " = ");
@@ -92,7 +92,7 @@ type u32 = 4 {
         u32 out = u32.null;
         u32 active = self;
         loop {
-            if active.lower(other + (u32.one)) {
+            if active < other + (u32.one) {
                 break;
             }
             active -= other;
@@ -103,7 +103,7 @@ type u32 = 4 {
 
     fn lower(u32 other) -> Boolean {
         for Byte i in 0..4 {
-            if self[i].lower(other[i]) {
+            if self[i] < other[i] {
                 return Boolean.true;
             }
             if other[i] != self[i] {

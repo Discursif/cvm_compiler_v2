@@ -9,9 +9,7 @@ type Byte = 1 {
     fn index(Byte position) -> Panic {}
     fn index_range(Byte position1,Byte position2) -> Panic {}
     fn len() -> Byte => return 1;
-    fn lower(Char other) -> Boolean {
-        return self.lower(other as Byte);
-    }
+    // OPTIMIZE THAT LATER WITH ASM
     fn lower(Byte other) -> Boolean {
         if other == 0 {
             return Boolean.false;
@@ -23,6 +21,7 @@ type Byte = 1 {
             }
         }
     }
+    // OPTIMIZE THAT LATER WITH ASM
     fn greater(Byte other) -> Boolean {
         if self == 0 {
             return Boolean.false;
@@ -33,6 +32,14 @@ type Byte = 1 {
                 return Boolean.false;
             }
         }
+    }
+    fn greater_equals(Byte other) -> Boolean {
+        if other == self => return Boolean.true;
+        return self > other;
+    }
+    fn lower_equals(Byte other) -> Boolean {
+        if other == self => return Boolean.true;
+        return self < other;
     }
     fn min(Byte other) -> Byte {
         if self.lower(other) => return self;

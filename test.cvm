@@ -1,26 +1,10 @@
 use "lib/std";
 
-fn test(Bytes a, Bytes byte) -> Boolean {
-    for Byte i in a {
-        if i == byte => return Boolean.true;
-    }
-    return Boolean.false;
-}
-
 fn main() {
-        // Bytes a = input(); // We get the input
-        // // We check if `a` is a number
-        // for Byte i in "123456789" {
-        //     if i == a {
-        //         print("Valid");
-        //         exit();
-        //     }
-        // }
-        // print("Invalid input"~10);
-        Bytes a = input();
-        if test("abcd",a) {
-            print("Valid");
-        } else {
-            print("Not valid");
-        }
+    u32 a = u32.null;
+    a += (14 2 1 7 as u32);
+    a += (140 20 10 70 as u32);
+    if a < (140 20 10 70 as u32) {
+        print("test");
+    }
 }

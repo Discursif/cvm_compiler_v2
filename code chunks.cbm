@@ -1,28 +1,28 @@
 BLOCK 0
 
+v292 = "O"
+v284 = 237
 v10 = 1
 v43 = "---------" 10
-v90 = 8
-v102 = 7
-v7 = 10
-v8 = 2
-v16 = " | "
-v32 = 0
-v220 = " "
-v114 = 6
-v123 = "Enter a position to play in : "
-v410 = "Aldready something placed here" 10
-v284 = 237
-v180 = "1"
 v147 = 9
-v61 = 4
-v292 = "O"
-v139 = "Invalid input" 10
-v363 = "  has won!" 10
-v146 = "123456789"
+v7 = 10
 v400 = "Nobody won!" 10
 v49 = 5
+v146 = "123456789"
+v102 = 7
+v32 = 0
 v73 = 3
+v90 = 8
+v220 = " "
+v61 = 4
+v123 = "Enter a position to play in : "
+v363 = "  has won!" 10
+v139 = "Invalid input" 10
+v16 = " | "
+v410 = "Aldready something placed here" 10
+v180 = "1"
+v8 = 2
+v114 = 6
 v2 = "         "
 v4 = "X"
 
@@ -221,7 +221,7 @@ goto l175
 BLOCK 148
 
 v293 = v226 * v73
-v301 = v293 + v73
+v301 = v293 + v8
 v305 = v2[v301:v10]
 v310 = v293 + v10
 v314 = v2[v310:v10]

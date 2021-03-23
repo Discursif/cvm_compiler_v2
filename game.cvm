@@ -18,7 +18,7 @@ type Table = 9 {
             if added == "X" * 3 => return "X";
             if added == "O" * 3 => return "O";
             Byte times3 = i * 3;
-            Byte added1 = self[times3] + self[times3 + 1] + self[times3 + 3];
+            Byte added1 = self[times3] + self[times3 + 1] + self[times3 + 2];
             if added1 == "X" * 3 => return "X";
             if added1 == "O" * 3 => return "O";
         }
