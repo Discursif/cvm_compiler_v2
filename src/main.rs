@@ -17,7 +17,7 @@ pub mod cvmir;
 pub mod error;
 
 use asm::Asm;
-use cvmir::{Counter, IrAsm, Optimizer, VariableManager, elide_unused_writes, remove_followed_usages};
+use cvmir::{Counter, IrAsm, Optimizer, VariableManager, computer, elide_unused_writes, if_cleaner, remove_followed_usages};
 use error::ParseError;
 use expression::*;
 use function::{Function, Functions};
@@ -160,9 +160,13 @@ fn main() {
         cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
         cctx.instructions = elide_unused_writes(cctx.instructions);
         cctx.instructions = remove_followed_usages(cctx.instructions, None);
+        cctx.instructions = cvmir::regroup_consts::optimize(cctx.instructions);
+        cctx.instructions = computer::optimize( cctx.instructions);
+        cctx.instructions = if_cleaner::optimize( cctx.instructions);
     }
     let mut counter = Counter::default();
     let mut fors = Vec::new();
+    std::fs::write("struct.optimized.mlasm.cbm", format!("vec![{}]",cctx.instructions.iter().map(|x| format!("{:?}",x)).collect::<Vec<_>>().join(", "))).unwrap();
     std::fs::write("new.optimized.mlasm.cbm", cctx.instructions.iter().map(|x| format!("{}",x)).collect::<Vec<_>>().join("\n")).unwrap();
     let asm: Vec<Asm> = cctx.instructions.into_iter().map(|x| x.to_asm(&mut counter, &mut fors, None)).flatten().collect();
     std::fs::write("new.llasm.cbm", asm.iter().enumerate().map(|(x,y)| format!("l{} {}",x,y)).collect::<Vec<_>>().join("\n")).unwrap();

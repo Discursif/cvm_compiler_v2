@@ -22,6 +22,12 @@ type Table = 9 {
             if added1 == "X" * 3 => return "X";
             if added1 == "O" * 3 => return "O";
         }
+        Byte added2 = self[0] + self[4] + self[8];
+        if added2 == "X" * 3 => return "X";
+        if added2 == "O" * 3 => return "O";
+        Byte added3 = self[2] + self[4] + self[6];
+        if added3 == "X" * 3 => return "X";
+        if added3 == "O" * 3 => return "O";
         return " "
     }
 

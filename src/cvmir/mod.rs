@@ -1,10 +1,14 @@
-use std::{collections::{HashMap, HashSet}, fmt::Display, rc::Rc};
+use std::{collections::{HashMap, HashSet}, fmt::{Debug, Display}, rc::Rc};
 
 use crate::asm::{Asm, OperationType};
 
 type Variable = usize;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub mod regroup_consts;
+pub mod computer;
+pub mod if_cleaner;
+
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IrAsm {
     Op(OperationType, Variable, Variable, Variable),
     End,
@@ -23,13 +27,71 @@ pub enum IrAsm {
     Nop,
 }
 
+impl Debug for IrAsm {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            IrAsm::Op(a, b, c, d) => {
+                write!(f, "IrAsm::Op(OperationType::{:?}, {}, {}, {})",a,b,c,d)
+            }
+            IrAsm::End => {
+                write!(f, "IrAsm::End")
+            }
+            IrAsm::If(a, b, c, d) => {
+                write!(f, "IrAsm::If({}, {}, vec![{}], vec![{}])",a,b,c.iter().map(|x| format!("{:?}", x)).collect::<Vec<_>>().join(", "),d.iter().map(|x| format!("{:?}", x)).collect::<Vec<_>>().join(", "))
+            }
+            IrAsm::Loop(c) => {
+                write!(f, "IrAsm::Loop(vec![{}])", c.iter().map(|x| format!("{:?}", x)).collect::<Vec<_>>().join(", "))
+            }
+            IrAsm::Break() => {
+                write!(f,"IrAsm::Break()")
+            }
+            IrAsm::Continue() => {
+                write!(f,"IrAsm::Continue()")}
+            IrAsm::FunctionBlock(a, b) => {
+                write!(f,"IrAsm::FunctionBlock({}, vec![{}])",a,b.iter().map(|x| format!("{:?}", x)).collect::<Vec<_>>().join(", "))
+            }
+            IrAsm::Return(a) => {
+                write!(f,"IrAsm::Return({})",a)
+            }
+            IrAsm::Prt(a) => {
+                write!(f,"IrAsm::Prt({})",a)
+            }
+            IrAsm::Inp(a) => {
+                write!(f,"IrAsm::Inp({})",a)
+            }
+            IrAsm::Cst(a, b) => {
+                write!(f,"IrAsm::Cst({}, vec![{}])",a,b.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(", "))
+            }
+            IrAsm::Mov(a, b) => {
+                write!(f,"IrAsm::Mov({}, {})",a,b)
+            }
+            IrAsm::Len(a, b) => {
+                write!(f,"IrAsm::Len({}, {})",a,b)
+            }
+            IrAsm::Read(a, b,c,d) => {
+                write!(f,"IrAsm::Read({}, {}, {}, {})",a,b,c,d)
+            }
+            IrAsm::Nop => {
+                write!(f,"IrAsm::NoOp")
+            }
+        }
+    }
+}
+
 impl Display for IrAsm {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             IrAsm::Op(a, b, c, d) => write!(f,"v{} = v{} {} v{}",b,c,a.as_operator(),d),
             IrAsm::End => write!(f,"end"),
             IrAsm::If(a, b, c, d) => {
-                write!(f,"if v{} == v{} {{\n  {}\n}} else {{\n  {}\n}}",a,b,c.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "),d.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "))
+                if c.is_empty() {
+                    write!(f,"if v{} != v{} {{\n  {}\n}}",a,b,d.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "))
+                } else if d.is_empty() {
+                    write!(f,"if v{} == v{} {{\n  {}\n}}",a,b,c.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "))
+                } else {
+                    write!(f,"if v{} == v{} {{\n  {}\n}} else {{\n  {}\n}}",a,b,c.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "),d.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "))
+                }
+                
             }
             IrAsm::Loop(e) => {
                 write!(f,"loop {{\n  {}\n}}",e.iter().map(|x| x.to_string()).collect::<Vec<_>>().join("\n").replace("\n","\n  "))
@@ -88,6 +150,26 @@ impl IrAsm {
     //         IrAsm::Read(_, a, b, c) => ie(a) + ie(b) + ie(c),
     //     }
     // }
+
+    fn remap_reads<T>(&mut self, remapper: &T) where 
+        T: Fn(usize) -> usize {
+            match self {
+                IrAsm::Op(_, _, a, b) | IrAsm::If(a, b, _,_) => {
+                    *a = remapper(*a);
+                    *b = remapper(*b);
+                }
+                IrAsm::End | IrAsm::Loop(_) | IrAsm::Break() | IrAsm::Continue() | IrAsm::Nop | IrAsm::FunctionBlock(_, _) | IrAsm::Inp(_) | IrAsm::Cst(_, _) => {}
+                IrAsm::Return(a) | IrAsm::Prt(a) | IrAsm::Mov(_, a) | IrAsm::Len(_, a) => {
+                    *a = remapper(*a);
+                }
+                IrAsm::Read(_, a, b, c) => {
+                    *a = remapper(*a);
+                    *b = remapper(*b);
+                    *c = remapper(*c);
+                }
+                
+            }
+        }
 
     fn is_inlinable(&self, is_out: bool) -> bool {
         match self {
@@ -321,7 +403,6 @@ pub fn get_whats_the_same(manager1: VariableManager, manager2: VariableManager) 
 }
 
 impl Optimizer for Vec<IrAsm> {
-
     
     fn get_muts(&self, a: &mut HashSet<usize>) {
         self.into_iter().for_each(|x| {
@@ -367,7 +448,7 @@ impl Optimizer for Vec<IrAsm> {
         let mut was_breaked = false;
         (self.into_iter().map(|x| {
             if was_breaked {
-                return vec![IrAsm::Nop];
+                return vec![];
             }
             match &x {
                 IrAsm::Op(o, a, b, c) => {
@@ -452,6 +533,9 @@ impl Optimizer for Vec<IrAsm> {
                     current_values.set_var(a,KnowledgeState::Value(b.clone()));
                 }
                 IrAsm::Mov(a, b) => {
+                    if a == b {
+                        return vec![];
+                    }
                     match current_values.get_var(b).map(|x| x.clone()) {
                         None => {
                             current_values.clear_var(a);
