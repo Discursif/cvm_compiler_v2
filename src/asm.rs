@@ -5,40 +5,44 @@ type Variable = usize;
 #[derive(Debug, Clone)]
 pub enum Asm {
     Label(String),
-    Op(OperationType, Variable, Variable, Variable),
-    Gt(usize),
+    Op(OperationType, Variable, Variable, Variable), // 0xB
+    Gt(usize), // 0xA
     GtLabel(String),
-    End,
-    If(bool, Variable, Variable), // bool = inverted?
-    Prt(Variable),
-    Inp(Variable),
-    Cst(Variable, Vec<u8>),
-    Mov(Variable, Variable),
-    Len(Variable, Variable),
-    Read(Variable, Variable, Variable, Variable),
-    Nop,
+    End, // 0x9
+    If(bool, Variable, Variable), // bool = inverted? // 0x7 | 0x08 (IFN)
+    Prt(Variable), // 0x6
+    Inp(Variable), // 0x5
+    Cst(Variable, Vec<u8>), // 0x4
+    Mov(Variable, Variable), // 0x3
+    Len(Variable, Variable), // 0x2
+    Read(Variable, Variable, Variable, Variable), // 0x2
+    Nop, // 0x1
 }
 
 impl Display for Asm {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Op(a, b, c, d) => write!(f,"v{} = v{} {} v{}",b,c,a.as_operator(),d),
-            Self::End => write!(f,"end"),
-            Self::Prt(e) => write!(f,"print v{}",e),
-            Self::Inp(e) => write!(f,"v{} = input",e),
-            Self::Cst(e, a) => write!(f,"v{} = {}",e,a.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(" ")),
-            Self::Mov(e, a) => write!(f,"v{} = v{}",e,a),
-            Self::Len(e, a) => write!(f,"v{} = len v{}",e,a),
-            Self::Read(a, b, c, d) => write!(f,"v{} = v{}[v{} > v{}]",a,b,c,d),
-            Self::Nop => write!(f,""),
-            Asm::Label(e) => write!(f,"'{}",e),
-            Asm::Gt(e) => write!(f,"goto {}",e),
-            Asm::GtLabel(e) => write!(f,"goto '{}",e),
-            Asm::If(a, b, c) => write!(f,"if {} {}= {}",b,if *a {
-                "!"
-            } else {
-                "="
-            },c),
+            Self::Op(a, b, c, d) => write!(f, "v{} = v{} {} v{}", b, c, a.as_operator(), d),
+            Self::End => write!(f, "end"),
+            Self::Prt(e) => write!(f, "print v{}", e),
+            Self::Inp(e) => write!(f, "v{} = input", e),
+            Self::Cst(e, a) => write!(
+                f,
+                "v{} = {}",
+                e,
+                a.iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            ),
+            Self::Mov(e, a) => write!(f, "v{} = v{}", e, a),
+            Self::Len(e, a) => write!(f, "v{} = len v{}", e, a),
+            Self::Read(a, b, c, d) => write!(f, "v{} = v{}[v{} > v{}]", a, b, c, d),
+            Self::Nop => write!(f, ""),
+            Asm::Label(e) => write!(f, "'{}", e),
+            Asm::Gt(e) => write!(f, "goto {}", e),
+            Asm::GtLabel(e) => write!(f, "goto '{}", e),
+            Asm::If(a, b, c) => write!(f, "if {} {}= {}", b, if *a { "!" } else { "=" }, c),
         }
     }
 }
@@ -55,7 +59,7 @@ impl Asm {
                     e => {
                         line += 1;
                         return Some(e);
-                    },
+                    }
                 };
                 labels_pos.insert(o, line);
                 None
@@ -106,14 +110,15 @@ impl Asm {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum OperationType {
-    Add,
-    And,
-    Sub,
-    Mul,
-    Div,
-    Mod,
-    Xor,
-    Merge,
+    Add, // 1
+    And, // 2
+    Sub, // 3
+    Mul, // 4
+    Div, // 5
+    Mod, // 6
+    Xor, // 7
+    Or, // 8
+    Merge, // 9
 }
 
 impl OperationType {
@@ -126,6 +131,7 @@ impl OperationType {
             OperationType::Div => "DIV",
             OperationType::Mod => "MOD",
             OperationType::Xor => "XOR",
+            OperationType::Or => "OR",
             OperationType::Merge => "MERGE",
         }
     }
@@ -138,6 +144,7 @@ impl OperationType {
             OperationType::Div => "/",
             OperationType::Mod => "%",
             OperationType::Xor => "^",
+            OperationType::Or => "|",
             OperationType::Merge => "~",
         }
     }

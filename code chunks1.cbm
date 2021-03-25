@@ -1,264 +1,265 @@
 BLOCK 0
 
-v332 = 8
-v292 = "O"
-v435 = 237
-v147 = 9
-v49 = 5
-v146 = "123456789"
-v220 = " "
-v61 = 4
-v139 = "Invalid input" 10
-v455 = "  has won!" 10
-v492 = "Nobody won!" 10
-v89 = 10
-v294 = 3
-v180 = "1"
-v502 = "Aldready something placed here" 10
-v123 = "Enter a position to play in : "
-v300 = 2
-v399 = 6
-v32 = 0
-v16 = " | "
-v102 = 7
-v34 = 1
-v84 = "---------" 10
-v2 = "         "
-v4 = "X"
+v14 = 6
+v20 = 9
+v23 = " has won!" 10
+v13 = "1"
+v22 = " | "
+v16 = "Nobody won!" 10
+v12 = 8
+v10 = 3
+v7 = 7
+v17 = "Invalid input" 10
+v4 = 10
+v11 = "O"
+v9 = "Aldready something placed here" 10
+v21 = "---------" 10
+v5 = "Enter a position to play in : "
+v8 = "123456789"
+v3 = 4
+v1 = 2
+v2 = 5
+v15 = 0
+v18 = " "
+v19 = 237
+v6 = 1
+v24 = "         "
+v25 = "X"
 
 BLOCK 25
 
-v9 = v2[v300:v34]
-v13 = v9 ~ v89
-v17 = v16 ~ v13
-v21 = v2[v34:v34]
-v25 = v21 ~ v17
-v29 = v16 ~ v25
-v33 = v2[v32:v34]
-v37 = v33 ~ v29
-print(v37)
-print(v84)
-v50 = v2[v49:v34]
-v54 = v50 ~ v89
-v58 = v16 ~ v54
-v62 = v2[v61:v34]
-v66 = v62 ~ v58
-v70 = v16 ~ v66
-v74 = v2[v294:v34]
-v78 = v74 ~ v70
-print(v78)
-print(v84)
-v91 = v2[v332:v34]
-v95 = v91 ~ v89
-v99 = v16 ~ v95
-v103 = v2[v102:v34]
-v107 = v103 ~ v99
-v111 = v16 ~ v107
-v115 = v2[v399:v34]
-v119 = v115 ~ v111
-print(v119)
-print(v123)
-v125 = input()
-print(v89)
-v131 = v125.length
-if v131 != v34
+v26 = v24[v1:v6]
+v27 = v26 ~ v4
+v28 = v22 ~ v27
+v29 = v24[v6:v6]
+v30 = v29 ~ v28
+v31 = v22 ~ v30
+v32 = v24[v15:v6]
+v33 = v32 ~ v31
+print(v33)
+print(v21)
+v34 = v24[v2:v6]
+v35 = v34 ~ v4
+v36 = v22 ~ v35
+v37 = v24[v3:v6]
+v38 = v37 ~ v36
+v39 = v22 ~ v38
+v40 = v24[v10:v6]
+v41 = v40 ~ v39
+print(v41)
+print(v21)
+v42 = v24[v12:v6]
+v43 = v42 ~ v4
+v44 = v22 ~ v43
+v45 = v24[v7:v6]
+v46 = v45 ~ v44
+v47 = v22 ~ v46
+v48 = v24[v14:v6]
+v49 = v48 ~ v47
+print(v49)
+print(v5)
+v50 = input()
+print(v4)
+v51 = v50.length
+if v51 != v6
 goto l62
-print(v139)
+print(v17)
 goto l25
 
 BLOCK 62
 
-v151 = 0
+v53 = 0
 
 BLOCK 63
 
-if v147 != v151
-goto l71
-v153 = v146[v151:v34]
-v151 += v34
-if v153 == v125
-goto l63
-v145 = 1
+if v20 == v53
+goto l67
+v52 = 0
 goto l72
 
-BLOCK 71
+BLOCK 67
 
-v145 = 0
+v54 = v8[v53:v6]
+v53 += v6
+if v54 == v50
+goto l63
+v52 = 1
 
 BLOCK 72
 
-if v145 == v32
+if v52 == v15
 goto l76
-print(v139)
+print(v17)
 goto l25
 
 BLOCK 76
 
-v181 = v125 - v180
-v187 = v2[v181:v34]
-if v187 != v220
+v55 = v50 - v13
+v57 = v24[v55:v6]
+if v57 != v18
 goto l82
-v185 = 1
-goto l177
+v56 = 1
+goto l178
 
 BLOCK 82
 
-v196 = v4.length
-v198 = v181 + v196
-v202 = v2.length
-v204 = v2[v198:v202]
-v206 = v4 ~ v204
-v211 = v181 - v32
-v210 = v2[v32:v211]
-v2 = v210 ~ v206
-v222 = 0
+v58 = v25.length
+v59 = v55 + v58
+v60 = v24.length
+v61 = v24[v59:v60]
+v62 = v25 ~ v61
+v63 = v55 - v15
+v64 = v24[v15:v63]
+v65 = v64 ~ v62
+v24 = v65
+v67 = 0
 
-BLOCK 91
+BLOCK 92
 
-if v222 != v294
-goto l129
-v226 = v222
-v222 += v34
-v233 = v2[v222:v34]
-if v233 != v220
-goto l91
-v242 = v226 + v399
-v246 = v2[v242:v34]
-v251 = v226 + v294
-v255 = v2[v251:v34]
-v259 = v255 + v246
-v263 = v2[v226:v34]
-v240 = v263 + v259
-if v240 == v332
-goto l109
-v221 = "X"
-goto l156
+if v67 == v10
+goto l122
+v68 = v65[v12:v6]
+v69 = v65[v3:v6]
+v70 = v69 + v68
+v71 = v65[v15:v6]
+v72 = v71 + v70
+if v72 == v12
+goto l103
+v66 = "X"
+goto l157
 
-BLOCK 109
+BLOCK 103
 
-if v240 == v435
-goto l113
-v221 = "O"
-goto l156
+if v72 == v19
+goto l107
+v66 = "O"
+goto l157
 
-BLOCK 113
+BLOCK 107
 
-v293 = v226 * v294
-v301 = v293 + v300
-v305 = v2[v301:v34]
-v310 = v293 + v34
-v314 = v2[v310:v34]
-v318 = v314 + v305
-v322 = v2[v293:v34]
-v299 = v322 + v318
-if v299 == v332
-goto l125
-v221 = "X"
-goto l156
+v73 = v65[v14:v6]
+v74 = v65[v3:v6]
+v75 = v74 + v73
+v76 = v65[v1:v6]
+v77 = v76 + v75
+if v77 == v12
+goto l116
+v66 = "X"
+goto l157
 
-BLOCK 125
+BLOCK 116
 
-if v299 == v435
-goto l91
-v221 = "O"
-goto l156
+if v77 == v19
+goto l120
+v66 = "O"
+goto l157
 
-BLOCK 129
+BLOCK 120
 
-v354 = v2[v332:v34]
-v359 = v2[v61:v34]
-v363 = v359 + v354
-v368 = v2[v32:v34]
-v352 = v368 + v363
-if v352 == v332
+v66 = " "
+goto l157
+
+BLOCK 122
+
+v78 = v67
+v67 += v6
+v79 = v65[v67:v6]
+if v79 != v18
+goto l92
+v80 = v78 + v14
+v81 = v65[v80:v6]
+v82 = v78 + v10
+v83 = v65[v82:v6]
+v84 = v83 + v81
+v85 = v65[v78:v6]
+v86 = v85 + v84
+if v86 == v12
 goto l138
-v221 = "X"
-goto l156
+v66 = "X"
+goto l157
 
 BLOCK 138
 
-if v352 == v435
+if v86 == v19
 goto l142
-v221 = "O"
-goto l156
+v66 = "O"
+goto l157
 
 BLOCK 142
 
-v400 = v2[v399:v34]
-v405 = v2[v61:v34]
-v409 = v405 + v400
-v414 = v2[v300:v34]
-v398 = v414 + v409
-if v398 == v332
-goto l151
-v221 = "X"
-goto l156
+v87 = v78 * v10
+v88 = v87 + v1
+v89 = v65[v88:v6]
+v90 = v87 + v6
+v91 = v65[v90:v6]
+v92 = v91 + v89
+v93 = v65[v87:v6]
+v94 = v93 + v92
+if v94 == v12
+goto l154
+v66 = "X"
+goto l157
 
-BLOCK 151
+BLOCK 154
 
-if v398 == v435
-goto l155
-v221 = "O"
-goto l156
+if v94 == v19
+goto l92
+v66 = "O"
 
-BLOCK 155
+BLOCK 157
 
-v221 = " "
-
-BLOCK 156
-
-if v221 != v220
-goto l160
-print(v455)
+if v66 != v18
+goto l162
+v95 = v66 ~ v23
+print(v95)
 exit
 
-BLOCK 160
+BLOCK 162
 
-v463 = v2
-v464 = v2.length
-v468 = 0
+v97 = v65.length
+v98 = 0
 
-BLOCK 163
+BLOCK 164
 
-if v464 != v468
-goto l171
-v470 = v463[v468:v34]
-v468 += v34
-if v470 == v220
-goto l163
-v462 = 1
-goto l172
+if v97 == v98
+goto l168
+v96 = 0
+goto l173
 
-BLOCK 171
+BLOCK 168
 
-v462 = 0
+v99 = v65[v98:v6]
+v98 += v6
+if v99 == v18
+goto l164
+v96 = 1
 
-BLOCK 172
+BLOCK 173
 
-if v462 == v32
-goto l176
-print(v492)
+if v96 == v15
+goto l177
+print(v16)
 exit
-
-BLOCK 176
-
-v185 = 0
 
 BLOCK 177
 
-if v185 == v34
-goto l181
-print(v502)
+v56 = 0
+
+BLOCK 178
+
+if v56 == v6
+goto l182
+print(v9)
 goto l25
 
-BLOCK 181
+BLOCK 182
 
-if v4 == v292
-goto l185
-v4 = "X"
+if v25 == v11
+goto l186
+v25 = "X"
 goto l25
 
-BLOCK 185
+BLOCK 186
 
-v4 = "O"
+v25 = "O"
 goto l25

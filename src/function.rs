@@ -1,6 +1,9 @@
 use std::{collections::HashMap, fmt::Display};
 
-use crate::{CVMCompCtx, CompilationContext, cvmir::IrAsm, error::ParseError, instruction::Instruction, types::Type, variable::Variable};
+use crate::{
+    cvmir::IrAsm, error::ParseError, instruction::Instruction, types::Type, variable::Variable,
+    CVMCompCtx, CompilationContext,
+};
 
 #[derive(Debug, Clone)]
 pub struct Function {
@@ -12,12 +15,27 @@ pub struct Function {
 
 impl Display for Function {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}({}) -> {}",self.name, self.arguments.iter().map(|x| format!("{} {}",x.var_type,x.name)).collect::<Vec<_>>().join(", "),self.return_type)
+        write!(
+            f,
+            "{}({}) -> {}",
+            self.name,
+            self.arguments
+                .iter()
+                .map(|x| format!("{} {}", x.var_type, x.name))
+                .collect::<Vec<_>>()
+                .join(", "),
+            self.return_type
+        )
     }
 }
 
 impl Function {
-    pub fn compile(&self, ctx: &mut CVMCompCtx, pos: &[usize], self_pos: Option<usize>) -> Result<usize, ParseError> {
+    pub fn compile(
+        &self,
+        ctx: &mut CVMCompCtx,
+        pos: &[usize],
+        self_pos: Option<usize>,
+    ) -> Result<usize, ParseError> {
         let return_var = ctx.new_var();
         let mut vars = HashMap::new();
         vars.extend(
@@ -58,8 +76,13 @@ impl Functions {
             if x.arguments.len() != arguments.len() {
                 return false;
             }
-            for (x,y) in x.arguments.iter().zip(arguments.iter()) {
-                if !context.types.get(&x.var_type).unwrap().is_assignable_from(*y, context) {
+            for (x, y) in x.arguments.iter().zip(arguments.iter()) {
+                if !context
+                    .types
+                    .get(&x.var_type)
+                    .unwrap()
+                    .is_assignable_from(*y, context)
+                {
                     return false;
                 }
                 // if x.var_type == ANY_TYPE || &x.var_type == &y.name || x.is_child_of(&y.name, context) {

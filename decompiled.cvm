@@ -1,15 +1,15 @@
 BLOCK 0
 
-v2 = {"         "}
-v4 = {"X"}
+v24 = {"         "}
+v25 = {"X"}
 
 BLOCK 25
 
-print((v2[{0}] ~ ({" | "} ~ (v2[{1}] ~ ({" | "} ~ (v2[{2}] ~ {10}))))))
+print((v24[{0}] ~ ({" | "} ~ (v24[{1}] ~ ({" | "} ~ (v24[{2}] ~ {10}))))))
 print({"---------" 10})
-print((v2[{3}] ~ ({" | "} ~ (v2[{4}] ~ ({" | "} ~ (v2[{5}] ~ {10}))))))
+print((v24[{3}] ~ ({" | "} ~ (v24[{4}] ~ ({" | "} ~ (v24[{5}] ~ {10}))))))
 print({"---------" 10})
-print((v2[{6}] ~ ({" | "} ~ (v2[{7}] ~ ({" | "} ~ (v2[{8}] ~ {10}))))))
+print((v24[{6}] ~ ({" | "} ~ (v24[{7}] ~ ({" | "} ~ (v24[{8}] ~ {10}))))))
 print({"Enter a position to play in : "})
 print({10})
 if len(input()) != {1}
@@ -19,157 +19,157 @@ goto 25
 
 BLOCK 62
 
-v151 = {0}
+v53 = {0}
 
 BLOCK 63
 
-if {9} != v151
-goto 71
-v151 = (v151 + {1})
-if {"123456789"}[v151] == v125
-goto 63
-v145 = {1}
+if {9} == v53
+goto 67
+v52 = {0}
 goto 72
 
-BLOCK 71
+BLOCK 67
 
-v145 = {0}
+v53 = (v53 + {1})
+if {"123456789"}[v53] == v50
+goto 63
+v52 = {1}
 
 BLOCK 72
 
-if v145 == {0}
+if v52 == {0}
 goto 76
 print({"Invalid input" 10})
 goto 25
 
 BLOCK 76
 
-if v2[(v125 - {"1"})] != {" "}
+if v24[(v50 - {"1"})] != {" "}
 goto 82
-v185 = {1}
-goto 177
+v56 = {1}
+goto 178
 
 BLOCK 82
 
-v2 = (v2[{0}:(v181 - {0})] ~ (v4 ~ v2[(v181 + len(v4)):len(v2)]))
-v222 = {0}
+v24 = (v24[{0}:(v55 - {0})] ~ (v25 ~ v24[(v55 + len(v25)):len(v24)]))
+v67 = {0}
 
-BLOCK 91
+BLOCK 92
 
-if v222 != {3}
-goto 129
-v222 = (v222 + {1})
-if v2[v222] != {" "}
-goto 91
-if (v2[v226] + (v2[(v226 + {3})] + v2[(v226 + {6})])) == {8}
-goto 109
-v221 = {"X"}
-goto 156
+if v67 == {3}
+goto 122
+if (v65[{0}] + (v65[{4}] + v65[{8}])) == {8}
+goto 103
+v66 = {"X"}
+goto 157
 
-BLOCK 109
+BLOCK 103
 
-if v240 == {237}
-goto 113
-v221 = {"O"}
-goto 156
+if v72 == {237}
+goto 107
+v66 = {"O"}
+goto 157
 
-BLOCK 113
+BLOCK 107
 
-if (v2[(v226 * {3})] + (v2[((v226 * {3}) + {1})] + v2[((v226 * {3}) + {2})])) == {8}
-goto 125
-v221 = {"X"}
-goto 156
+if (v65[{2}] + (v65[{4}] + v65[{6}])) == {8}
+goto 116
+v66 = {"X"}
+goto 157
 
-BLOCK 125
+BLOCK 116
 
-if v299 == {237}
-goto 91
-v221 = {"O"}
-goto 156
+if v77 == {237}
+goto 120
+v66 = {"O"}
+goto 157
 
-BLOCK 129
+BLOCK 120
 
-if (v2[{0}] + (v2[{4}] + v2[{8}])) == {8}
+v66 = {" "}
+goto 157
+
+BLOCK 122
+
+v67 = (v67 + {1})
+if v65[v67] != {" "}
+goto 92
+if (v65[v78] + (v65[(v78 + {3})] + v65[(v78 + {6})])) == {8}
 goto 138
-v221 = {"X"}
-goto 156
+v66 = {"X"}
+goto 157
 
 BLOCK 138
 
-if v352 == {237}
+if v86 == {237}
 goto 142
-v221 = {"O"}
-goto 156
+v66 = {"O"}
+goto 157
 
 BLOCK 142
 
-if (v2[{2}] + (v2[{4}] + v2[{6}])) == {8}
-goto 151
-v221 = {"X"}
-goto 156
+if (v65[(v78 * {3})] + (v65[((v78 * {3}) + {1})] + v65[((v78 * {3}) + {2})])) == {8}
+goto 154
+v66 = {"X"}
+goto 157
 
-BLOCK 151
+BLOCK 154
 
-if v398 == {237}
-goto 155
-v221 = {"O"}
-goto 156
+if v94 == {237}
+goto 92
+v66 = {"O"}
 
-BLOCK 155
+BLOCK 157
 
-v221 = {" "}
-
-BLOCK 156
-
-if v221 != {" "}
-goto 160
-print({"  has won!" 10})
+if v66 != {" "}
+goto 162
+print((v66 ~ {" has won!" 10}))
 exit()
 
-BLOCK 160
+BLOCK 162
 
-v468 = {0}
+v98 = {0}
 
-BLOCK 163
+BLOCK 164
 
-if v464 != v468
-goto 171
-v468 = (v468 + {1})
-if v463[v468] == {" "}
-goto 163
-v462 = {1}
-goto 172
+if v97 == v98
+goto 168
+v96 = {0}
+goto 173
 
-BLOCK 171
+BLOCK 168
 
-v462 = {0}
+v98 = (v98 + {1})
+if v65[v98] == {" "}
+goto 164
+v96 = {1}
 
-BLOCK 172
+BLOCK 173
 
-if v462 == {0}
-goto 176
+if v96 == {0}
+goto 177
 print({"Nobody won!" 10})
 exit()
 
-BLOCK 176
-
-v185 = {0}
-
 BLOCK 177
 
-if v185 == {1}
-goto 181
+v56 = {0}
+
+BLOCK 178
+
+if v56 == {1}
+goto 182
 print({"Aldready something placed here" 10})
 goto 25
 
-BLOCK 181
+BLOCK 182
 
-if v4 == {"O"}
-goto 185
-v4 = {"X"}
+if v25 == {"O"}
+goto 186
+v25 = {"X"}
 goto 25
 
-BLOCK 185
+BLOCK 186
 
-v4 = {"O"}
+v25 = {"O"}
 goto 25

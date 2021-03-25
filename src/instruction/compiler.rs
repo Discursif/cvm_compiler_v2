@@ -5,6 +5,7 @@ use pest::iterators::Pair;
 use crate::{error::ParseError, utils::PairsTrait};
 
 use super::Instruction;
+use crate::error::to_static;
 use crate::parse_expression;
 use crate::rule_to_operator;
 use crate::utils::PairTrait;
@@ -13,7 +14,6 @@ use crate::{
     function::Function, types::Type, variable::Variable, CompilationContext,
     ParseExpressionContext, Rule,
 };
-use crate::error::to_static;
 
 pub fn parse_instructions(
     cvm: Pair<Rule>,
@@ -22,14 +22,18 @@ pub fn parse_instructions(
     Ok(vec![match cvm.as_rule() {
         Rule::instruction => return parse_instructions(cvm.into_inner().next().unwrap(), context),
         Rule::if_statement => {
-            let st= to_static(&cvm);
+            let st = to_static(&cvm);
             let mut inner = cvm.into_inner();
             let expr: Expression = parse_expression(inner.next().unwrap(), context)?;
             Instruction::If(
                 st.clone(),
                 expr,
                 true,
-                Expression::VariantAccess(st.clone(), box Expression::Type(st, "Boolean".to_owned()),"true".to_owned()),
+                Expression::VariantAccess(
+                    st.clone(),
+                    box Expression::Type(st, "Boolean".to_owned()),
+                    "true".to_owned(),
+                ),
                 inner.extract(&mut *context)?,
                 if let Some(e) = inner.next() {
                     Some(e.extract(&mut *context)?)
@@ -38,12 +42,13 @@ pub fn parse_instructions(
                 },
             )
         }
-        Rule::expr => Instruction::Expression(to_static(&cvm),parse_expression(cvm, context)?),
-        Rule::return_statement => {
-            Instruction::Return(to_static(&cvm),parse_expression(cvm.into_inner().next().unwrap(), context)?)
-        }
+        Rule::expr => Instruction::Expression(to_static(&cvm), parse_expression(cvm, context)?),
+        Rule::return_statement => Instruction::Return(
+            to_static(&cvm),
+            parse_expression(cvm.into_inner().next().unwrap(), context)?,
+        ),
         Rule::var_declaration => {
-            let st= to_static(&cvm);
+            let st = to_static(&cvm);
             let mut inner = cvm.into_inner();
             let var: Variable = inner.extract(())?;
             context.variables.insert(var.name.clone(), var.clone());
@@ -70,8 +75,9 @@ pub fn parse_instructions(
                     Instruction::Assign(
                         st.clone(),
                         a.clone(),
-                        Expression::MethodCall(st.clone(),
-                            box Expression::Variable(st,a),
+                        Expression::MethodCall(
+                            st.clone(),
+                            box Expression::Variable(st, a),
                             rule_to_operator(&b.as_rule()).unwrap().to_owned(),
                             vec![parse_expression(d, context)?],
                         ),
@@ -83,13 +89,14 @@ pub fn parse_instructions(
                         .get(&a.extract::<String, ()>(())?)
                         .expect("Can't find variable")
                         .clone();
-                    let inside = parse_expression(a.next().unwrap().into_inner().next().unwrap(), context)?;
+                    let inside =
+                        parse_expression(a.next().unwrap().into_inner().next().unwrap(), context)?;
                     Instruction::Assign(
                         st.clone(),
                         i.clone(),
                         Expression::MethodCall(
                             st.clone(),
-                            box Expression::Variable(st.clone(),i.clone()),
+                            box Expression::Variable(st.clone(), i.clone()),
                             "replace".to_owned(),
                             vec![Expression::MethodCall(
                                 st.clone(),
@@ -112,8 +119,11 @@ pub fn parse_instructions(
                         context
                             .variables
                             .get(a.as_str().trim())
-                            .ok_or_else(||{
-                                ParseError::CantGetVariable(to_static(&a), a.as_str().trim().to_owned())
+                            .ok_or_else(|| {
+                                ParseError::CantGetVariable(
+                                    to_static(&a),
+                                    a.as_str().trim().to_owned(),
+                                )
                             })?
                             .clone(),
                         parse_expression(c, context)?,
@@ -128,19 +138,29 @@ pub fn parse_instructions(
                     Instruction::Assign(
                         st.clone(),
                         b.clone(),
-                        Expression::Cast(st.clone(),
-                        box Expression::MethodCall(st.clone(),
-                            box Expression::Variable(st,b.clone()),
-                            "replace".to_owned(),
-                            vec![parse_expression(a.next().unwrap().into_inner().next().unwrap(), context)?,parse_expression(c, context)?],
+                        Expression::Cast(
+                            st.clone(),
+                            box Expression::MethodCall(
+                                st.clone(),
+                                box Expression::Variable(st, b.clone()),
+                                "replace".to_owned(),
+                                vec![
+                                    parse_expression(
+                                        a.next().unwrap().into_inner().next().unwrap(),
+                                        context,
+                                    )?,
+                                    parse_expression(c, context)?,
+                                ],
+                            ),
+                            b.var_type,
                         ),
-                        b.var_type
-                        )
                     )
                 }
             }
         }
-        Rule::loop_statement => Instruction::Loop(to_static(&cvm),cvm.into_inner().extract(context)?),
+        Rule::loop_statement => {
+            Instruction::Loop(to_static(&cvm), cvm.into_inner().extract(context)?)
+        }
         Rule::break_instruction => Instruction::Break(to_static(&cvm)),
         Rule::continue_instruction => Instruction::Continue(to_static(&cvm)),
         Rule::comment => return Ok(vec![]),
@@ -157,20 +177,20 @@ pub fn parse_instructions(
                     context
                         .variables
                         .insert(typed_var.name.to_owned(), typed_var.clone());
-                    Instruction::ForRange(st,typed_var, expr1, expr2, inner.extract(context)?)
+                    Instruction::ForRange(st, typed_var, expr1, expr2, inner.extract(context)?)
                 }
                 Rule::expr => {
                     let expr = parse_expression(expr, context)?;
                     context
                         .variables
                         .insert(typed_var.name.to_owned(), typed_var.clone());
-                    Instruction::ForEach(st,typed_var, expr, inner.extract(context)?)
+                    Instruction::ForEach(st, typed_var, expr, inner.extract(context)?)
                 }
                 _ => unreachable!(),
             }
         }
         Rule::asm_statement => {
-            Instruction::AsmStatement(to_static(&cvm),cvm.into_inner().extract(&mut *context)?)
+            Instruction::AsmStatement(to_static(&cvm), cvm.into_inner().extract(&mut *context)?)
         }
         e => {
             panic!("Unexpected token in instruction {:?}", e)
@@ -180,7 +200,12 @@ pub fn parse_instructions(
 
 type Result<T> = std::result::Result<T, ParseError>;
 
-pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, type_name: &str, type_parent: &str) -> Result<()> {
+pub fn parse_type_function(
+    cvm: Pair<Rule>,
+    context: &mut CompilationContext,
+    type_name: &str,
+    type_parent: &str,
+) -> Result<()> {
     let mut cvm = cvm.into_inner();
     let a = cvm.next().unwrap();
     let is_static = a.as_rule() == Rule::keyword_static;
@@ -192,7 +217,10 @@ pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, ty
             .expect("Can't get type")
             .add_static_function(func);
     } else {
-        let func: Function = a.extract((Some((type_name.to_owned(), type_parent.to_owned())), &*context))?;
+        let func: Function = a.extract((
+            Some((type_name.to_owned(), type_parent.to_owned())),
+            &*context,
+        ))?;
         context
             .types
             .get_mut(type_name)
@@ -202,16 +230,16 @@ pub fn parse_type_function(cvm: Pair<Rule>, context: &mut CompilationContext, ty
     Ok(())
 }
 
-pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext,file: &Path) -> Result<()> {
+pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext, file: &Path) -> Result<()> {
     match cvm.as_rule() {
-        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context,file),
+        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context, file),
         Rule::file => {
             for x in cvm.into_inner() {
-                file_parser(x, context,file)?;
+                file_parser(x, context, file)?;
             }
             Ok(())
-        },
-        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context,file),
+        }
+        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context, file),
         Rule::use_statement => {
             let string: Vec<u8> = cvm.into_inner().extract(())?;
             let string = String::from_utf8(string).unwrap();
@@ -222,7 +250,7 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext,file: &Path
                 s = &s[3..];
                 buf.pop();
             }
-            format!("{}.cvm",s).split("/").for_each(|x| buf.push(x));
+            format!("{}.cvm", s).split("/").for_each(|x| buf.push(x));
             crate::compile_file(buf.to_str().unwrap(), context)?;
             Ok(())
         }
@@ -251,9 +279,9 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext,file: &Path
                 p
             };
             let parent = &context.types.get_mut(name).unwrap().parent.to_owned();
-            parse_type_insides(p, context, name,parent)?;
+            parse_type_insides(p, context, name, parent)?;
             for x in cvm {
-                parse_type_insides(x, context, name,parent)?;
+                parse_type_insides(x, context, name, parent)?;
             }
             Ok(())
         }
@@ -263,10 +291,15 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext,file: &Path
     }
 }
 
-pub fn parse_type_insides(inside: Pair<Rule>, context: &mut CompilationContext, name: &str,parent: &str) -> Result<()> {
+pub fn parse_type_insides(
+    inside: Pair<Rule>,
+    context: &mut CompilationContext,
+    name: &str,
+    parent: &str,
+) -> Result<()> {
     let inside = inside.into_inner().next().unwrap();
     if inside.as_rule() == Rule::type_function {
-        parse_type_function(inside, context, name,parent)?;
+        parse_type_function(inside, context, name, parent)?;
     } else if inside.as_rule() == Rule::type_ref {
         let mut inside = inside.into_inner();
         let ref_name = inside.next().unwrap().as_str().trim();

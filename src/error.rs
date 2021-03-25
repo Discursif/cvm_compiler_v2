@@ -1,6 +1,10 @@
 use std::{fmt, rc::Rc};
 
-use pest::{RuleType, Span, error::{self, ErrorVariant}, iterators::{Pair, Pairs, pairs, queueable_token::QueueableToken}};
+use pest::{
+    error::{self, ErrorVariant},
+    iterators::{pairs, queueable_token::QueueableToken, Pair, Pairs},
+    RuleType, Span,
+};
 
 use crate::Rule;
 
@@ -8,43 +12,65 @@ pub enum ParseError {
     ValueExpectedStringOrByteArray(Paire<Rule>),
     ByteArrayIsNotMadeOfU8(Paire<Rule>),
     CantGetFunction(Paire<Rule>, String, Vec<String>),
-    InvalidReturnType(Paire<Rule>, String /* Expected */, String /* Found */),
+    InvalidReturnType(
+        Paire<Rule>,
+        String, /* Expected */
+        String, /* Found */
+    ),
     TypeNotFound(Paire<Rule>, String),
     PanicTypeReached(Paire<Rule>),
-    ForbiddenMethodUse(Paire<Rule>, String /* Method name */, String /* Type name */, Vec<String> /* Method args */),
-    ForbiddenFunctionUse(Paire<Rule>, String /* Function name */, Vec<String> /* Function args */),
-    MethodNotFound(Paire<Rule>, String /* Method name */, String /* Type name */, Vec<String> /* Method args */),
+    ForbiddenMethodUse(
+        Paire<Rule>,
+        String,      /* Method name */
+        String,      /* Type name */
+        Vec<String>, /* Method args */
+    ),
+    ForbiddenFunctionUse(
+        Paire<Rule>,
+        String,      /* Function name */
+        Vec<String>, /* Function args */
+    ),
+    MethodNotFound(
+        Paire<Rule>,
+        String,      /* Method name */
+        String,      /* Type name */
+        Vec<String>, /* Method args */
+    ),
     CantFindVariableOrType(Paire<Rule>, String),
     InvalidAssignement(Paire<Rule>, String, String),
     UnexpectedType(Paire<Rule>),
     ExpectedTypeInVariant(Paire<Rule>),
     VariantNotFound(Paire<Rule>, String, String),
-    CantGetVariable(Paire<Rule>, String)
+    CantGetVariable(Paire<Rule>, String),
 }
 
 impl ParseError {
-
     pub fn as_custom_error(&self) -> pest::error::Error<Rule> {
-        error::Error::new_from_span(ErrorVariant::CustomError { message: self.get_error_message().to_owned()}, self.get_inner().as_span())
+        error::Error::new_from_span(
+            ErrorVariant::CustomError {
+                message: self.get_error_message().to_owned(),
+            },
+            self.get_inner().as_span(),
+        )
     }
 
     pub fn get_inner(&self) -> &Paire<Rule> {
         match self {
-            Self::ValueExpectedStringOrByteArray(e) |
-            Self::UnexpectedType(e) |
-            Self::PanicTypeReached(e) |
-            Self::ByteArrayIsNotMadeOfU8(e) |
-            Self::InvalidReturnType(e,..) |
-            Self::TypeNotFound(e,..) |
-            Self::ForbiddenMethodUse(e,..) |
-            Self::ForbiddenFunctionUse(e,..) |
-            Self::MethodNotFound(e,..) |
-            Self::InvalidAssignement(e, _, _) |
-            Self::CantFindVariableOrType(e,..) |
-            Self::ExpectedTypeInVariant(e) |
-            Self::VariantNotFound(e, ..) |
-            Self::CantGetVariable(e, ..) |
-            Self::CantGetFunction(e,..) => e
+            Self::ValueExpectedStringOrByteArray(e)
+            | Self::UnexpectedType(e)
+            | Self::PanicTypeReached(e)
+            | Self::ByteArrayIsNotMadeOfU8(e)
+            | Self::InvalidReturnType(e, ..)
+            | Self::TypeNotFound(e, ..)
+            | Self::ForbiddenMethodUse(e, ..)
+            | Self::ForbiddenFunctionUse(e, ..)
+            | Self::MethodNotFound(e, ..)
+            | Self::InvalidAssignement(e, _, _)
+            | Self::CantFindVariableOrType(e, ..)
+            | Self::ExpectedTypeInVariant(e)
+            | Self::VariantNotFound(e, ..)
+            | Self::CantGetVariable(e, ..)
+            | Self::CantGetFunction(e, ..) => e,
         }
     }
 
@@ -89,11 +115,11 @@ pub struct Paire<R> {
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::fmt::Result {
-        write!(f,"{}",self.as_custom_error())
+        write!(f, "{}", self.as_custom_error())
     }
 }
 
-impl <R: RuleType> Paire<R> {
+impl<R: RuleType> Paire<R> {
     #[inline]
     pub fn as_rule(&self) -> R {
         match self.queue[self.pair()] {
@@ -118,7 +144,7 @@ impl <R: RuleType> Paire<R> {
             }
         }
     }
-    
+
     pub fn as_span<'a>(&'a self) -> Span<'a> {
         let start = self.pos(self.start);
         let end = self.pos(self.pair());
@@ -134,6 +160,4 @@ impl <R: RuleType> Paire<R> {
     }
 }
 
-pub enum CVMError {
-
-}
+pub enum CVMError {}

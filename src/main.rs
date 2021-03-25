@@ -1,23 +1,27 @@
 #![feature(box_syntax)]
 #![feature(box_patterns)]
 #![feature(associated_type_bounds)]
+#![feature(half_open_range_patterns)]
+#![feature(exclusive_range_pattern)]
 
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
 pub mod asm;
+pub mod cvmir;
+pub mod error;
 pub mod expression;
 pub mod function;
 pub mod instruction;
 pub mod types;
 pub mod utils;
 pub mod variable;
-pub mod cvmir;
-pub mod error;
+pub mod cvm_exe;
 
 use asm::Asm;
-use cvmir::{Counter, IrAsm, Optimizer, VariableManager, computer, elide_unused_writes, if_cleaner, remove_followed_usages};
+use cvm_exe::{clean_asm_to_exe, exe_to_clean_asm};
+use cvmir::{Counter, IrAsm, computer, elide_unused_writes, fn_inliner, if_cleaner, loop_break_inline, remap_consts, remove_followed_usages};
 use error::ParseError;
 use expression::*;
 use function::{Function, Functions};
@@ -26,7 +30,10 @@ use path_absolutize::Absolutize;
 use types::Type;
 use variable::Variable;
 
-use std::{collections::{HashMap, HashSet}, path::Path};
+use std::{
+    collections::{HashMap, HashSet},
+    path::Path,
+};
 
 use pest::Parser;
 
@@ -107,7 +114,8 @@ pub struct ParseExpressionContext {
 pub fn compile_file(file: &str, context: &mut CompilationContext) -> Result<(), ParseError> {
     if context.files.contains(file) {
         return Ok(());
-    }context.files.insert(file.to_owned());
+    }
+    context.files.insert(file.to_owned());
     let path = Path::new(file).absolutize().unwrap();
     let file = std::fs::read_to_string(&path).unwrap();
     let json = match CVMParser::parse(Rule::line, &file) {
@@ -127,7 +135,7 @@ fn main() {
     match compile_file("game.cvm", &mut context) {
         Ok(_) => (),
         Err(e) => {
-            println!("{}",e);
+            println!("{}", e);
         }
     };
 
@@ -148,29 +156,82 @@ fn main() {
         instructions: Vec::new(),
     };
     match func.compile(&mut cctx, &Vec::new(), None) {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => {
-            println!("{}",e);
+            println!("{}", e);
         }
     };
-    std::fs::write("new.mlasm.cbm", cctx.instructions.iter().map(|x| format!("{}",x)).collect::<Vec<_>>().join("\n")).unwrap();
+    std::fs::write(
+        "new.mlasm.cbm",
+        cctx.instructions
+            .iter()
+            .map(|x| format!("{}", x))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    )
+    .unwrap();
     let mut o = 0;
-    while o != cctx.instructions.len() {
+    let mut p = 0;
+    loop {
+        if o != cctx.instructions.len() {
+            p = 0;
+        } else {
+            p += 1;
+            if p == 3 {
+                break;
+            }
+        }
         o = cctx.instructions.len();
-        cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
+        //cctx.instructions = cctx.instructions.optimize(VariableManager::default()).0;
         cctx.instructions = elide_unused_writes(cctx.instructions);
         cctx.instructions = remove_followed_usages(cctx.instructions, None);
         cctx.instructions = cvmir::regroup_consts::optimize(cctx.instructions);
-        cctx.instructions = computer::optimize( cctx.instructions);
+        cctx.instructions = computer::optimize(cctx.instructions);
+        cctx.instructions = fn_inliner::elide_fns(cctx.instructions);
         cctx.instructions = if_cleaner::optimize( cctx.instructions);
+        cctx.instructions = loop_break_inline::loop_break_inline( cctx.instructions);
     }
+    cctx.instructions = remap_consts::optimize(cctx.instructions);
     let mut counter = Counter::default();
     let mut fors = Vec::new();
-    std::fs::write("struct.optimized.mlasm.cbm", format!("vec![{}]",cctx.instructions.iter().map(|x| format!("{:?}",x)).collect::<Vec<_>>().join(", "))).unwrap();
-    std::fs::write("new.optimized.mlasm.cbm", cctx.instructions.iter().map(|x| format!("{}",x)).collect::<Vec<_>>().join("\n")).unwrap();
-    let asm: Vec<Asm> = cctx.instructions.into_iter().map(|x| x.to_asm(&mut counter, &mut fors, None)).flatten().collect();
-    std::fs::write("new.llasm.cbm", asm.iter().enumerate().map(|(x,y)| format!("l{} {}",x,y)).collect::<Vec<_>>().join("\n")).unwrap();
-    let out = Asm::clean(asm)
+    std::fs::write(
+        "struct.optimized.mlasm.cbm",
+        format!(
+            "vec![{}]",
+            cctx.instructions
+                .iter()
+                .map(|x| format!("{:?}", x))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+    )
+    .unwrap();
+    std::fs::write(
+        "new.optimized.mlasm.cbm",
+        cctx.instructions
+            .iter()
+            .map(|x| format!("{}", x))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    )
+    .unwrap();
+    let asm: Vec<Asm> = cctx
+        .instructions
+        .into_iter()
+        .map(|x| x.to_asm(&mut counter, &mut fors, None))
+        .flatten()
+        .collect();
+    std::fs::write(
+        "new.llasm.cbm",
+        asm.iter()
+            .enumerate()
+            .map(|(x, y)| format!("l{} {}", x, y))
+            .collect::<Vec<_>>()
+            .join("\n"),
+    )
+    .unwrap();
+    let clean_asm = Asm::clean(asm);
+    let out = clean_asm
         .iter()
         .chain(vec![Asm::End].iter())
         .enumerate()
@@ -178,4 +239,18 @@ fn main() {
         .collect::<Vec<_>>()
         .join("\n");
     std::fs::write("new.cbm", &out).unwrap();
+
+    let p = clean_asm_to_exe(&clean_asm);
+
+    std::fs::write("new.cbmexe", &p).unwrap();
+
+    let out = exe_to_clean_asm(p).unwrap()
+        .iter()
+        .chain(vec![Asm::End].iter())
+        .enumerate()
+        .map(|(i, x)| format!("l{} {}", i, x.to_raw()))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    std::fs::write("new.decomp.cbm", &out).unwrap();
 }

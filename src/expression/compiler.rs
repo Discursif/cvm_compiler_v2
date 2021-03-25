@@ -1,11 +1,18 @@
-use crate::{ParseExpressionContext, Rule, error::{ParseError, to_static}, utils::{PairTrait, PairsTrait}};
+use crate::{
+    error::{to_static, ParseError},
+    utils::{PairTrait, PairsTrait},
+    ParseExpressionContext, Rule,
+};
 use pest::iterators::Pair;
 
 use super::Expression;
 
 type Result<T> = std::result::Result<T, ParseError>;
 
-pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContext) -> Result<Expression> {
+pub fn parse_expression<'a>(
+    cvm: Pair<'a, Rule>,
+    context: &ParseExpressionContext,
+) -> Result<Expression> {
     Ok(match cvm.as_rule() {
         Rule::expr => {
             let mut expr = cvm.into_inner();
@@ -17,7 +24,6 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
             for i in expr {
                 match i.as_rule() {
                     Rule::operation => {
-                        
                         let st = to_static(&i);
                         let mut inner = i.into_inner();
                         ex = Expression::MethodCall(
@@ -33,14 +39,16 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
                         let st = to_static(&i);
                         let inner = i.into_inner().next().unwrap();
                         if inner.as_rule() == Rule::expr {
-                            ex = Expression::MethodCall(st,
+                            ex = Expression::MethodCall(
+                                st,
                                 Box::new(ex),
                                 "index".to_owned(),
                                 vec![parse_expression(inner, context)?],
                             );
                         } else {
                             let mut inner = inner.into_inner();
-                            ex = Expression::MethodCall(st,
+                            ex = Expression::MethodCall(
+                                st,
                                 Box::new(ex),
                                 "index_range".to_owned(),
                                 vec![
@@ -52,7 +60,7 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
                     }
                     Rule::variant_access => {
                         let st = to_static(&i);
-                        ex = Expression::VariantAccess(st,box ex, i.into_inner().extract(())?);
+                        ex = Expression::VariantAccess(st, box ex, i.into_inner().extract(())?);
                     }
                     Rule::method_call => {
                         let st = to_static(&i);
@@ -70,7 +78,7 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
                         );
                     }
                     Rule::literal => {
-                        ex = Expression::Cast(to_static(&i),box ex, i.as_str().trim().to_owned());
+                        ex = Expression::Cast(to_static(&i), box ex, i.as_str().trim().to_owned());
                     }
                     _ => unreachable!(),
                 }
@@ -80,14 +88,17 @@ pub fn parse_expression<'a>(cvm: Pair<'a, Rule>, context: &ParseExpressionContex
         Rule::literal => {
             let st = cvm.as_str().trim();
             if let Some(e) = context.variables.get(st) {
-                Expression::Variable(to_static(&cvm),e.clone())
+                Expression::Variable(to_static(&cvm), e.clone())
             } else if context.types.contains(st) {
-                Expression::Type(to_static(&cvm),st.to_owned())
+                Expression::Type(to_static(&cvm), st.to_owned())
             } else {
-                return Err(ParseError::CantFindVariableOrType(to_static(&cvm),st.to_owned()));
+                return Err(ParseError::CantFindVariableOrType(
+                    to_static(&cvm),
+                    st.to_owned(),
+                ));
             }
         }
-        Rule::number_array | Rule::string => Expression::Value(to_static(&cvm),cvm.extract(())?),
+        Rule::number_array | Rule::string => Expression::Value(to_static(&cvm), cvm.extract(())?),
         Rule::indexing => {
             let st = to_static(&cvm);
             let mut v = cvm.into_inner();
