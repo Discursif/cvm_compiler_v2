@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::asm::OperationType;
 
-use super::{IrAsm, Optimizer};
+use super::{IrAsm, Optimizer, loop_for_unwrapper};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum KnowledgeState {
@@ -129,20 +129,6 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             *reg2 = state.get_alias(*reg2);
             if ELIDE_OPS {
                 match (state.get_flattened(&reg1), state.get_flattened(&reg2)) {
-                    (KnowledgeState::Value(value), KnowledgeState::Unknown) => {
-                        if operation_type != &OperationType::Merge {
-                            state.set(*into, KnowledgeState::Length(value.len()));
-                        } else {
-                            state.set(*into, KnowledgeState::Unknown);
-                        }
-                    }
-                    (KnowledgeState::Length(value), KnowledgeState::Unknown) => {
-                        if operation_type != &OperationType::Merge {
-                            state.set(*into, KnowledgeState::Length(*value));
-                        } else {
-                            state.set(*into, KnowledgeState::Unknown);
-                        }
-                    }
                     (KnowledgeState::Value(value), KnowledgeState::Value(value1)) => {
                         // TODO: Compute
                         if operation_type == &OperationType::Merge {
@@ -194,6 +180,27 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                             state.set(*into, KnowledgeState::Length(*value1));
                         } else {
                             state.set(*into, KnowledgeState::Length(value.len() + *value1));
+                        }
+                    }
+                    (KnowledgeState::Length(value), KnowledgeState::Length(value1)) => {
+                        if operation_type != &OperationType::Merge {
+                            state.set(*into, KnowledgeState::Length(*value));
+                        } else {
+                            state.set(*into, KnowledgeState::Length(*value + *value1));
+                        }
+                    }
+                    (KnowledgeState::Value(value), _) => {
+                        if operation_type != &OperationType::Merge {
+                            state.set(*into, KnowledgeState::Length(value.len()));
+                        } else {
+                            state.set(*into, KnowledgeState::Unknown);
+                        }
+                    }
+                    (KnowledgeState::Length(value), _) => {
+                        if operation_type != &OperationType::Merge {
+                            state.set(*into, KnowledgeState::Length(*value));
+                        } else {
+                            state.set(*into, KnowledgeState::Unknown);
                         }
                     }
                     _ => {
@@ -319,20 +326,28 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             no = Some(vec![IrAsm::If(*a, *b, p, m)]);
         }
         IrAsm::Loop(block) => {
-            let mut set = HashSet::new();
-            block.get_muts(&mut set);
-            for s in set {
-                state.0.insert(s, KnowledgeState::Unknown);
+            // TODO IMPLEMENT THE CODEX
+            let p = loop_for_unwrapper::optimize_loop(block.clone(), state);
+            if p.len() == 1 {
+                if let IrAsm::Loop(block) = &p[0] {
+                    let mut set = HashSet::new();
+                        block.get_muts(&mut set);
+                        for s in set {
+                            state.0.insert(s, KnowledgeState::Unknown);
+                        }
+                        let mut state1 = state.clone();
+                        return vec![IrAsm::Loop(
+                            block
+                                .into_iter()
+                                .map(|x| update(x.clone(), &mut state1))
+                                .flatten()
+                                .collect(),
+                        )];
+                }
             }
-            let mut state1 = state.clone();
-            no = Some(vec![IrAsm::Loop(
-                block
-                    .into_iter()
-                    .map(|x| update(x.clone(), &mut state1))
-                    .flatten()
-                    .collect(),
-            )]);
-        }
+            println!("Inlining for");
+            return p.into_iter().map(|x| update(x, state)).flatten().collect();
+        },
         IrAsm::Break() => {}
         IrAsm::Continue() => {}
         IrAsm::FunctionBlock(a, block) => {

@@ -1,40 +1,58 @@
 use super::{IrAsm, computer::MemoryManager, fn_inliner};
 
 pub fn optimize_loop(ir: Vec<IrAsm>, state: &MemoryManager) -> Vec<IrAsm>{
-    if let [IrAsm::If(a,b,c,d), e, IrAsm::Op(crate::asm::OperationType::Add,f,g,h)] = ir.as_slice() {
+    // TODO check h
+    //println!("AL -1 {}", ir.iter().take(3).map(|x| x.to_string()).collect::<Vec<_>>().join("\n"));
+    if let [IrAsm::If(a,b,c,d), e, IrAsm::Op(crate::asm::OperationType::Add,f,g,h),..] = ir.as_slice() {
+        //println!("AL 0");
+        if state.get_value(h) != Some(vec![1]) {
+            return vec![IrAsm::Loop(ir)];
+        }
         if !fn_inliner::does_end_in_any_case(c) {
+            //println!("AL 1");
             return vec![IrAsm::Loop(ir)];
         }
         if !d.is_empty() {
+            //println!("AL 2");
             return vec![IrAsm::Loop(ir)];
         }
         if f != g {
+            //println!("AL 3");
             return vec![IrAsm::Loop(ir)];
         }
         
         let constant = if a == f {
+            //println!("AL 4");
             b
         } else if b == f {
+            //println!("AL 5");
             a
         } else {
+            //println!("AL 6");
             return vec![IrAsm::Loop(ir)];
         };
         let default = if let Some(e) = state.get_value(f) {
+            //println!("AL 7");
             e
         } else {
+            //println!("AL 8");
             return vec![IrAsm::Loop(ir)];
         };
         let constant_value = if let Some(e) = state.get_value(constant) {
+            //println!("AL 9");
             e
         } else {
+            //println!("AL 10");
             return vec![IrAsm::Loop(ir)];
         };
 
         if has_continue(c) {
+            //println!("AL 11");
             return vec![IrAsm::Loop(ir)];
         }
 
         if has_continues_or_breaks(&ir.iter().skip(1).cloned().collect()) {
+            //println!("AL 12");
             return vec![IrAsm::Loop(ir)];
         }
 
