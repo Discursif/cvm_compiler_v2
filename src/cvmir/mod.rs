@@ -14,6 +14,7 @@ pub mod regroup_consts;
 pub mod fn_inliner;
 pub mod loop_break_inline;
 pub mod remap_consts;
+pub mod loop_for_unwrapper;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IrAsm {
@@ -704,6 +705,15 @@ impl Optimizer for Vec<IrAsm> {
                             return vec![IrAsm::If(*a, *b, block1, block2)];
                         }
                         IrAsm::Loop(e) => {
+                            // TODO IMPLEMENT THE CODEX
+                            match loop_for_unwrapper::optimize_loop(e.clone(), state) {
+                                IrAsm::Loop(e) => {
+
+                                },
+                                e => {
+                                    return e.optimize(state);
+                                }
+                            }
                             let before = current_values.clone();
                             let mut out = HashSet::new();
                             e.get_muts(&mut out);
