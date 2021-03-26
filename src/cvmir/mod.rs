@@ -14,6 +14,7 @@ pub mod regroup_consts;
 pub mod fn_inliner;
 pub mod loop_break_inline;
 pub mod remap_consts;
+pub mod loop_for_unwrapper;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IrAsm {
