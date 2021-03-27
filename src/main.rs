@@ -18,6 +18,7 @@ pub mod types;
 pub mod utils;
 pub mod variable;
 pub mod cvm_exe;
+pub mod cli;
 
 use asm::Asm;
 use cvm_exe::{clean_asm_to_exe, exe_to_clean_asm};
@@ -132,7 +133,7 @@ pub fn compile_file(file: &str, context: &mut CompilationContext) -> Result<(), 
 
 fn main() {
     let mut context = CompilationContext::default();
-    match compile_file("game.cvm", &mut context) {
+    match compile_file("cvm/src/game.cvm", &mut context) {
         Ok(_) => (),
         Err(e) => {
             println!("{}", e);
@@ -162,7 +163,7 @@ fn main() {
         }
     };
     std::fs::write(
-        "new.mlasm.cbm",
+        "cvm/build/new.mlasm.cbm",
         cctx.instructions
             .iter()
             .map(|x| format!("{}", x))
@@ -195,7 +196,7 @@ fn main() {
     let mut counter = Counter::default();
     let mut fors = Vec::new();
     std::fs::write(
-        "struct.optimized.mlasm.cbm",
+        "cvm/build/struct.optimized.mlasm.cbm",
         format!(
             "vec![{}]",
             cctx.instructions
@@ -207,7 +208,7 @@ fn main() {
     )
     .unwrap();
     std::fs::write(
-        "new.optimized.mlasm.cbm",
+        "cvm/build/new.optimized.mlasm.cbm",
         cctx.instructions
             .iter()
             .map(|x| format!("{}", x))
@@ -222,7 +223,7 @@ fn main() {
         .flatten()
         .collect();
     std::fs::write(
-        "new.llasm.cbm",
+        "cvm/build/new.llasm.cbm",
         asm.iter()
             .enumerate()
             .map(|(x, y)| format!("l{} {}", x, y))
@@ -238,11 +239,11 @@ fn main() {
         .map(|(i, x)| format!("l{} {}", i, x.to_raw()))
         .collect::<Vec<_>>()
         .join("\n");
-    std::fs::write("new.cbm", &out).unwrap();
+    std::fs::write("cvm/build/new.cbm", &out).unwrap();
 
     let p = clean_asm_to_exe(&clean_asm);
 
-    std::fs::write("new.cbmexe", &p).unwrap();
+    std::fs::write("cvm/build/new.cbmexe", &p).unwrap();
 
     let out = exe_to_clean_asm(p).unwrap()
         .iter()
@@ -252,5 +253,5 @@ fn main() {
         .collect::<Vec<_>>()
         .join("\n");
 
-    std::fs::write("new.decomp.cbm", &out).unwrap();
+    std::fs::write("cvm/build/new.decomp.cbm", &out).unwrap();
 }

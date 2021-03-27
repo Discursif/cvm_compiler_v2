@@ -1,4 +1,4 @@
-use "lib/std";
+use "../lib/std";
 
 fn adde(Bytes a) -> String {
     return a + 1 10 as String;
@@ -9,7 +9,7 @@ fn assert(Bytes a, Bytes b) {
         print("Test passed!"~10);
     } else {
         print("Error occured in test:" ~ 10~"  Expected "~(b.to_string())~10~"  Found "~(a.to_string()));
-        print(10)
+        print(10);
     }
 }
 
@@ -17,6 +17,11 @@ fn assert(Bytes a, Bytes b) {
 fn main() {
     // u32 test1 = 230 236 145 1 as u32; // 15382876 or with 230 in first place 3874263152
     // u32 test2 = 0 2 250 2 as u32; // 195074
+
+    //print((10 25 26 128 196).to_hex());
+    
+    //print(((0 as Byte) < 10).to_string());
+    assert((10 25 26 128 196).to_hex(), "0A191A80C4");
 
     // assert((230 10 20 4 as u32).lower(10 20 30 10 as u32), Boolean.false);
     // assert((250 2 0 0 as u32).lower(0 0 0 115 as u32), Boolean.false);

@@ -1,4 +1,4 @@
-use "lib/std";
+use "../lib/std";
 
 type Table = 9 {
     ref empty = "         ";

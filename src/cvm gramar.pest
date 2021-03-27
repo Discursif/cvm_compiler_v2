@@ -49,6 +49,7 @@ comma = _{whitespace* ~ "," ~ whitespace*}
 keyword_fn = _{whitespace* ~ "fn " ~ whitespace*}
 keyword_if = _{whitespace* ~ "if " ~ whitespace*}
 keyword_for = _{whitespace* ~ "for " ~ whitespace*}
+keyword_while = _{whitespace* ~ "while " ~ whitespace*}
 keyword_loop = _{whitespace* ~ "loop" ~ whitespace*}
 keyword_type = _{whitespace* ~ "type " ~ whitespace*}
 keyword_in = _{whitespace* ~ "in" ~ whitespace*}
@@ -79,7 +80,7 @@ method_call = {dot ~ literal~left_parenthesis~terms~right_parenthesis}
 typed_var = {literal~whitespace+~literal}
 functions_params = {(typed_var ~ (comma ~ typed_var)*)?}
 
-instruction = {asm_statement | loop_statement | (continue_instruction~semicolon?) | (break_instruction~semicolon?) | if_statement | for_statement | (var_declaration~semicolon?) | (var_assignement~semicolon?) | (return_statement~semicolon?) | (expr~semicolon?)}
+instruction = {asm_statement | loop_statement | (continue_instruction~semicolon?) | (break_instruction~semicolon?) | if_statement | while_statement | for_statement | (var_declaration~semicolon?) | (var_assignement~semicolon?) | (return_statement~semicolon?) | (expr~semicolon?)}
 
 continue_instruction = {whitespace*~"continue"~whitespace*}
 break_instruction = {whitespace*~"break"~whitespace*}
@@ -98,6 +99,8 @@ return_statement = {keyword_return ~ expr}
 range = {expr~range_operator~expr}
 
 for_statement = {keyword_for~typed_var~keyword_in~(range | expr)~code_block}
+
+while_statement = {keyword_while~expr~code_block}
 
 loop_statement = {keyword_loop ~ code_block}
 

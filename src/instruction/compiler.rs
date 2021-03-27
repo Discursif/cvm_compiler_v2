@@ -189,6 +189,11 @@ pub fn parse_instructions(
                 _ => unreachable!(),
             }
         }
+        Rule::while_statement => {
+            let st = to_static(&cvm);
+            let mut cvm = cvm.into_inner();
+            Instruction::While(st,parse_expression(cvm.next().unwrap(), context)?, cvm.extract(context)?)
+        }
         Rule::asm_statement => {
             Instruction::AsmStatement(to_static(&cvm), cvm.into_inner().extract(&mut *context)?)
         }

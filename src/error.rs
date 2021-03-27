@@ -19,6 +19,7 @@ pub enum ParseError {
     ),
     TypeNotFound(Paire<Rule>, String),
     PanicTypeReached(Paire<Rule>),
+    AsmInvalidReached(Paire<Rule>,Rule),
     ForbiddenMethodUse(
         Paire<Rule>,
         String,      /* Method name */
@@ -70,6 +71,7 @@ impl ParseError {
             | Self::ExpectedTypeInVariant(e)
             | Self::VariantNotFound(e, ..)
             | Self::CantGetVariable(e, ..)
+            | Self::AsmInvalidReached(e, ..)
             | Self::CantGetFunction(e, ..) => e,
         }
     }
@@ -94,6 +96,7 @@ impl ParseError {
             ParseError::ExpectedTypeInVariant(_) => "Expected type in variant found expression!".to_owned(),
             ParseError::VariantNotFound(_, a,b) => format!("Variant `{}` not found in `{}`",a,b),
             ParseError::CantGetVariable(_, a) => format!("Can't find variable `{}`",a),
+            ParseError::AsmInvalidReached(_, b) => format!("Unexpected `{:?}`",b),
         }
     }
 }

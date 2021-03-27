@@ -91,7 +91,7 @@ fn has_continue(vec: &Vec<IrAsm>) -> bool {
 fn has_continues_or_breaks(data: &Vec<IrAsm>) -> bool{
     for i in data {
         match i {
-            IrAsm::If(a, b, c, d) => {
+            IrAsm::If(_, _, c, d) => {
                 if has_continues_or_breaks(c) || has_continues_or_breaks(d) {
                     return true;
                 }

@@ -11,26 +11,36 @@ type Byte = 1 {
     fn len() -> Byte => return 1;
     // OPTIMIZE THAT LATER WITH ASM
     fn lower(Byte other) -> Boolean {
-        if other == 0 {
-            return Boolean.false;
-        } else {
-            if self / other == 0 {
-                return Boolean.true;
-            } else {
-                return Boolean.false;
-            }
+        asm {
+            CONST $false, 0;
+            IF other, $false {
+                RETURN $false;
+            } ELSE {
+                DIV $div, self, other;
+                IF $div, $false {
+                    CONST $true, 1;
+                    RETURN $true;
+                } ELSE {
+                    RETURN $false;
+                };
+            };
         }
     }
     // OPTIMIZE THAT LATER WITH ASM
     fn greater(Byte other) -> Boolean {
-        if self == 0 {
-            return Boolean.false;
-        } else {
-            if other / self == 0 {
-                return Boolean.true;
-            } else {
-                return Boolean.false;
-            }
+        asm {
+            CONST $false, 0;
+            IF self, $false {
+                RETURN $false;
+            } ELSE {
+                DIV $div, other, self;
+                IF $div, $false {
+                    CONST $true, 1;
+                    RETURN $true;
+                } ELSE {
+                    RETURN $false;
+                };
+            };
         }
     }
     fn greater_equals(Byte other) -> Boolean {
@@ -48,7 +58,7 @@ type Byte = 1 {
     fn to_string() -> String {
         String out = "";
         loop {
-            out = ((self % 10) + 48 as Char) ~ out;
+            out = (((self % 10) + 48 as Char) ~ out) as String;
             self /= 10;
             if self == 0 => break;
         }

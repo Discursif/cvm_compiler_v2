@@ -307,7 +307,7 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
             }
             e => {
                 println!("Unexpected {:?}", e);
-                unreachable!();
+                return Err(ParseError::AsmInvalidReached(to_static(&rule),e));
             }
         })
     }

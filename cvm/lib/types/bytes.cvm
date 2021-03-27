@@ -35,7 +35,7 @@ type Bytes {
                 CONST $a, 0;
             } ELSE {
                 CONST $a, 1;
-            }
+            };
             RETURN $a;
         }
     }
@@ -46,8 +46,30 @@ type Bytes {
                 CONST $a, 1;
             } ELSE {
                 CONST $a, 0;
-            }
+            };
             RETURN $a;
         }
+    }
+
+    fn to_hex() -> String {
+        String out = "";
+        for Byte i in self {
+            //print(i.to_string()~10);
+            Byte a = i / 16;
+            Byte b = i % 16;
+            //print("DGB"~a.to_string()~10);
+            if a < 10 {
+                out ~= ("0" + a) as Char;
+            }
+             else {
+                out ~= (("A" - 10) + a) as Char;
+            }
+            if b < 10 {
+                out ~= ("0" + b) as Char;
+            } else {
+                out ~= (("A" - 10) + b) as Char;
+            }
+        }
+        return out
     }
 }

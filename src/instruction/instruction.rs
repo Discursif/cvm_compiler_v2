@@ -64,6 +64,7 @@ pub enum Instruction {
     Continue(Paire<Rule>),
     Assign(Paire<Rule>, Variable, Expression),
     Return(Paire<Rule>, Expression),
+    While(Paire<Rule>, Expression, Vec<Instruction>)
 }
 
 impl Instruction {
@@ -279,6 +280,24 @@ impl Instruction {
                         .collect::<Vec<_>>()
                 };
                 ctx.instructions.append(&mut i);
+            }
+            Instruction::While(pair, a, b) => {
+                let mut lk = vec![
+                    Instruction::If(
+                        pair.clone(),
+                        a.clone(),
+                        true,
+                        Expression::VariantAccess(
+                            pair.clone(),
+                            box Expression::Type(pair.clone(), "Boolean".to_owned()),
+                            "false".to_owned(),
+                        ),vec![Instruction::Break(pair.clone())],None),
+                    
+                ];
+                lk.append(&mut b.clone());
+
+
+                Instruction::Loop(pair.clone(), lk).compile(ctx, function_data, vars)?;
             }
         }
         Ok(())
