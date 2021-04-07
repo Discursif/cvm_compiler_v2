@@ -2,9 +2,12 @@ use std::convert::TryInto;
 
 use crate::asm::Asm;
 
+mod executor;
+pub use executor::*;
+
 const CVM_VERSION: u32 = 1;
 
-// u32 (CVM specification version) 
+// u32 (CVM specification version)
 // u8 (line_encode_length | var_encode_length) (number of byte per line | number of byte per var) (maximum u64 supported so 4 the u8 is split in two)
 // u32 number of instructions
 // FOR EACH:
@@ -16,15 +19,15 @@ const CVM_VERSION: u32 = 1;
 //       UVAR
 //     else
 //       u7 opcode
-//       if opcode == 0: 
-//          
+//       if opcode == 0:
+//
 //   u8 (1 bytes is equivalent to label) (4 first bits are the OPCODE) (1 other bits are unused)
 //   If the opcode is 0x0B (Operation), The next one is for operation discrimination
 pub fn clean_asm_to_exe(asm: &Vec<Asm>) -> Vec<u8> {
     let op = match asm.len() {
         0..=255 => 0,
         256..=0xffff => 1,
-        _ => 2
+        _ => 2,
     };
     let config = Config {
         line_encode_length: op,
@@ -46,14 +49,16 @@ struct Config {
 }
 
 impl Config {
-
-    fn get_header<T>(data: &mut T) -> Option<Self> where
-    T: Iterator<Item = u8>, {
+    fn get_header<T>(data: &mut T) -> Option<Self>
+    where
+        T: Iterator<Item = u8>,
+    {
         let version = u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32;
         let read = data.next().unwrap();
         let line_encode_length = (read & 0xF0) >> 4;
         let var_encode_length = read & 0x0F;
-        let number_of_instructions = u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32;
+        let number_of_instructions =
+            u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32;
         Some(Self {
             line_encode_length,
             var_encode_length,
@@ -70,13 +75,19 @@ impl Config {
         headers
     }
 
-    fn decode_line<T>(&self, data: &mut T) -> Option<u32> where
-    T: Iterator<Item = u8>, {
+    fn decode_line<T>(&self, data: &mut T) -> Option<u32>
+    where
+        T: Iterator<Item = u8>,
+    {
         match self.line_encode_length {
             0 => data.next().map(|x| x as u32),
-            1 => Some(u16::from_le_bytes(data.take(2).collect::<Vec<u8>>().try_into().ok()?) as u32),
-            2 => Some(u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32),
-            _ => unreachable!()
+            1 => {
+                Some(u16::from_le_bytes(data.take(2).collect::<Vec<u8>>().try_into().ok()?) as u32)
+            }
+            2 => {
+                Some(u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32)
+            }
+            _ => unreachable!(),
         }
     }
     fn encode_line(&self, line: u32) -> Vec<u8> {
@@ -84,7 +95,7 @@ impl Config {
             0 => vec![line as u8],
             1 => (line as u16).to_le_bytes().to_vec(),
             2 => (line as u32).to_le_bytes().to_vec(),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
     fn encode_var(&self, var: u32) -> Vec<u8> {
@@ -92,16 +103,22 @@ impl Config {
             0 => vec![var as u8],
             1 => (var as u16).to_le_bytes().to_vec(),
             2 => (var as u32).to_le_bytes().to_vec(),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
-    fn decode_var<T>(&self, data: &mut T) -> Option<u32> where
-    T: Iterator<Item = u8>, {
+    fn decode_var<T>(&self, data: &mut T) -> Option<u32>
+    where
+        T: Iterator<Item = u8>,
+    {
         match self.var_encode_length {
             0 => data.next().map(|x| x as u32),
-            1 => Some(u16::from_le_bytes(data.take(2).collect::<Vec<u8>>().try_into().ok()?) as u32),
-            2 => Some(u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32),
-            _ => unreachable!()
+            1 => {
+                Some(u16::from_le_bytes(data.take(2).collect::<Vec<u8>>().try_into().ok()?) as u32)
+            }
+            2 => {
+                Some(u32::from_le_bytes(data.take(4).collect::<Vec<u8>>().try_into().ok()?) as u32)
+            }
+            _ => unreachable!(),
         }
     }
 }
@@ -112,18 +129,20 @@ pub fn exe_to_clean_asm(vec: Vec<u8>) -> Option<Vec<Asm>> {
     let mut iter = vec.into_iter();
     let header = Config::get_header(&mut iter).unwrap();
     let mut out = Vec::new();
-    while let Some(e) = from_bytes(&mut iter,&header) {
+    while let Some(e) = from_bytes(&mut iter, &header) {
         out.push(e);
     }
     Some(out)
 }
 
-fn from_bytes<T>(data: &mut T, config: &Config) -> Option<Asm> where
-T: Iterator<Item = u8> {
+fn from_bytes<T>(data: &mut T, config: &Config) -> Option<Asm>
+where
+    T: Iterator<Item = u8>,
+{
     let i = data.next()?;
     Some(match i {
-        128..=255 => {
-            Asm::Op(match i {
+        128..=255 => Asm::Op(
+            match i {
                 129 => OperationType::Add,
                 130 => OperationType::And,
                 131 => OperationType::Sub,
@@ -133,60 +152,68 @@ T: Iterator<Item = u8> {
                 135 => OperationType::Xor,
                 136 => OperationType::Or,
                 137 => OperationType::Merge,
-                _ => return None
-            }, config.decode_var(data)? as usize, config.decode_var(data)? as usize, config.decode_var(data)? as usize)
-        },
-        0 => {
-            Asm::Nop
-        },
-        1 => {
-            Asm::Read(config.decode_var(data)? as usize,config.decode_var(data)? as usize,config.decode_var(data)? as usize,config.decode_var(data)? as usize)
-        },
-        2 => {
-            Asm::Len(config.decode_var(data)? as usize,config.decode_var(data)? as usize)
-        },
-        3 => {
-            Asm::Mov(config.decode_var(data)? as usize,config.decode_var(data)? as usize)
-        },
+                _ => return None,
+            },
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
+        0 => Asm::Nop,
+        1 => Asm::Read(
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
+        2 => Asm::Len(
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
+        3 => Asm::Mov(
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
         4 => {
             let i = config.decode_var(data)? as usize;
             let len = data.next()?;
-            Asm::Cst(i,data.take(len as usize).collect())
-        },
-        5 => {
-            Asm::Inp(config.decode_var(data)? as usize)
-        },
-        6 => {
-            Asm::Prt(config.decode_var(data)? as usize)
-        },
-        7 => {
-            Asm::If(false,config.decode_var(data)? as usize,config.decode_var(data)? as usize)
-        },
-        8 => {
-            Asm::If(true,config.decode_var(data)? as usize,config.decode_var(data)? as usize)
-        },
+            Asm::Cst(i, data.take(len as usize).collect())
+        }
+        5 => Asm::Inp(config.decode_var(data)? as usize),
+        6 => Asm::Prt(config.decode_var(data)? as usize),
+        7 => Asm::If(
+            false,
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
+        8 => Asm::If(
+            true,
+            config.decode_var(data)? as usize,
+            config.decode_var(data)? as usize,
+        ),
         9 => Asm::End,
         10 => Asm::Gt(config.decode_line(data)? as usize),
-        _ => return None
+        _ => return None,
     })
 }
 
-fn to_bytes(asm: &Asm, config: &Config) -> Vec<u8>{
+fn to_bytes(asm: &Asm, config: &Config) -> Vec<u8> {
     let mut vec = Vec::new();
     match asm {
         Asm::Label(_) => unreachable!(),
         Asm::Op(a, b, c, d) => {
-            vec.push(128 + match a {
-                OperationType::Add => 1,
-                OperationType::And => 2,
-                OperationType::Sub => 3,
-                OperationType::Mul => 4,
-                OperationType::Div => 5,
-                OperationType::Mod => 6,
-                OperationType::Xor => 7,
-                OperationType::Or => 8,
-                OperationType:: Merge => 9
-            });
+            vec.push(
+                128 + match a {
+                    OperationType::Add => 1,
+                    OperationType::And => 2,
+                    OperationType::Sub => 3,
+                    OperationType::Mul => 4,
+                    OperationType::Div => 5,
+                    OperationType::Mod => 6,
+                    OperationType::Xor => 7,
+                    OperationType::Or => 8,
+                    OperationType::Merge => 9,
+                },
+            );
             vec.append(&mut config.encode_var(*b as u32));
             vec.append(&mut config.encode_var(*c as u32));
             vec.append(&mut config.encode_var(*d as u32));
@@ -232,7 +259,7 @@ fn to_bytes(asm: &Asm, config: &Config) -> Vec<u8>{
             vec.append(&mut config.encode_var(*a as u32));
             vec.append(&mut config.encode_var(*b as u32));
         }
-        Asm::Read(a, b,c,d) => {
+        Asm::Read(a, b, c, d) => {
             vec.push(1);
             vec.append(&mut config.encode_var(*a as u32));
             vec.append(&mut config.encode_var(*b as u32));

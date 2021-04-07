@@ -8,13 +8,15 @@ use crate::asm::{Asm, OperationType};
 
 type Variable = usize;
 
+pub mod clear_unreachable;
 pub mod computer;
-pub mod if_cleaner;
-pub mod regroup_consts;
 pub mod fn_inliner;
+pub mod if_cleaner;
 pub mod loop_break_inline;
-pub mod remap_consts;
+pub mod loop_fn_return_opt;
 pub mod loop_for_unwrapper;
+pub mod regroup_consts;
+pub mod remap_consts;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IrAsm {
@@ -228,7 +230,6 @@ impl Counter {
 }
 
 impl IrAsm {
-
     pub fn to_asm(
         self,
         counter: &mut Counter,

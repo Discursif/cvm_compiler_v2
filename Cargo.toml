@@ -11,3 +11,4 @@ pest = { path = "pest" }
 pest_derive = "2.1.0"
 path-absolutize = "3.0.7"
 serde = {features = ["derive"], version = "1.0.124"}
+serde_yaml = "0.8"

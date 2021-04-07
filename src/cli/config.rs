@@ -1,9 +1,4 @@
-const ANY_TYPE: &'static str = "Bytes";
-const VOID_TYPE: &'static str = "Empty";
-const BYTE_TYPE: &'static str = "Byte";
-const CHAR_TYPE: &'static str = "Char";
-const PANIC_TYPE: &'static str = "Panic";
-const STRING_TYPE: &'static str = "String";
+use std::path::Path;
 
 fn default_any_type() -> String {
     return "Bytes".to_owned();
@@ -29,21 +24,20 @@ fn default_string_type() -> String {
     return "String".to_owned();
 }
 
-
-#[derive(serde::Deserialize,serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct TypeConfig {
     #[serde(default = "default_any_type")]
-    any: String,
+    pub any: String,
     #[serde(default = "default_void_type")]
-    void: String,
+    pub void: String,
     #[serde(default = "default_byte_type")]
-    byte: String,
+    pub byte: String,
     #[serde(default = "default_char_type")]
-    char: String,
+    pub char: String,
     #[serde(default = "default_panic_type")]
-    panic: String,
+    pub panic: String,
     #[serde(default = "default_string_type")]
-    string: String,
+    pub string: String,
 }
 
 impl Default for TypeConfig {
@@ -63,28 +57,28 @@ fn opt_on() -> bool {
     return true;
 }
 
-fn opt_off() -> bool {
-    return false;
-}
+// fn opt_off() -> bool {
+//     return false;
+// }
 
-#[derive(serde::Deserialize,serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct OptimizerConfig {
     #[serde(default = "opt_on")]
-    elide_unused_writes: bool,
+    pub elide_unused_writes: bool,
     #[serde(default = "opt_on")]
-    remove_followed_usages: bool,
+    pub remove_followed_usages: bool,
     #[serde(default = "opt_on")]
-    regroup_consts: bool,
+    pub regroup_consts: bool,
     #[serde(default = "opt_on")]
-    compile_time_evaluation: bool,
+    pub compile_time_evaluation: bool,
     #[serde(default = "opt_on")]
-    function_inliner: bool,
+    pub function_inliner: bool,
     #[serde(default = "opt_on")]
-    if_optimizer: bool,
+    pub if_optimizer: bool,
     #[serde(default = "opt_on")]
-    loop_break_inline: bool,
+    pub loop_break_inline: bool,
     #[serde(default = "opt_on")]
-    remap_consts: bool,
+    pub remap_consts: bool,
 }
 
 impl Default for OptimizerConfig {
@@ -101,12 +95,14 @@ impl Default for OptimizerConfig {
         }
     }
 }
-#[derive(serde::Deserialize,serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize, PartialEq)]
 pub enum OutputFormat {
     Binary,
     Asm,
     Lir,
     Mir,
+    Python,
+    C,
 }
 
 impl Default for OutputFormat {
@@ -119,12 +115,82 @@ fn default_output_format() -> Vec<OutputFormat> {
     vec![OutputFormat::default()]
 }
 
-#[derive(serde::Deserialize,serde::Serialize)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct ProjectConfig {
     #[serde(default = "TypeConfig::default")]
-    types: TypeConfig,
+    pub types: TypeConfig,
     #[serde(default = "OptimizerConfig::default")]
-    optimizer: OptimizerConfig,
+    pub optimizer: OptimizerConfig,
     #[serde(default = "default_output_format")]
-    output_format: Vec<OutputFormat>,
+    pub output_format: Vec<OutputFormat>,
+    #[serde(default = "default_output_folder")]
+    pub output_folder: String,
+}
+
+fn default_output_folder() -> String {
+    "build".to_owned()
+}
+
+impl Default for ProjectConfig {
+    fn default() -> Self {
+        Self {
+            types: TypeConfig::default(),
+            optimizer: OptimizerConfig::default(),
+            output_format: vec![OutputFormat::Binary],
+            output_folder: "build".to_owned(),
+        }
+    }
+}
+
+pub fn load_config(project_dir: &str) -> ProjectConfig {
+    let file = format!("{}/config.yml", project_dir).replace("//", "/");
+    if !Path::new(&file).exists() {
+        println!("`{}` doesn't exists! Using default config instead!", file);
+        let default_config = ProjectConfig::default();
+        match serde_yaml::to_string(&default_config).map(|x| std::fs::write(&file, x)) {
+            Ok(Ok(_)) => {
+                println!("A default `config.yml` has been created in your project folder")
+            }
+            Ok(Err(e)) => {
+                println!("Can't write in `{}` file: {}", file, e);
+            }
+            Err(e) => {
+                println!("Can't serialize to YAML default config: {}", e);
+            }
+        }
+
+        return default_config;
+    }
+    match std::fs::read_to_string(&file) {
+        Ok(eio) => match serde_yaml::from_str(&eio) {
+            Ok(e) => match serde_yaml::to_string(&e) {
+                Ok(ep) => {
+                    if ep != eio {
+                        match std::fs::write(&file, ep) {
+                            Ok(_) => (),
+                            Err(e) => {
+                                println!("Can't write in `{}` file: {}", file, e);
+                            }
+                        }
+                    }
+                    return e;
+                }
+                Err(er) => {
+                    println!("Can't serialize to YAML the config: {}", er);
+                    return e;
+                }
+            },
+            Err(e) => {
+                println!("Can't deserialize to YAML the config: {}", e);
+                ProjectConfig::default()
+            }
+        },
+        Err(e) => {
+            println!(
+                "Can't read file `{}` using default config instead: {}",
+                file, e
+            );
+            ProjectConfig::default()
+        }
+    }
 }

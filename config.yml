@@ -1,0 +1,24 @@
+---
+types:
+  any: Bytes
+  void: Empty
+  byte: Byte
+  char: Char
+  panic: Panic
+  string: String
+optimizer:
+  elide_unused_writes: true
+  remove_followed_usages: true
+  regroup_consts: true
+  compile_time_evaluation: true
+  function_inliner: true
+  if_optimizer: true
+  loop_break_inline: true
+  remap_consts: true
+output_format:
+  - Binary
+  - Asm
+  - Mir
+  - Lir
+  - Python
+output_folder: cvm/build
