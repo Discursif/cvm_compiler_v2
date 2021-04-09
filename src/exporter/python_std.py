@@ -9,6 +9,7 @@
 ### CVM 2.0.3.1741
 ###
 
+from math import * 
 import turtle
 
 def p(a):

@@ -32,6 +32,9 @@ fn transpile(mir_code: &IrAsm, context: &mut TranspileContext) -> Vec<String> {
                 OperationType::Merge => {
                     return vec![format!("v[{into}]=v[{a}]+v[{b}]")];
                 }
+                OperationType::Div => {
+                    return vec![format!("v[{into}]=list(map(lambda i:floor(v[{a}][i]/v[{b}][i%len(v[{b}])])%256,iter(range(len(v[{a}])))))")];
+                }
                 e => e.as_operator(),
             };
             format!("v[{into}]=list(map(lambda i:(v[{a}][i]{operator}v[{b}][i%len(v[{b}])])%256,iter(range(len(v[{a}])))))")

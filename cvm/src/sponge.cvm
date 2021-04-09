@@ -1,0 +1,6 @@
+use "../lib/turtle";
+
+fn main() {
+    Turtle.rect(100, 50);
+    Turtle.exit_on_click();
+}

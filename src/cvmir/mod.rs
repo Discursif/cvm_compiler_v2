@@ -12,7 +12,7 @@ pub mod clear_unreachable;
 pub mod computer;
 pub mod fn_inliner;
 pub mod if_cleaner;
-pub mod loop_break_inline;
+// pub mod loop_break_inline;
 pub mod loop_fn_return_opt;
 pub mod loop_for_unwrapper;
 pub mod regroup_consts;

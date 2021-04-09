@@ -25,7 +25,7 @@ pub mod variable;
 use asm::Asm;
 use cvm_exe::clean_asm_to_exe;
 use cvmir::{
-    computer, elide_unused_writes, fn_inliner, if_cleaner, loop_break_inline, remap_consts,
+    computer, elide_unused_writes, fn_inliner, if_cleaner, remap_consts,
     remove_followed_usages, Counter, IrAsm,
 };
 use error::ParseError;
@@ -219,9 +219,9 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         if config.optimizer.if_optimizer {
             cctx.instructions = if_cleaner::optimize(cctx.instructions);
         }
-        if config.optimizer.loop_break_inline {
-            cctx.instructions = loop_break_inline::loop_break_inline(cctx.instructions);
-        }
+        // if config.optimizer.loop_break_inline {
+        //     cctx.instructions = loop_break_inline::loop_break_inline(cctx.instructions);
+        // }
         cctx.instructions = loop_fn_return_opt::optimize(cctx.instructions);
         cctx.instructions = clear_unreachable::optimize(cctx.instructions);
     }

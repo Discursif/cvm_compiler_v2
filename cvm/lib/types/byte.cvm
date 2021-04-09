@@ -56,11 +56,12 @@ type Byte = 1 {
         return other;
     }
     fn to_string() -> String {
+        Byte tmp = self;
         String out = "";
         loop {
-            out = (((self % 10) + 48 as Char) ~ out) as String;
-            self /= 10;
-            if self == 0 => break;
+            out = (((tmp % 10) + 48 as Char) ~ out) as String;
+            tmp /= 10;
+            if tmp == 0 => break;
         }
         return out;
     }

@@ -1,0 +1,32 @@
+use "std";
+
+type Turtle {
+    static fn forward(Byte i) {
+        print(1~"turtle.forward("~ i.to_string()~")");
+    }
+    static fn backwards(Byte i) {
+        print(1~"turtle.forward(-"~ i.to_string()~")");
+    }
+    static fn right(Byte i) {
+        print(1~"turtle.right("~ i.to_string()~")");
+    }
+    static fn left(Byte i) {
+        print(1~"turtle.right("~ i.to_string()~")");
+    }
+    static fn exit_on_click() {
+        print(1~"turtle.exitonclick()");
+    }
+    static fn rect(Byte width, Byte height) {
+        Turtle.forward(width);
+        Turtle.right(90);
+
+        Turtle.forward(height);
+        Turtle.right(90);
+
+        Turtle.forward(width);
+        Turtle.right(90);
+
+        Turtle.forward(height);
+        Turtle.right(90);
+    }
+}

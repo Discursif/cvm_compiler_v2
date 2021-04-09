@@ -1,219 +1,153 @@
-l0 v0 = 4
-l1 v1 = 237
-l2 v2 = 10
+l0 v0 = 0
+l1 v1 = 48
+l2 v2 = 116 117 114 116 108 101 46 102 111 114 119 97 114 100 40
 l3 v3 = 1
-l4 v4 = 78 111 98 111 100 121 32 119 111 110 33 10
-l5 v5 = 32
-l6 v6 = 5
-l7 v7 = 9
-l8 v8 = 45 45 45 45 45 45 45 45 45 10
-l9 v9 = 32 124 32
-l10 v10 = 6
-l11 v11 = 3
-l12 v12 = 73 110 118 97 108 105 100 32 105 110 112 117 116 10
-l13 v13 = 8
-l14 v14 = 7
-l15 v15 = 49
-l16 v16 = 2
-l17 v17 = 69 110 116 101 114 32 97 32 112 111 115 105 116 105 111 110 32 116 111 32 112 108 97 121 32 105 110 32 58 32
-l18 v18 = 65 108 100 114 101 97 100 121 32 115 111 109 101 116 104 105 110 103 32 112 108 97 99 101 100 32 104 101 114 101 10
-l19 v19 = 0
-l20 v20 = 79
-l21 v21 = 49 50 51 52 53 54 55 56 57
-l22 v22 = 32 32 32 32 32 32 32 32 32
-l23 v23 = 88
-l24 'loop_start1
-l25 v24 = v22[v16 > v3]
-l26 v25 = v24 ~ v2
-l27 v26 = v9 ~ v25
-l28 v27 = v22[v3 > v3]
-l29 v28 = v27 ~ v26
-l30 v29 = v9 ~ v28
-l31 v30 = v22[v19 > v3]
-l32 v31 = v30 ~ v29
-l33 print v31
-l34 print v8
-l35 v32 = v22[v6 > v3]
-l36 v33 = v32 ~ v2
-l37 v34 = v9 ~ v33
-l38 v35 = v22[v0 > v3]
-l39 v36 = v35 ~ v34
-l40 v37 = v9 ~ v36
-l41 v38 = v22[v11 > v3]
-l42 v39 = v38 ~ v37
-l43 print v39
-l44 print v8
-l45 v40 = v22[v13 > v3]
-l46 v41 = v40 ~ v2
-l47 v42 = v9 ~ v41
-l48 v43 = v22[v14 > v3]
-l49 v44 = v43 ~ v42
-l50 v45 = v9 ~ v44
-l51 v46 = v22[v10 > v3]
-l52 v47 = v46 ~ v45
-l53 print v47
-l54 print v17
-l55 v48 = input
-l56 print v2
-l57 v49 = len v48
-l58 if 49 != 3
-l59 goto 'if_end2
-l60 print v12
-l61 goto 'loop_start1
-l62 'if_end2
-l63 v50 = 0
-l64 'loop_start3
-l65 if 7 == 50
-l66 goto 'if_end4
-l67 v51 = 0
-l68 goto 'loop_end3
-l69 'if_end4
-l70 v52 = v21[v50 > v3]
-l71 v50 = v50 + v3
-l72 if 52 == 48
-l73 goto 'if_end5
-l74 v51 = 1
-l75 goto 'loop_end3
-l76 'if_end5
-l77 goto 'loop_start3
-l78 'loop_end3
-l79 if 51 == 19
-l80 goto 'if_end6
-l81 print v12
-l82 goto 'loop_start1
-l83 'if_end6
-l84 v53 = v48 - v15
-l85 v55 = v22[v53 > v3]
-l86 if 55 != 5
-l87 goto 'if_end8
-l88 v54 = v3
-l89 goto 'func_end7
-l90 'if_end8
-l91 v56 = len v23
-l92 v57 = v53 + v56
-l93 v58 = len v22
-l94 v59 = v22[v57 > v58]
-l95 v60 = v23 ~ v59
-l96 v61 = v53 - v19
-l97 v62 = v22[v19 > v61]
-l98 v63 = v62 ~ v60
-l99 v22 = v63
-l100 v64 = 0
-l101 'loop_start9
-l102 if 64 == 11
-l103 goto 'if_end10
-l104 v65 = v63[v13 > v3]
-l105 v66 = v63[v0 > v3]
-l106 v67 = v66 + v65
-l107 v68 = v63[v19 > v3]
-l108 v69 = v68 + v67
-l109 if 69 == 13
-l110 goto 'if_end11
-l111 v70 = 88 32 104 97 115 32 119 111 110 33 10
-l112 print v70
-l113 end
-l114 'if_end11
-l115 if 69 == 1
-l116 goto 'if_end12
-l117 v70 = 79 32 104 97 115 32 119 111 110 33 10
-l118 print v70
-l119 end
-l120 'if_end12
-l121 v71 = v63[v10 > v3]
-l122 v72 = v63[v0 > v3]
-l123 v73 = v72 + v71
-l124 v74 = v63[v16 > v3]
-l125 v75 = v74 + v73
-l126 if 75 == 13
-l127 goto 'if_end13
-l128 v70 = 88 32 104 97 115 32 119 111 110 33 10
-l129 print v70
-l130 end
-l131 'if_end13
-l132 if 75 == 1
-l133 goto 'if_end14
-l134 v70 = 79 32 104 97 115 32 119 111 110 33 10
-l135 print v70
-l136 end
-l137 'if_end14
-l138 v76 = len v63
-l139 v77 = 0
-l140 'loop_start15
-l141 if 76 == 77
-l142 goto 'if_end16
-l143 print v4
-l144 end
+l4 v4 = 116 117 114 116 108 101 46 114 105 103 104 116 40
+l5 v5 = 41
+l6 v6 = 10
+l7 v7 = 1 116 117 114 116 108 101 46 101 120 105 116 111 110 99 108 105 99 107 40 41
+l8 v8 = 100
+l9 v9 = 
+l10 'loop_start1
+l11 v10 = v8 % v6
+l12 v11 = v10 + v1
+l13 v9 = v11 ~ v9
+l14 v12 = v8 / v6
+l15 v8 = v12
+l16 if 12 == 0
+l17 goto 'if_end2
+l18 goto 'loop_end1
+l19 'if_end2
+l20 goto 'loop_start1
+l21 'loop_end1
+l22 v13 = v9 ~ v5
+l23 v14 = v2 ~ v13
+l24 v15 = v3 ~ v14
+l25 print v15
+l26 v16 = 90
+l27 v17 = 
+l28 'loop_start3
+l29 v18 = v16 % v6
+l30 v19 = v18 + v1
+l31 v17 = v19 ~ v17
+l32 v20 = v16 / v6
+l33 v16 = v20
+l34 if 20 == 0
+l35 goto 'if_end4
+l36 goto 'loop_end3
+l37 'if_end4
+l38 goto 'loop_start3
+l39 'loop_end3
+l40 v21 = v17 ~ v5
+l41 v22 = v4 ~ v21
+l42 v23 = v3 ~ v22
+l43 print v23
+l44 v24 = 50
+l45 v25 = 
+l46 'loop_start5
+l47 v26 = v24 % v6
+l48 v27 = v26 + v1
+l49 v25 = v27 ~ v25
+l50 v28 = v24 / v6
+l51 v24 = v28
+l52 if 28 == 0
+l53 goto 'if_end6
+l54 goto 'loop_end5
+l55 'if_end6
+l56 goto 'loop_start5
+l57 'loop_end5
+l58 v29 = v25 ~ v5
+l59 v30 = v2 ~ v29
+l60 v31 = v3 ~ v30
+l61 print v31
+l62 v32 = 90
+l63 v33 = 
+l64 'loop_start7
+l65 v34 = v32 % v6
+l66 v35 = v34 + v1
+l67 v33 = v35 ~ v33
+l68 v36 = v32 / v6
+l69 v32 = v36
+l70 if 36 == 0
+l71 goto 'if_end8
+l72 goto 'loop_end7
+l73 'if_end8
+l74 goto 'loop_start7
+l75 'loop_end7
+l76 v37 = v33 ~ v5
+l77 v38 = v4 ~ v37
+l78 v39 = v3 ~ v38
+l79 print v39
+l80 v40 = 100
+l81 v41 = 
+l82 'loop_start9
+l83 v42 = v40 % v6
+l84 v43 = v42 + v1
+l85 v41 = v43 ~ v41
+l86 v44 = v40 / v6
+l87 v40 = v44
+l88 if 44 == 0
+l89 goto 'if_end10
+l90 goto 'loop_end9
+l91 'if_end10
+l92 goto 'loop_start9
+l93 'loop_end9
+l94 v45 = v41 ~ v5
+l95 v46 = v2 ~ v45
+l96 v47 = v3 ~ v46
+l97 print v47
+l98 v48 = 90
+l99 v49 = 
+l100 'loop_start11
+l101 v50 = v48 % v6
+l102 v51 = v50 + v1
+l103 v49 = v51 ~ v49
+l104 v52 = v48 / v6
+l105 v48 = v52
+l106 if 52 == 0
+l107 goto 'if_end12
+l108 goto 'loop_end11
+l109 'if_end12
+l110 goto 'loop_start11
+l111 'loop_end11
+l112 v53 = v49 ~ v5
+l113 v54 = v4 ~ v53
+l114 v55 = v3 ~ v54
+l115 print v55
+l116 v56 = 50
+l117 v57 = 
+l118 'loop_start13
+l119 v58 = v56 % v6
+l120 v59 = v58 + v1
+l121 v57 = v59 ~ v57
+l122 v60 = v56 / v6
+l123 v56 = v60
+l124 if 60 == 0
+l125 goto 'if_end14
+l126 goto 'loop_end13
+l127 'if_end14
+l128 goto 'loop_start13
+l129 'loop_end13
+l130 v61 = v57 ~ v5
+l131 v62 = v2 ~ v61
+l132 v63 = v3 ~ v62
+l133 print v63
+l134 v64 = 90
+l135 v65 = 
+l136 'loop_start15
+l137 v66 = v64 % v6
+l138 v67 = v66 + v1
+l139 v65 = v67 ~ v65
+l140 v68 = v64 / v6
+l141 v64 = v68
+l142 if 68 == 0
+l143 goto 'if_end16
+l144 goto 'loop_end15
 l145 'if_end16
-l146 v78 = v63[v77 > v3]
-l147 v77 = v77 + v3
-l148 if 78 == 5
-l149 goto 'if_end17
-l150 v54 = v19
-l151 goto 'func_end7
-l152 'if_end17
-l153 goto 'loop_start15
-l154 'loop_end15
-l155 'if_end10
-l156 v79 = v64
-l157 v64 = v64 + v3
-l158 v80 = v63[v79 > v3]
-l159 if 80 == 5
-l160 goto 'if_end18
-l161 goto 'loop_start9
-l162 'if_end18
-l163 v81 = v79 + v10
-l164 v82 = v63[v81 > v3]
-l165 v83 = v79 + v11
-l166 v84 = v63[v83 > v3]
-l167 v85 = v84 + v82
-l168 v86 = v63[v79 > v3]
-l169 v87 = v86 + v85
-l170 if 87 == 13
-l171 goto 'if_end19
-l172 v70 = 88 32 104 97 115 32 119 111 110 33 10
-l173 print v70
-l174 end
-l175 'if_end19
-l176 if 87 == 1
-l177 goto 'if_end20
-l178 v70 = 79 32 104 97 115 32 119 111 110 33 10
-l179 print v70
-l180 end
-l181 'if_end20
-l182 v88 = v79 * v11
-l183 v89 = v88 + v16
-l184 v90 = v63[v89 > v3]
-l185 v91 = v88 + v3
-l186 v92 = v63[v91 > v3]
-l187 v93 = v92 + v90
-l188 v94 = v63[v88 > v3]
-l189 v95 = v94 + v93
-l190 if 95 == 13
-l191 goto 'if_end21
-l192 v70 = 88 32 104 97 115 32 119 111 110 33 10
-l193 print v70
-l194 end
-l195 'if_end21
-l196 if 95 == 1
-l197 goto 'if_end22
-l198 v70 = 79 32 104 97 115 32 119 111 110 33 10
-l199 print v70
-l200 end
-l201 'if_end22
-l202 goto 'loop_start9
-l203 'loop_end9
-l204 'func_end7
-l205 if 54 == 3
-l206 goto 'if_end23
-l207 print v18
-l208 goto 'loop_start1
-l209 'if_end23
-l210 if 23 == 20
-l211 goto 'if_else24
-l212 v23 = 88
-l213 goto 'if_end24
-l214 'if_else24
-l215 v23 = 79
-l216 'if_end24
-l217 goto 'loop_start1
-l218 'loop_end1
+l146 goto 'loop_start15
+l147 'loop_end15
+l148 v69 = v65 ~ v5
+l149 v70 = v4 ~ v69
+l150 v71 = v3 ~ v70
+l151 print v71
+l152 print v7
