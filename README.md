@@ -1,17 +1,68 @@
 # cvm_compiler_v2
  The second iteration of the CVM compiler
 ## Introduction
-CVM is a high level language targetting compiling to CVM Bytecode which itself can be compiled to ANY target such as:
+CVM is a high level language which compiles to CVM Bytecode which itself can be transpiled to all kind of targets such as:
  > C, x86, ARM64, Python, JS...
 CVM is similar to Rust in terms of syntax with touches of Java.
+
+## Aim of this project
+This project was made to explore optimization and language theory.
+The other aim of this project is making challenges for a custom CTF named Discursif.
+
+## Why is CVM so particular to code with ?
+Every feature of CVM is due or a consequence of the underlying possibilities or CVM Bytecode.
+This is why it is very important to learn the basics of CVM Bytecode before programming in CVM.
+
+The CVM Bytecode has only 9 instruction with the OP instruction having 9 kinds of suboperation.
+
+In CVM registers have a variable size between 0 and 255. They act like an Vector of unsigned bytes with a maximum capacity of 255.
+
+All operations in CVM are wrapping!
+For instance: `250 + 10 = 5`
+If you don't understand wrapping just imagine there is a modulus 256 after each operation.
+
+Furthermore, registers when operating are cyclic this means:
+```
+10 20 30 40 50 60 70 + 1 2 = 11 22 31 42 51 62 71
+```
+As you can see if the second register is smaller than the first it will cycle to create a long enough register.
+This means that operations in CVM aren't commutative.
+```
+10 + 20 1 = 30
+20 1 + 10 = 30 11
+```
+
+Here all the possible instructions:
+`CONST v<nreg>, <byte array>` This instruction sets the `<nreg>` register to the value of the `<byte array>`.
+`MOV v<nreg1>, v<nreg2>` This instruction sets the `<nreg1>` register to the value of the `<nreg2>` register.
+`IF v<nreg1>, v<nreg2>` If the register the `<nreg1>` is equal to the `<nreg2>` register we skip the next instuction.
+`IFN v<nreg1>, v<nreg2>` If the register the `<nreg1>` is NOT equal to the `<nreg2>` register we skip the next instuction.
+*Note that IF and IFN are encoded as one instruction in the binary*
+`JUMP <line>` Jump to `<line>`
+`END` Closes the program
+`INPUT v<nreg>` Ask for user input (Will only take the first 255 bytes) and put it into `<nreg>` register
+`PRINT v<nreg>` Print the `<nreg>` register as UTF8 sequence.
+`LEN v<nreg1> v<nreg2>` Set the `<nreg1>` register to a register of size one which contains the `v<nreg2>` register size.
+`READ v<nreg1> v<nreg2> v<nreg3> v<nreg4>` Set the `<nreg1>` register to the values of `v<nreg2>` register starting from first value of the `v<nreg3>` register and taking as many values as the first value of the `v<nreg4>` register.
+`ADD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping addition of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`SUB v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping substraction of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`MUL v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping multiplication of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`DIV v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping division of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`MOD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping modulus of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`AND v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary and of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`OR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary or of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`XOR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary xor of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+`MERGE v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to the concatenation of the `v<nreg2>` and the `v<nreg3>` registers.
+*Note that all operations including MERGE are encoded in the same instruction*
+
+
+
 ## Hello world
 ```rust
 fn main() {
-    print("Hello world!"~10);
+    println("Hello world!");
 }
 ```
-Note: *The `10` is the ascii code for \n*
-Note: *The `~` is an operator that merges two variables into one 0 1 ~ 2 3 = 0 1 2 3*
 
 Note: *This example is usable without STD*
 ## Variables
