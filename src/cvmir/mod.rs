@@ -12,7 +12,7 @@ pub mod clear_unreachable;
 pub mod computer;
 pub mod fn_inliner;
 pub mod if_cleaner;
-// pub mod loop_break_inline;
+pub mod loop_break_inline;
 pub mod loop_fn_return_opt;
 pub mod loop_for_unwrapper;
 pub mod regroup_consts;
@@ -21,6 +21,7 @@ pub mod remap_consts;
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum IrAsm {
     Op(OperationType, Variable, Variable, Variable),
+    Meta(IrAsmMeta),
     End,
     If(Variable, Variable, Vec<Self>, Vec<Self>),
     Loop(Vec<Self>),
@@ -35,6 +36,20 @@ pub enum IrAsm {
     Len(Variable, Variable),
     Read(Variable, Variable, Variable, Variable),
     Nop,
+}
+
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum IrAsmMeta {
+    SetLength(Variable, usize),
+}
+impl Display for IrAsmMeta {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            IrAsmMeta::SetLength(a, b) => {
+                write!(f, "len({}) = {}", a, b)
+            }
+        }
+    }
 }
 
 impl Debug for IrAsm {
@@ -121,6 +136,7 @@ impl Debug for IrAsm {
             IrAsm::Nop => {
                 write!(f, "IrAsm::NoOp")
             }
+            IrAsm::Meta(e) => write!(f, "IrAsm::Meta(IrAsmMeta::{:?})", e),
         }
     }
 }
@@ -215,6 +231,7 @@ impl Display for IrAsm {
             IrAsm::Len(e, a) => write!(f, "v{} = len v{}", e, a),
             IrAsm::Read(a, b, c, d) => write!(f, "v{} = v{}[v{} > v{}]", a, b, c, d),
             IrAsm::Nop => write!(f, ""),
+            IrAsm::Meta(e) => write!(f, "meta {}", e),
         }
     }
 }
@@ -331,6 +348,7 @@ impl IrAsm {
                 out.push(Asm::Label(format!("func_end{}", if_id)));
                 return out;
             }
+            IrAsm::Meta(_) => return vec![],
         }]
     }
 
@@ -396,6 +414,7 @@ fn get_what_to_elide(i: &Vec<IrAsm>, set: &mut HashMap<usize, usize>) {
                 add(c, set);
             }
             IrAsm::Nop => {}
+            IrAsm::Meta(_) => {}
         }
     }
 }
@@ -478,6 +497,7 @@ fn count_refs(i: &IrAsm, map: &mut HashMap<usize, (usize, usize)>) {
             add(d, false);
         }
         IrAsm::Nop => {}
+        IrAsm::Meta(_) => {}
     }
 }
 
@@ -496,7 +516,16 @@ pub fn remove_followed_usages(
         return i;
     }
     let mut i = i.into_iter();
-    let mut last = i.next().unwrap();
+    let mut metas = Vec::new();
+    let mut last = loop {
+        match i.next() {
+            Some(IrAsm::Meta(a)) => {
+                metas.push(IrAsm::Meta(a));
+            }
+            Some(e) => break e,
+            None => return metas,
+        }
+    };
     let mut out = Vec::with_capacity(i.len());
     while let Some(mut e) = i.next() {
         e = match e {
@@ -509,6 +538,10 @@ pub fn remove_followed_usages(
             IrAsm::Loop(a) => IrAsm::Loop(remove_followed_usages(a, Some(refs.clone()))),
             IrAsm::FunctionBlock(a, b) => {
                 IrAsm::FunctionBlock(a, remove_followed_usages(b, Some(refs.clone())))
+            }
+            IrAsm::Meta(e) => {
+                metas.push(IrAsm::Meta(e));
+                continue;
             }
             e => e,
         };
@@ -533,6 +566,7 @@ pub fn remove_followed_usages(
                             IrAsm::Len(_, b) => IrAsm::Len(to_use, b),
                             IrAsm::Read(_, b, c, d) => IrAsm::Read(to_use, b, c, d),
                             IrAsm::Nop => IrAsm::Nop,
+                            IrAsm::Meta(_) => unreachable!(),
                         };
                         continue;
                     }
@@ -540,8 +574,10 @@ pub fn remove_followed_usages(
             }
         }
         out.push(last);
+        out.append(&mut metas);
         last = e;
     }
     out.push(last);
+    out.append(&mut metas);
     out
 }

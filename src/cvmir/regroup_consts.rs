@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::cvmir::IrAsmMeta;
+
 use super::IrAsm;
 
 pub struct Vars {
@@ -96,6 +98,9 @@ fn inner_opt(asm: Vec<IrAsm>, consts: &mut Vars) -> Vec<IrAsm> {
                     IrAsm::Read(a, consts.remap(b), consts.remap(c), consts.remap(d))
                 }
                 IrAsm::Nop => IrAsm::Nop,
+                IrAsm::Meta(e) => IrAsm::Meta(match e {
+                    IrAsmMeta::SetLength(a, b) => IrAsmMeta::SetLength(consts.remap(a), b),
+                }),
             })
         })
         .collect()
@@ -117,8 +122,12 @@ pub fn get_writes(asm: &IrAsm, consts: &mut Vars) {
         }
         IrAsm::End => {}
         IrAsm::If(_, _, d, e) => {
-            d.iter().for_each(|x| get_writes(x, consts));
-            e.iter().for_each(|x| get_writes(x, consts));
+            if !matches!(d.last(), Some(IrAsm::End)) {
+                d.iter().for_each(|x| get_writes(x, consts));
+            }
+            if !matches!(e.last(), Some(IrAsm::End)) {
+                e.iter().for_each(|x| get_writes(x, consts));
+            }
         }
         IrAsm::Loop(e) => {
             e.iter().for_each(|x| get_writes(x, consts));
@@ -147,5 +156,6 @@ pub fn get_writes(asm: &IrAsm, consts: &mut Vars) {
             consts.get(*a);
         }
         IrAsm::Nop => {}
+        IrAsm::Meta(_) => {}
     }
 }

@@ -8,13 +8,18 @@ types:
   string: String
 optimizer:
   elide_unused_writes: true
+  clear_unreachable: true
+  loop_fn_return: true
   remove_followed_usages: true
   regroup_consts: true
   compile_time_evaluation: true
   function_inliner: true
   if_optimizer: true
-  loop_break_inline: true
+  loop_break_inline: false
   remap_consts: true
+  infer_sizes_from_meta: false
+compiler:
+  emit_meta_type_size: false
 output_format:
   - Binary
   - Asm

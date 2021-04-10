@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use crate::IrAsm;
 use crate::Rule;
 use crate::{
     asm::OperationType,
@@ -9,6 +8,7 @@ use crate::{
     variable::Variable,
     CVMCompCtx, BYTE_TYPE,
 };
+use crate::{cvmir::IrAsmMeta, IrAsm};
 
 #[derive(Clone, Debug)]
 pub enum AsmInstruction {
@@ -64,7 +64,7 @@ pub enum Instruction {
     Continue(Paire<Rule>),
     Assign(Paire<Rule>, Variable, Expression),
     Return(Paire<Rule>, Expression),
-    While(Paire<Rule>, Expression, Vec<Instruction>)
+    While(Paire<Rule>, Expression, Vec<Instruction>),
 }
 
 impl Instruction {
@@ -113,6 +113,7 @@ impl Instruction {
                         p.name.to_owned(),
                     ));
                 }
+
                 // I'm not sure if I can remove this MOV since if we do
                 // a = "test"
                 // b = a
@@ -120,6 +121,12 @@ impl Instruction {
                 // print(a) -> "tast"
                 let expr1_r = a.compile(ctx, vars)?;
                 ctx.instructions.push(IrAsm::Mov(expr1, expr1_r));
+                if ctx.config.emit_meta_type_size {
+                    if let Some(elen) = ctx.ctx.types.get(&e.var_type).unwrap().size {
+                        ctx.instructions
+                            .push(IrAsm::Meta(IrAsmMeta::SetLength(expr1, elen as usize)));
+                    }
+                }
                 vars.insert(e.name.to_owned(), expr1);
             }
             Instruction::Return(a, e) => {
@@ -282,20 +289,19 @@ impl Instruction {
                 ctx.instructions.append(&mut i);
             }
             Instruction::While(pair, a, b) => {
-                let mut lk = vec![
-                    Instruction::If(
+                let mut lk = vec![Instruction::If(
+                    pair.clone(),
+                    a.clone(),
+                    true,
+                    Expression::VariantAccess(
                         pair.clone(),
-                        a.clone(),
-                        true,
-                        Expression::VariantAccess(
-                            pair.clone(),
-                            box Expression::Type(pair.clone(), "Boolean".to_owned()),
-                            "false".to_owned(),
-                        ),vec![Instruction::Break(pair.clone())],None),
-                    
-                ];
+                        box Expression::Type(pair.clone(), "Boolean".to_owned()),
+                        "false".to_owned(),
+                    ),
+                    vec![Instruction::Break(pair.clone())],
+                    None,
+                )];
                 lk.append(&mut b.clone());
-
 
                 Instruction::Loop(pair.clone(), lk).compile(ctx, function_data, vars)?;
             }

@@ -25,7 +25,7 @@ pub mod variable;
 use asm::Asm;
 use cvm_exe::clean_asm_to_exe;
 use cvmir::{
-    computer, elide_unused_writes, fn_inliner, if_cleaner, remap_consts,
+    computer, elide_unused_writes, fn_inliner, if_cleaner, loop_break_inline, remap_consts,
     remove_followed_usages, Counter, IrAsm,
 };
 use error::ParseError;
@@ -45,7 +45,7 @@ use std::{
 use pest::Parser;
 
 use crate::{
-    cli::{load_config, OutputFormat},
+    cli::{load_config, CompilerConfig, OutputFormat},
     cvm_exe::CVm,
     cvmir::{clear_unreachable, loop_fn_return_opt},
     exporter::python,
@@ -86,6 +86,7 @@ impl CompilationContext {
 }
 
 pub struct CVMCompCtx {
+    pub config: CompilerConfig,
     pub ctx: CompilationContext,
     pub current_var: usize,
     pub function: usize,
@@ -173,6 +174,7 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         .clone();
 
     let mut cctx = CVMCompCtx {
+        config: config.compiler,
         ctx: context,
         current_var: 0,
         function: 0,
@@ -187,6 +189,8 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
             println!("{}", e);
         }
     };
+
+    cctx.instructions.push(IrAsm::End);
 
     let mut o = 0;
     let mut p = 0;
@@ -211,7 +215,7 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
             cctx.instructions = cvmir::regroup_consts::optimize(cctx.instructions);
         }
         if config.optimizer.compile_time_evaluation {
-            cctx.instructions = computer::optimize(cctx.instructions);
+            cctx.instructions = computer::optimize(cctx.instructions, &config.optimizer);
         }
         if config.optimizer.function_inliner {
             cctx.instructions = fn_inliner::elide_fns(cctx.instructions);
@@ -219,11 +223,15 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         if config.optimizer.if_optimizer {
             cctx.instructions = if_cleaner::optimize(cctx.instructions);
         }
-        // if config.optimizer.loop_break_inline {
-        //     cctx.instructions = loop_break_inline::loop_break_inline(cctx.instructions);
-        // }
-        cctx.instructions = loop_fn_return_opt::optimize(cctx.instructions);
-        cctx.instructions = clear_unreachable::optimize(cctx.instructions);
+        if config.optimizer.loop_break_inline {
+            cctx.instructions = loop_break_inline::loop_break_inline(cctx.instructions);
+        }
+        if config.optimizer.loop_fn_return {
+            cctx.instructions = loop_fn_return_opt::optimize(cctx.instructions);
+        }
+        if config.optimizer.clear_unreachable {
+            cctx.instructions = clear_unreachable::optimize(cctx.instructions);
+        }
     }
     if config.optimizer.remap_consts {
         cctx.instructions = remap_consts::optimize(cctx.instructions);

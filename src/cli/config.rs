@@ -57,14 +57,18 @@ fn opt_on() -> bool {
     return true;
 }
 
-// fn opt_off() -> bool {
-//     return false;
-// }
+fn opt_off() -> bool {
+    return false;
+}
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct OptimizerConfig {
     #[serde(default = "opt_on")]
     pub elide_unused_writes: bool,
+    #[serde(default = "opt_on")]
+    pub clear_unreachable: bool,
+    #[serde(default = "opt_on")]
+    pub loop_fn_return: bool,
     #[serde(default = "opt_on")]
     pub remove_followed_usages: bool,
     #[serde(default = "opt_on")]
@@ -75,10 +79,12 @@ pub struct OptimizerConfig {
     pub function_inliner: bool,
     #[serde(default = "opt_on")]
     pub if_optimizer: bool,
-    #[serde(default = "opt_on")]
+    #[serde(default = "opt_off")]
     pub loop_break_inline: bool,
     #[serde(default = "opt_on")]
     pub remap_consts: bool,
+    #[serde(default = "opt_off")]
+    pub infer_sizes_from_meta: bool,
 }
 
 impl Default for OptimizerConfig {
@@ -90,8 +96,11 @@ impl Default for OptimizerConfig {
             compile_time_evaluation: true,
             function_inliner: true,
             if_optimizer: true,
-            loop_break_inline: true,
+            loop_break_inline: false,
             remap_consts: true,
+            clear_unreachable: true,
+            loop_fn_return: true,
+            infer_sizes_from_meta: false,
         }
     }
 }
@@ -121,10 +130,26 @@ pub struct ProjectConfig {
     pub types: TypeConfig,
     #[serde(default = "OptimizerConfig::default")]
     pub optimizer: OptimizerConfig,
+    #[serde(default = "CompilerConfig::default")]
+    pub compiler: CompilerConfig,
     #[serde(default = "default_output_format")]
     pub output_format: Vec<OutputFormat>,
     #[serde(default = "default_output_folder")]
     pub output_folder: String,
+}
+
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct CompilerConfig {
+    #[serde(default = "opt_on")]
+    pub emit_meta_type_size: bool,
+}
+
+impl Default for CompilerConfig {
+    fn default() -> Self {
+        Self {
+            emit_meta_type_size: true,
+        }
+    }
 }
 
 fn default_output_folder() -> String {
@@ -138,6 +163,7 @@ impl Default for ProjectConfig {
             optimizer: OptimizerConfig::default(),
             output_format: vec![OutputFormat::Binary],
             output_folder: "build".to_owned(),
+            compiler: CompilerConfig::default(),
         }
     }
 }

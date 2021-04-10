@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::asm::OperationType;
+use crate::{asm::OperationType, cli::OptimizerConfig};
 
-use super::{IrAsm, loop_for_unwrapper};
+use super::{loop_for_unwrapper, IrAsm};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum KnowledgeState {
@@ -61,6 +61,26 @@ impl MemoryManager {
         }
     }
 
+    pub fn try_set_length(&mut self, variable: usize, length: usize) {
+        match self.0.get(&variable) {
+            None => {
+                self.0.insert(variable, KnowledgeState::Length(length));
+            }
+            Some(&KnowledgeState::Equivalent(e)) => {
+                //println!("Going in {}", e);
+                if e == variable {
+                    self.0.insert(variable, KnowledgeState::Length(length));
+                } else {
+                    self.try_set_length(e, length);
+                }
+            }
+            Some(KnowledgeState::Unknown) => {
+                self.0.insert(variable, KnowledgeState::Length(length));
+            }
+            _ => (),
+        }
+    }
+
     pub fn set(&mut self, variable: usize, value: KnowledgeState) {
         self.0.values_mut().for_each(|x| {
             // TODO: We can maybe copy the equivalent to state instead of setting Unknown
@@ -113,16 +133,20 @@ impl MemoryManager {
     }
 }
 
-pub fn optimize(data: Vec<IrAsm>) -> Vec<IrAsm> {
+pub fn optimize(data: Vec<IrAsm>, config: &OptimizerConfig) -> Vec<IrAsm> {
     let mut manager = MemoryManager::new();
     data.into_iter()
-        .map(|x| update(x, &mut manager))
+        .map(|x| update(x, &mut manager, config))
         .flatten()
         .collect()
 }
 
 #[allow(mutable_borrow_reservation_conflict)]
-fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
+fn update(
+    mut operation: IrAsm,
+    state: &mut MemoryManager,
+    optimizer_config: &OptimizerConfig,
+) -> Vec<IrAsm> {
     let mut no = None;
     match &mut operation {
         IrAsm::Op(operation_type, into, reg1, reg2) => {
@@ -231,7 +255,7 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                         if m == n {
                             return c
                                 .into_iter()
-                                .map(|x| update(x.clone(), state))
+                                .map(|x| update(x.clone(), state, optimizer_config))
                                 .flatten()
                                 .collect();
                         }
@@ -240,7 +264,7 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                         if a != b {
                             return d
                                 .into_iter()
-                                .map(|x| update(x.clone(), state))
+                                .map(|x| update(x.clone(), state, optimizer_config))
                                 .flatten()
                                 .collect();
                         }
@@ -250,7 +274,7 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                         if *a != b.len() {
                             return d
                                 .into_iter()
-                                .map(|x| update(x.clone(), state))
+                                .map(|x| update(x.clone(), state, optimizer_config))
                                 .flatten()
                                 .collect();
                         }
@@ -259,13 +283,13 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                         if a == b {
                             return c
                                 .into_iter()
-                                .map(|x| update(x.clone(), state))
+                                .map(|x| update(x.clone(), state, optimizer_config))
                                 .flatten()
                                 .collect();
                         } else {
                             return d
                                 .into_iter()
-                                .map(|x| update(x.clone(), state))
+                                .map(|x| update(x.clone(), state, optimizer_config))
                                 .flatten()
                                 .collect();
                         }
@@ -274,7 +298,7 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             }
             // CHECK IF VALID LATER
             let mut state1 = state.clone();
-            
+
             let knowledge = if IF_ELISION {
                 if state1.get_flattened(&*a) != &KnowledgeState::Unknown {
                     state1.set(*b, KnowledgeState::Equivalent(*a));
@@ -282,16 +306,14 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
                     state1.set(*a, KnowledgeState::Equivalent(*b));
                 }
                 if c.is_empty() && super::fn_inliner::does_end_in_any_case(&d) {
-                    Some(match (state1.get_flattened(a),state1.get_flattened(b)) {
-                        (KnowledgeState::Value(a),_) | (_,KnowledgeState::Value(a)) => {
+                    Some(match (state1.get_flattened(a), state1.get_flattened(b)) {
+                        (KnowledgeState::Value(a), _) | (_, KnowledgeState::Value(a)) => {
                             KnowledgeState::Value(a.clone())
                         }
-                        (KnowledgeState::Length(a),_) | (_,KnowledgeState::Length(a)) => {
+                        (KnowledgeState::Length(a), _) | (_, KnowledgeState::Length(a)) => {
                             KnowledgeState::Length(*a)
                         }
-                        _ => {
-                            KnowledgeState::Equivalent(state1.get_alias(*b))
-                        }
+                        _ => KnowledgeState::Equivalent(state1.get_alias(*b)),
                     })
                 } else {
                     None
@@ -301,12 +323,12 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             };
             let p: Vec<IrAsm> = c
                 .into_iter()
-                .map(|x| update(x.clone(), &mut state1))
+                .map(|x| update(x.clone(), &mut state1, optimizer_config))
                 .flatten()
                 .collect();
             let m: Vec<IrAsm> = d
                 .into_iter()
-                .map(|x| update(x.clone(), &mut *state))
+                .map(|x| update(x.clone(), &mut *state, optimizer_config))
                 .flatten()
                 .collect();
             if super::fn_inliner::does_end_in_any_case(&m) {
@@ -317,12 +339,12 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             match knowledge {
                 Some(KnowledgeState::Equivalent(e)) => {
                     state.set(*a, KnowledgeState::Equivalent(e));
-                },
+                }
                 Some(e) => {
                     state.set(*a, e.clone());
                     state.set(*b, e);
-                },
-                _ => ()
+                }
+                _ => (),
             }
             no = Some(vec![IrAsm::If(*a, *b, p, m)]);
         }
@@ -332,29 +354,33 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             if p.len() == 1 {
                 if let IrAsm::Loop(block) = &p[0] {
                     let mut set = HashSet::new();
-                        get_muts(block,&mut set);
-                        for s in set {
-                            state.0.insert(s, KnowledgeState::Unknown);
-                        }
-                        let mut state1 = state.clone();
-                        return vec![IrAsm::Loop(
-                            block
-                                .into_iter()
-                                .map(|x| update(x.clone(), &mut state1))
-                                .flatten()
-                                .collect(),
-                        )];
+                    get_muts(block, &mut set);
+                    for s in set {
+                        state.0.insert(s, KnowledgeState::Unknown);
+                    }
+                    let mut state1 = state.clone();
+                    return vec![IrAsm::Loop(
+                        block
+                            .into_iter()
+                            .map(|x| update(x.clone(), &mut state1, optimizer_config))
+                            .flatten()
+                            .collect(),
+                    )];
                 }
             }
             println!("Inlining for");
-            return p.into_iter().map(|x| update(x, state)).flatten().collect();
-        },
+            return p
+                .into_iter()
+                .map(|x| update(x, state, optimizer_config))
+                .flatten()
+                .collect();
+        }
         IrAsm::Break() => {}
         IrAsm::Continue() => {}
         IrAsm::FunctionBlock(a, block) => {
             *block = block
                 .into_iter()
-                .map(|x| update(x.clone(), state))
+                .map(|x| update(x.clone(), state, optimizer_config))
                 .flatten()
                 .collect();
             state.set(*a, KnowledgeState::Unknown);
@@ -390,16 +416,16 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
         IrAsm::Len(a, b) => {
             *b = state.get_alias(*b);
             if ELIDE_LEN {
-            if let Some(e) = state.get_length(&b) {
-                no = Some(vec![IrAsm::Cst(*a, vec![e as u8])]);
-                state.set(*a, KnowledgeState::Value(vec![e as u8]));
+                if let Some(e) = state.get_length(&b) {
+                    no = Some(vec![IrAsm::Cst(*a, vec![e as u8])]);
+                    state.set(*a, KnowledgeState::Value(vec![e as u8]));
+                } else {
+                    //state.set(*a, KnowledgeState::Length(*b));
+                    state.set(*a, KnowledgeState::Unknown);
+                }
             } else {
-                //state.set(*a, KnowledgeState::Length(*b));
                 state.set(*a, KnowledgeState::Unknown);
             }
-        } else {
-            state.set(*a, KnowledgeState::Unknown);
-        }
         }
         IrAsm::Read(a, b, c, d) => {
             *b = state.get_alias(*b);
@@ -422,6 +448,15 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
             }
         }
         IrAsm::Nop => {}
+        IrAsm::Meta(e) => {
+            if optimizer_config.infer_sizes_from_meta {
+                match e {
+                    super::IrAsmMeta::SetLength(a, b) => {
+                        state.try_set_length(*a, *b);
+                    }
+                }
+            }
+        }
     }
     if let Some(e) = no {
         e
@@ -432,18 +467,29 @@ fn update(mut operation: IrAsm, state: &mut MemoryManager) -> Vec<IrAsm> {
 
 fn get_muts(ir: &Vec<IrAsm>, a: &mut HashSet<usize>) {
     ir.iter().for_each(|x| match x {
-                IrAsm::If(_, _, e, f) => {
-                    get_muts(e,a);
-                    get_muts(f,a);
-                }
-                IrAsm::Loop(e) => get_muts(e,a),
-                IrAsm::Break() | IrAsm::End | IrAsm::Continue() | IrAsm::Return(_) | IrAsm::Prt(_) | IrAsm::Nop => {}
-                IrAsm::FunctionBlock(b, f) => {
-                    a.insert(*b);
-                    get_muts(f,a);
-                }
-                IrAsm::Op(_, b, _, _) | IrAsm::Inp(b) | IrAsm::Cst(b, _) |  IrAsm::Mov(b, _) | IrAsm::Len(b, _) | IrAsm::Read(b, _, _, _) => {
-                    a.insert(*b);
-                }
-            });
+        IrAsm::If(_, _, e, f) => {
+            get_muts(e, a);
+            get_muts(f, a);
         }
+        IrAsm::Loop(e) => get_muts(e, a),
+        IrAsm::Break()
+        | IrAsm::End
+        | IrAsm::Continue()
+        | IrAsm::Return(_)
+        | IrAsm::Prt(_)
+        | IrAsm::Nop => {}
+        IrAsm::FunctionBlock(b, f) => {
+            a.insert(*b);
+            get_muts(f, a);
+        }
+        IrAsm::Op(_, b, _, _)
+        | IrAsm::Inp(b)
+        | IrAsm::Cst(b, _)
+        | IrAsm::Mov(b, _)
+        | IrAsm::Len(b, _)
+        | IrAsm::Read(b, _, _, _) => {
+            a.insert(*b);
+        }
+        IrAsm::Meta(_) => {}
+    });
+}

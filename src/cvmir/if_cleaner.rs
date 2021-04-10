@@ -14,14 +14,24 @@ pub fn optimize(cvm_ir: Vec<IrAsm>) -> Vec<IrAsm> {
 fn optimize_inner(cvm_ir: Vec<IrAsm>, consts: &HashMap<usize, Vec<u8>>) -> Vec<IrAsm> {
     let mut iter = cvm_ir.into_iter();
     let mut buffer = Vec::new();
-    let mut last = iter.next().map(|e| match e {
+    let mut last = loop {
+        match iter.next() {
+            Some(IrAsm::Meta(e)) => {
+                buffer.push(IrAsm::Meta(e));
+            }
+            Some(e) => break e,
+            None => return buffer,
+        }
+    };
+    last = match last {
         IrAsm::If(a, b, c, d) => {
             IrAsm::If(a, b, optimize_inner(c, consts), optimize_inner(d, consts))
         }
         IrAsm::Loop(a) => IrAsm::Loop(optimize_inner(a, consts)),
         IrAsm::FunctionBlock(a, b) => IrAsm::FunctionBlock(a, optimize_inner(b, consts)),
         e => e,
-    });
+    };
+    let mut metas = Vec::new();
     while let Some(e) = iter.next() {
         let e = match e {
             IrAsm::If(a, b, c, d) => {
@@ -29,9 +39,13 @@ fn optimize_inner(cvm_ir: Vec<IrAsm>, consts: &HashMap<usize, Vec<u8>>) -> Vec<I
             }
             IrAsm::Loop(a) => IrAsm::Loop(optimize_inner(a, consts)),
             IrAsm::FunctionBlock(a, b) => IrAsm::FunctionBlock(a, optimize_inner(b, consts)),
+            IrAsm::Meta(e) => {
+                metas.push(IrAsm::Meta(e));
+                continue;
+            }
             e => e,
         };
-        let other = last.unwrap();
+        let other = last;
         if let (IrAsm::If(a, b, c, d), IrAsm::If(e, f, g, h)) = (&other, &e) {
             if c.len() == 1 && d.len() == 1 {
                 if let ([IrAsm::Cst(v, w)], [IrAsm::Cst(x, y)]) = (c.as_slice(), d.as_slice()) {
@@ -39,13 +53,13 @@ fn optimize_inner(cvm_ir: Vec<IrAsm>, consts: &HashMap<usize, Vec<u8>>) -> Vec<I
                         if e == v {
                             if consts.get(&f).map(|f| f.as_slice() == [1]).unwrap_or(false) {
                                 let (b1, b2) = if w.as_slice() == [1] { (g, h) } else { (h, g) };
-                                last = Some(IrAsm::If(*a, *b, b1.clone(), b2.clone()));
+                                last = IrAsm::If(*a, *b, b1.clone(), b2.clone());
                                 continue;
                             }
                         } else if f == v {
                             if consts.get(&e).map(|e| e.as_slice() == [1]).unwrap_or(false) {
                                 let (b1, b2) = if w.as_slice() == [1] { (g, h) } else { (h, g) };
-                                last = Some(IrAsm::If(*a, *b, b1.clone(), b2.clone()));
+                                last = IrAsm::If(*a, *b, b1.clone(), b2.clone());
                                 continue;
                             }
                         }
@@ -53,11 +67,11 @@ fn optimize_inner(cvm_ir: Vec<IrAsm>, consts: &HashMap<usize, Vec<u8>>) -> Vec<I
                 }
             }
         }
-        last = Some(e);
+        last = e;
         buffer.push(other);
+        buffer.append(&mut metas);
     }
-    if let Some(e) = last {
-        buffer.push(e);
-    }
+    buffer.push(last);
+    buffer.append(&mut metas);
     buffer
 }

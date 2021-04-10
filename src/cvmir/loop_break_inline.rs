@@ -1,6 +1,6 @@
 use super::{fn_inliner, IrAsm};
 
-pub fn loop_break_inline(instructions: Vec<IrAsm>, lp: bool) -> Vec<IrAsm> {
+pub fn loop_break_inline(instructions: Vec<IrAsm>) -> Vec<IrAsm> {
     let mut out = Vec::with_capacity(instructions.len());
     let mut iter = instructions.into_iter();
     while let Some(e) = iter.next() {
@@ -22,8 +22,8 @@ pub fn loop_break_inline(instructions: Vec<IrAsm>, lp: bool) -> Vec<IrAsm> {
             // }
             out.push(IrAsm::Loop(loop_break_inline(replace_inner_breaks(
                 e,
-                &loop_break_inline(p, true),
-            ),true)));
+                &loop_break_inline(p),
+            ))));
             return out;
         }
         out.push(match e {

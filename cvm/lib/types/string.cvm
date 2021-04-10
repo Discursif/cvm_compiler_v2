@@ -11,4 +11,16 @@ type String {
     static fn new(Bytes bytes) -> String {
         return bytes as String;
     }
+
+    fn trim() -> String {
+        loop {
+            if self[0] != " " => break;
+            self = self[1..len(self)] as String;
+        }
+        loop {
+            if self[len(self)-1] != " " => break;
+            self = self[0..len(self)-1] as String;
+        }
+        return self;
+    }
 }

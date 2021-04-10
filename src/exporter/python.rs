@@ -109,5 +109,6 @@ fn transpile(mir_code: &IrAsm, context: &mut TranspileContext) -> Vec<String> {
             format!("v[{a}]=v[{b}][v[{c}][0]:v[{c}][0]+v[{d}][0]]")
         }
         IrAsm::Nop => return vec![],
+        IrAsm::Meta(_) => return vec![],
     }]
 }
