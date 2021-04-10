@@ -1,21 +1,21 @@
 # cvm_compiler_v2
  The second iteration of the CVM compiler
 ## Introduction
-CVM is a high level language which compiles to CVM Bytecode which itself can be transpiled to all kind of targets such as:
+CVM is a high-level language which compiles to CVM Bytecode which itself can be transpiled to all kind of targets such as:
  > C, x86, ARM64, Python, JS...
 CVM is similar to Rust in terms of syntax with touches of Java.
 
 ## Aim of this project
 This project was made to explore optimization and language theory.
-The other aim of this project is making challenges for a custom CTF named Discursif.
+The other aim of this project is to make challenges for a custom CTF named Discursif.
 
-## Why is CVM so particular to code with ?
+## Why is CVM so particular to code with?
 Every feature of CVM is due or a consequence of the underlying possibilities or CVM Bytecode.
 This is why it is very important to learn the basics of CVM Bytecode before programming in CVM.
 
-The CVM Bytecode has only 9 instruction with the OP instruction having 9 kinds of suboperation.
+The CVM Bytecode has only 9 instructions, with the OP instruction having 9 kinds of suboperation.
 
-In CVM registers have a variable size between 0 and 255. They act like an Vector of unsigned bytes with a maximum capacity of 255.
+In CVM, registers have a variable size between 0 and 255. They act like a Vector of unsigned bytes with a maximum capacity of 255.
 
 All operations in CVM are wrapping!
 For instance: `250 + 10 = 5`
@@ -33,26 +33,26 @@ This means that operations in CVM aren't commutative.
 ```
 
 Here all the possible instructions:
-`CONST v<nreg>, <byte array>` This instruction sets the `<nreg>` register to the value of the `<byte array>`.
-`MOV v<nreg1>, v<nreg2>` This instruction sets the `<nreg1>` register to the value of the `<nreg2>` register.
-`IF v<nreg1>, v<nreg2>` If the register the `<nreg1>` is equal to the `<nreg2>` register we skip the next instuction.
-`IFN v<nreg1>, v<nreg2>` If the register the `<nreg1>` is NOT equal to the `<nreg2>` register we skip the next instuction.
+ - `CONST v<nreg>, <byte array>` This instruction sets the `<nreg>` register to the value of the `<byte array>`.
+ - `MOV v<nreg1>, v<nreg2>` This instruction sets the `<nreg1>` register to the value of the `<nreg2>` register.
+ - `IF v<nreg1>, v<nreg2>` If the register the `<nreg1>` is equal to the `<nreg2>` register we skip the next instuction.
+ - `IFN v<nreg1>, v<nreg2>` If the register the `<nreg1>` is NOT equal to the `<nreg2>` register we skip the next instuction.
 *Note that IF and IFN are encoded as one instruction in the binary*
-`JUMP <line>` Jump to `<line>`
-`END` Closes the program
-`INPUT v<nreg>` Ask for user input (Will only take the first 255 bytes) and put it into `<nreg>` register
-`PRINT v<nreg>` Print the `<nreg>` register as UTF8 sequence.
-`LEN v<nreg1> v<nreg2>` Set the `<nreg1>` register to a register of size one which contains the `v<nreg2>` register size.
-`READ v<nreg1> v<nreg2> v<nreg3> v<nreg4>` Set the `<nreg1>` register to the values of `v<nreg2>` register starting from first value of the `v<nreg3>` register and taking as many values as the first value of the `v<nreg4>` register.
-`ADD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping addition of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`SUB v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping substraction of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`MUL v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping multiplication of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`DIV v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping division of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`MOD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping modulus of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`AND v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary and of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`OR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary or of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`XOR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary xor of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
-`MERGE v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to the concatenation of the `v<nreg2>` and the `v<nreg3>` registers.
+ - `JUMP <line>` Jump to `<line>`
+ - `END` Closes the program
+ - `INPUT v<nreg>` Ask for user input (Will only take the first 255 bytes) and put it into `<nreg>` register
+ - `PRINT v<nreg>` Print the `<nreg>` register as UTF8 sequence.
+ - `LEN v<nreg1> v<nreg2>` Set the `<nreg1>` register to a register of size one which contains the `v<nreg2>` register size.
+ - `READ v<nreg1> v<nreg2> v<nreg3> v<nreg4>` Set the `<nreg1>` register to the values of `v<nreg2>` register starting from first value of the `v<nreg3>` register and taking as many values as the first value of the `v<nreg4>` register.
+ - `ADD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping addition of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `SUB v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping substraction of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `MUL v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping multiplication of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `DIV v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping division of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `MOD v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping modulus of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `AND v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary and of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `OR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary or of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `XOR v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to a wrapping binary xor of the `v<nreg2>` register with a cycle of the `v<nreg3>` register.
+ - `MERGE v<nreg1> v<nreg2> v<nreg3>` Set the `<nreg1>` register to the concatenation of the `v<nreg2>` and the `v<nreg3>` registers.
 *Note that all operations including MERGE are encoded in the same instruction*
 
 
