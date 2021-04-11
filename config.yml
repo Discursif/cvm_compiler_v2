@@ -24,4 +24,5 @@ output_format:
   - Mir
   - C
   - Rust
+  - JS
 output_folder: cvm/build

@@ -113,6 +113,7 @@ pub enum OutputFormat {
     Python,
     C,
     Rust,
+    JS,
 }
 
 impl Default for OutputFormat {
