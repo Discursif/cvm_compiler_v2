@@ -34,39 +34,100 @@ type u32 = 4 {
             Byte t = other[p] + rem;
             Byte ele = self[p] - t;
 
-            rem = self[p] < t as Byte;
+            rem = (self[p] < t as Byte) as Boolean;
 
             out = ele ~ out;
         }
         return out as u32;
     }
 
-    fn div(u32 other) -> u32 {
-        u32 active = self;
-        u32 out = u32.null;
-        if other[0] == 0 {
-            if other[1] == 0 {
-                if other[2] == 0 {
-                    print("A ---"~10);
-                    Bytes tmp = active.__div_inner(other[3] ~ 0 0 0 as u32, out, 1 0 0 0 as u32);
-                    active = tmp[0..4] as u32;
-                    out = tmp[4..8] as u32;
-                }
-                print("B ---"~10);
-                Bytes tmp = active.__div_inner(other[2] ~ other[3] ~ 0 0 as u32, out, 0 1 0 0 as u32);
-                active = tmp[0..4] as u32;
-                out = tmp[4..8] as u32;
-            }
-            print("C ---"~10);
-            Bytes tmp = active.__div_inner(other[1] ~ other[2] ~ other[3] ~ 0 as u32, out, 0 0 1 0 as u32);
-            active = tmp[0..4] as u32;
-            out = tmp[4..8] as u32;
+    // fn shift(Byte bits) -> u32 {
+    //     u32 b = self;
+    //     Byte next_byte = 0;
+    //     Byte index = 4;
+    //     loop {
+    //         if index == 0 {
+    //             break;
+    //         }
+    //         index -= 1;
+    //         Byte curr = b[index];
+    //         Byte shifted = curr << bits;
+    //         Byte shifted = curr << bits;
+
+    //     }
+    // }
+
+    fn shift(Byte bits) -> u32 {
+        u32 b = self;
+        if bits > 15 {
+            println("E");
+            b = b.shift_sixteen();
+            bits -= 16;
         }
-        print("D ---"~10);
-        Bytes tmp = active.__div_inner(other, out, 0 0 0 1 as u32);
-        active = tmp[0..4] as u32;
-        out = tmp[4..8] as u32;
-        return out;
+        if bits > 7 {
+            println("D");
+            b = b.shift_eight();
+            bits -= 8;
+        }
+        if bits > 3 {
+            println("C");
+            b = b.shift_four();
+            bits -= 4;
+        }
+        if bits > 1 {
+            println("B");
+            b = b.shift_two();
+            bits -= 2;
+        }
+        if bits > 0 {
+            println("A");
+            b = b.shift_one();
+            println("SHIFTED" ~ (b.shift_one().to_string() as Bytes));
+        }
+        println("END"~bits.to_string());
+        return b;
+    }
+
+    fn shift_one() -> u32 {
+        return self.shift_generic_shift(127, 2, 128);
+    }
+
+    fn shift_two() -> u32 {
+        return self.shift_generic_shift(63, 4, 64);
+    }
+
+    fn shift_four() -> u32 {
+        return self.shift_generic_shift(15, 16, 16);
+    }
+
+    fn shift_eight() -> u32 {
+        return (self[1] ~ self[2] ~ self[3] ~ 0) as u32;
+    }
+
+    fn shift_sixteen() -> u32 {
+        return (self[2] ~ self[3] ~ 0 0) as u32;
+    }
+
+    fn shift_generic_shift(Byte mask, Byte multi, Byte divi) -> u32 {
+        u32 b = self;
+        Bytes next_bit = 0;
+        Byte index = 4;
+        loop {
+            if index == 0 {
+                break;
+            }
+            // 0000 0000  0000 0000  0000 0000  0000 0000
+            index -= 1;
+            Byte curr = b[index];
+            b[index] = (curr & mask * multi) | next_bit;
+            next_bit = curr & (mask ^ 255) / divi;
+        }
+        return b;
+    }
+
+    fn div(u32 other) -> u32 {
+        
+        return other;
     }
 
     fn __div_inner(u32 other, u32 out, u32 multiplicator) -> Bytes {

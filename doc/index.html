@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="dist/style.css">
+</head>
+
+<body>
+    <div class="app">
+        <div class="sidebar">
+            <h3>Search</h3>
+            <input type="text" name="" id="">
+            <div class="block-elements seperator">
+                <h3>Types</h3>
+                <ul>
+                    <li><a class="link link-type">Byte</a></li>
+                    <li><a class="link link-type">String</a></li>
+                </ul>
+            </div>
+            <div class="block-elements">
+                <h3>Methods</h3>
+                <ul>
+                    <li><a class="link link-type">to_string</a></li>
+                    <li><a class="link link-type">iter</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="main">
+            <div class="main-header">
+                <h1>type <a class="link link-type">String</a></h1>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="meta">
+                <div>size 1</div>
+                <div>parent <a class="link link-type">Bytes</a></div>
+            </div>
+            <div class="colapsable open">
+                <h2><img src="right-arrow.svg" height="16" class="open"> Documentation</h2>
+                <div class="doc">
+                    This string type is the default STD type for strings and can only be used on ascii characters
+                </div>
+            </div>
+            <div class="colapsable open">
+                <h2><img src="right-arrow.svg" height="16" class="open"> References <a class="close-docs">[ - ]</a></h2>
+                <div class="ref-container">
+                    <div class="ref-element colapsable open">
+                        <div class="definition">
+                            <img src="right-arrow.svg" height="16" class="open"> <a
+                                class="link link-type pdr-0_4">Byte</a><a class="link link-ref">true</a>
+                        </div>
+                        <div class="doc">
+                            <a class="link link-ref">true</a> means it's true
+                        </div>
+                    </div>
+                    <div class="ref-element colapsable open">
+                        <div class="definition">
+                            <img src="right-arrow.svg" height="16" class="open"> <a
+                                class="link link-type pdr-0_4">Byte</a><a class="link link-ref">false</a>
+                        </div>
+                        <div class="doc">
+                            <a class="link link-ref">false</a> means it's not true lol
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="colapsable open">
+                <h2><img src="right-arrow.svg" height="16" class="open"> Methods <a class="close-docs">[ - ]</a></h2>
+                <div class="method colapsable open">
+                    <div class="definition">
+                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
+                            class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
+                            class="arrow">→</span> <a class="link link-type">Bytes</a>
+                    </div>
+                    <div class="doc">
+                        This functions replace the element at <a class="link link-var">index</a> and replace it by <a
+                            class="link link-var">item</a>
+
+                    </div>
+                </div>
+                <div class="method colapsable open">
+                    <div class="definition">
+                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
+                            class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
+                            class="arrow">→</span> <a class="link link-type">Bytes</a>
+                    </div>
+                    <div class="doc">
+                        This functions replace the element at <a class="link link-var">index</a> and replace it by <a
+                            class="link link-var">item</a>
+
+                    </div>
+                </div>
+                <div class="method colapsable open">
+                    <div class="definition">
+                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
+                            class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
+                            class="arrow">→</span> <a class="link link-type">Bytes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="colapsable open">
+                <h2><img src="right-arrow.svg" height="16" class="open"> Static methods <a class="close-docs">[ - ]</a></h2>
+                <div class="method colapsable open">
+                    <div class="definition">
+                        <img src="right-arrow.svg" height="16" class="open">
+                        <a class="link link-fn">replace_element </a>(<a class="link link-type">Byte</a> <a
+                            class="link link-var">index</a>, <a class="link link-type">Bytes</a> <a
+                            class="link link-var">item</a>) <span class="arrow">→</span> <a
+                            class="link link-type">Bytes</a>
+                    </div>
+                    <div class="doc">
+                        This functions replace the element at <a class="link link-var">index</a> and replace it by <a
+                            class="link link-var">item</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="dist/index.js"></script>
+</body>
+
+</html>

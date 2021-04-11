@@ -41,6 +41,18 @@ fn xor(Bytes a, Bytes b) -> Bytes {
     }
     return out
 }
+fn and(Bytes a, Bytes b) -> Bytes {
+    asm {
+        AND Bytes out, a, b;
+    }
+    return out
+}
+fn or(Bytes a, Bytes b) -> Bytes {
+    asm {
+        OR Bytes out, a, b;
+    }
+    return out
+}
 fn read(Bytes a, Byte b, Byte c) -> Bytes {
     asm {
         READ Bytes out, a, b, c;
@@ -56,6 +68,13 @@ fn len(Bytes a) -> Byte {
 fn print(Bytes a) {
     asm {
         PRINT a;
+    }
+}
+fn println(Bytes a) {
+    asm {
+        CONST $lineend, 10
+        MERGE $tmp, a, $lineend
+        PRINT $tmp;
     }
 }
 fn input() -> Bytes{

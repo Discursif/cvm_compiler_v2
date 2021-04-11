@@ -19,7 +19,7 @@ In CVM, registers have a variable size between 0 and 255. They act like a Vector
 
 All operations in CVM are wrapping!
 For instance: `250 + 10 = 5`
-If you don't understand wrapping just imagine there is a modulus 256 after each operation.
+If you don't understand wrapping, just imagine there is a modulus 256 after each operation.
 
 Furthermore, registers when operating are cyclic this means:
 ```

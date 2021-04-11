@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap')
+
+$link-var-color: #2dc27c
+$link-type-color: #c96f33
+$link-classic-color: #0984e3
+$link-fn-color: #cf3f3f
+
+body, html
+    background-color: #202020
+    width: 100%
+    height: 100%
+    color: #FFFE
+    font-family: Roboto
+
+.app
+    width: 100%
+    height: 100%
+    display: flex
+    flex-direction: row
+    justify-content: center
+    .sidebar
+        overflow-y: auto
+        background-color: #2e2e2e
+        min-width: 18rem
+        padding: 0.5rem
+        display: flex
+        flex-direction: column
+        .block-elements
+            a
+                font-size: 1.2rem
+        .seperator
+            margin-top: 1.3rem
+            border-top: 1px solid #585858
+    .main
+        overflow-y: auto
+        flex-grow: 1
+        display: flex
+        flex-direction: column
+        padding: 0rem 1rem
+        .main-header
+            display: flex
+            flex-direction: row
+            h1
+                flex-grow: 1
+            input
+                margin: 1.5rem 0rem
+        .meta
+            display: flex
+            flex-direction: row
+            & > div
+                padding-right: 2rem
+                display: inline-block
+        h2
+            margin-top: 2.5rem
+        div
+            div
+                padding-left: 0.4rem
+
+.colapsable img
+    transition: transform 0.3s
+    cursor: pointer
+    &.open
+        transform: rotate(90deg)
+
+span.arrow
+    padding: 0rem 0.4rem
+    font-weight: bold
+    color: #FFF
+
+.doc
+    padding: 1rem
+    color: #FFF
+.definition
+    color: #FFF
+    font-size: 1.3rem
+    margin-top: 1rem
+
+input
+    background-color: #FFF3
+    border: none
+    padding: 0.5rem 1rem
+    color: #FFF
+    &:focus
+        outline: none
+
+.link
+    text-decoration: none
+    color: $link-classic-color
+    cursor: pointer
+    &:hover
+        color: darken($link-classic-color, 5)
+    &.link-type
+        color: $link-type-color
+        &:hover
+            color: darken($link-type-color, 5)
+    &.link-var
+        color: $link-var-color
+        &:hover
+            color: darken($link-var-color, 5)
+    &.link-fn
+        color: $link-fn-color
+        &:hover
+            color: darken($link-fn-color, 5)
+
+.pdr-0_4
+    margin-right: 1rem
+
+.close-docs
+    color: #999
+    font-size: 1rem
+    position: relative
+    bottom: 3px
+    user-select: none
+    cursor: pointer

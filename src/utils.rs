@@ -258,6 +258,12 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
                         po.extract(&mut *ctx)?,
                         po.extract(&mut *ctx)?,
                     ),
+                    "OR" => Self::Operation(
+                        OperationType::Or,
+                        po.extract(&mut *ctx)?,
+                        po.extract(&mut *ctx)?,
+                        po.extract(&mut *ctx)?,
+                    ),
                     _ => unreachable!(),
                 }
             }
@@ -307,7 +313,7 @@ impl TryFromRule<&mut ParseExpressionContext> for AsmInstruction {
             }
             e => {
                 println!("Unexpected {:?}", e);
-                return Err(ParseError::AsmInvalidReached(to_static(&rule),e));
+                return Err(ParseError::AsmInvalidReached(to_static(&rule), e));
             }
         })
     }

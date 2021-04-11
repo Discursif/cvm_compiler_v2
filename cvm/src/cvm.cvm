@@ -21,8 +21,7 @@ fn main() {
     //print((10 25 26 128 196).to_hex());
     
     //print(((0 as Byte) < 10).to_string());
-    String i = "  ezfuzeinjezagijn   ";
-    print(i.trim());
+    assert(((214 214 214 214) as u32).shift(1), 173 173 173 172);
     // assert((10 25 26 128 196).to_hex(), "0A191A80C4");
 
     // assert((230 10 20 4 as u32).lower(10 20 30 10 as u32), Boolean.false);

@@ -144,6 +144,8 @@ pub fn rule_to_operator(rule: &Rule) -> Option<&'static str> {
         Rule::boolean_or => "double_or",
         Rule::double_equal => "equals",
         Rule::not_equal => "not_equals",
+        Rule::and => "and",
+        Rule::or => "or",
         _ => return None,
     })
 }
