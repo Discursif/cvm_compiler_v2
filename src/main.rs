@@ -48,7 +48,7 @@ use crate::{
     cli::{load_config, CompilerConfig, OutputFormat},
     cvm_exe::CVm,
     cvmir::{clear_unreachable, loop_fn_return_opt},
-    exporter::{c, js, python, rust},
+    exporter::{c, java, js, python, rust},
 };
 
 const ANY_TYPE: &'static str = "Bytes";
@@ -273,6 +273,13 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         std::fs::write(
             Path::new(path).join(build_folder.join(Path::new("output_mir.js"))),
             js::export_from_mir(&cctx.instructions),
+        )
+        .unwrap();
+    }
+    if config.output_format.contains(&OutputFormat::Java) {
+        std::fs::write(
+            Path::new(path).join(build_folder.join(Path::new("Main.java"))),
+            java::export_from_mir(&cctx.instructions),
         )
         .unwrap();
     }

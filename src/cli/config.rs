@@ -114,6 +114,7 @@ pub enum OutputFormat {
     C,
     Rust,
     JS,
+    Java,
 }
 
 impl Default for OutputFormat {

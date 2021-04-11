@@ -25,4 +25,5 @@ output_format:
   - C
   - Rust
   - JS
+  - Java
 output_folder: cvm/build

@@ -1,186 +1,186 @@
-v0 = 2
-v1 = 237
-v2 = 8
-v3 = 49
-v4 = 0
-v5 = 5
-v6 = 45 45 45 45 45 45 45 45 45 10
-v7 = 6
-v8 = 88
-v9 = 32
-v10 = 32 124 32
-v11 = 73 110 118 97 108 105 100 32 105 110 112 117 116 10
-v12 = 65 108 100 114 101 97 100 121 32 115 111 109 101 116 104 105 110 103 32 112 108 97 99 101 100 32 104 101 114 101 10
-v13 = 7
-v14 = 4
-v15 = 69 110 116 101 114 32 97 32 112 111 115 105 116 105 111 110 32 116 111 32 112 108 97 121 32 105 110 32 58 32
-v16 = 79
-v17 = 3
-v18 = 10
-v19 = 1
+v0 = 7
+v1 = 69 110 116 101 114 32 97 32 112 111 115 105 116 105 111 110 32 116 111 32 112 108 97 121 32 105 110 32 58 32
+v2 = 10
+v3 = 65 108 100 114 101 97 100 121 32 115 111 109 101 116 104 105 110 103 32 112 108 97 99 101 100 32 104 101 114 101 10
+v4 = 6
+v5 = 32
+v6 = 3
+v7 = 2
+v8 = 8
+v9 = 237
+v10 = 1
+v11 = 32 124 32
+v12 = 0
+v13 = 49
+v14 = 88
+v15 = 79
+v16 = 73 110 118 97 108 105 100 32 105 110 112 117 116 10
+v17 = 4
+v18 = 45 45 45 45 45 45 45 45 45 10
+v19 = 5
 v20 = 32 32 32 32 32 32 32 32 32
 v21 = 88
 loop {
-  v22 = v20[v0 > v19]
-  v23 = v22 ~ v18
-  v24 = v10 ~ v23
-  v25 = v20[v19 > v19]
+  v22 = v20[v7 > v10]
+  v23 = v22 ~ v2
+  v24 = v11 ~ v23
+  v25 = v20[v10 > v10]
   v26 = v25 ~ v24
-  v27 = v10 ~ v26
-  v28 = v20[v4 > v19]
+  v27 = v11 ~ v26
+  v28 = v20[v12 > v10]
   v29 = v28 ~ v27
   print v29
-  print v6
-  v30 = v20[v5 > v19]
-  v31 = v30 ~ v18
-  v32 = v10 ~ v31
-  v33 = v20[v14 > v19]
+  print v18
+  v30 = v20[v19 > v10]
+  v31 = v30 ~ v2
+  v32 = v11 ~ v31
+  v33 = v20[v17 > v10]
   v34 = v33 ~ v32
-  v35 = v10 ~ v34
-  v36 = v20[v17 > v19]
+  v35 = v11 ~ v34
+  v36 = v20[v6 > v10]
   v37 = v36 ~ v35
   print v37
-  print v6
-  v38 = v20[v2 > v19]
-  v39 = v38 ~ v18
-  v40 = v10 ~ v39
-  v41 = v20[v13 > v19]
+  print v18
+  v38 = v20[v8 > v10]
+  v39 = v38 ~ v2
+  v40 = v11 ~ v39
+  v41 = v20[v0 > v10]
   v42 = v41 ~ v40
-  v43 = v10 ~ v42
-  v44 = v20[v7 > v19]
+  v43 = v11 ~ v42
+  v44 = v20[v4 > v10]
   v45 = v44 ~ v43
   print v45
-  print v15
+  print v1
   v46 = input
-  print v18
+  print v2
   v47 = len v46
-  if v47 != v19 {
-    print v11
+  if v47 != v10 {
+    print v16
     continue
   }
   v48 = fn {
     v49 = 49
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 50
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 51
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 52
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 53
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 54
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 55
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 56
     if v49 == v46 {
-      return v19
+      return v10
     }
     v49 = 57
     if v49 == v46 {
-      return v19
+      return v10
     }
-    return v4
+    return v12
   }
-  if v48 == v4 {
-    print v11
+  if v48 == v12 {
+    print v16
     continue
   }
-  v50 = v46 - v3
+  v50 = v46 - v13
   v51 = fn {
-    v52 = v20[v50 > v19]
-    if v52 != v9 {
-      return v19
+    v52 = v20[v50 > v10]
+    if v52 != v5 {
+      return v10
     }
     v53 = len v21
     v54 = v50 + v53
     v55 = len v20
     v56 = v20[v54 > v55]
     v57 = v21 ~ v56
-    v58 = v50 - v4
-    v59 = v20[v4 > v58]
+    v58 = v50 - v12
+    v59 = v20[v12 > v58]
     v60 = v59 ~ v57
     v20 = v60
     v61 = fn {
       v62 = 0
       loop {
-        if v62 == v17 {
+        if v62 == v6 {
           break
         }
         v63 = v62
-        v62 = v62 + v19
-        v64 = v60[v63 > v19]
-        if v64 == v9 {
+        v62 = v62 + v10
+        v64 = v60[v63 > v10]
+        if v64 == v5 {
           continue
         }
-        v65 = v63 + v7
-        v66 = v60[v65 > v19]
-        v67 = v63 + v17
-        v68 = v60[v67 > v19]
+        v65 = v63 + v4
+        v66 = v60[v65 > v10]
+        v67 = v63 + v6
+        v68 = v60[v67 > v10]
         v69 = v68 + v66
-        v70 = v60[v63 > v19]
+        v70 = v60[v63 > v10]
         v71 = v70 + v69
-        if v71 == v2 {
-          return v8
+        if v71 == v8 {
+          return v14
         }
-        if v71 == v1 {
-          return v16
+        if v71 == v9 {
+          return v15
         }
-        v72 = v63 * v17
-        v73 = v72 + v0
-        v74 = v60[v73 > v19]
-        v75 = v72 + v19
-        v76 = v60[v75 > v19]
+        v72 = v63 * v6
+        v73 = v72 + v7
+        v74 = v60[v73 > v10]
+        v75 = v72 + v10
+        v76 = v60[v75 > v10]
         v77 = v76 + v74
-        v78 = v60[v72 > v19]
+        v78 = v60[v72 > v10]
         v79 = v78 + v77
-        if v79 == v2 {
-          return v8
+        if v79 == v8 {
+          return v14
         }
-        if v79 == v1 {
-          return v16
+        if v79 == v9 {
+          return v15
         }
       }
-      v80 = v60[v2 > v19]
-      v81 = v60[v14 > v19]
+      v80 = v60[v8 > v10]
+      v81 = v60[v17 > v10]
       v82 = v81 + v80
-      v83 = v60[v4 > v19]
+      v83 = v60[v12 > v10]
       v84 = v83 + v82
-      if v84 == v2 {
-        return v8
+      if v84 == v8 {
+        return v14
       }
-      if v84 == v1 {
-        return v16
+      if v84 == v9 {
+        return v15
       }
-      v85 = v60[v7 > v19]
-      v86 = v60[v14 > v19]
+      v85 = v60[v4 > v10]
+      v86 = v60[v17 > v10]
       v87 = v86 + v85
-      v88 = v60[v0 > v19]
+      v88 = v60[v7 > v10]
       v89 = v88 + v87
-      if v89 == v2 {
-        return v8
+      if v89 == v8 {
+        return v14
       }
-      if v89 == v1 {
-        return v16
+      if v89 == v9 {
+        return v15
       }
-      return v9
+      return v5
     }
-    if v61 != v9 {
+    if v61 != v5 {
       v90 = 32 104 97 115 32 119 111 110 33 10
       v91 = v61 ~ v90
       print v91
@@ -193,26 +193,26 @@ loop {
         if v93 == v94 {
           break
         }
-        v95 = v60[v94 > v19]
-        v94 = v94 + v19
-        if v95 == v9 {
-          return v19
+        v95 = v60[v94 > v10]
+        v94 = v94 + v10
+        if v95 == v5 {
+          return v10
         }
       }
-      return v4
+      return v12
     }
-    if v92 == v4 {
+    if v92 == v12 {
       v96 = 78 111 98 111 100 121 32 119 111 110 33 10
       print v96
       end
     }
-    return v4
+    return v12
   }
-  if v51 == v19 {
-    print v12
+  if v51 == v10 {
+    print v3
     continue
   }
-  if v21 == v16 {
+  if v21 == v15 {
     v21 = 88
   } else {
     v21 = 79
