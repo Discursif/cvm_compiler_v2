@@ -21,9 +21,6 @@ optimizer:
 compiler:
   emit_meta_type_size: false
 output_format:
-  - Binary
-  - Asm
   - Mir
-  - Lir
-  - Python
+  - C
 output_folder: cvm/build

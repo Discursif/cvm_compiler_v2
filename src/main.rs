@@ -48,7 +48,7 @@ use crate::{
     cli::{load_config, CompilerConfig, OutputFormat},
     cvm_exe::CVm,
     cvmir::{clear_unreachable, loop_fn_return_opt},
-    exporter::python,
+    exporter::{c, python},
 };
 
 const ANY_TYPE: &'static str = "Bytes";
@@ -252,6 +252,13 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         std::fs::write(
             Path::new(path).join(build_folder.join(Path::new("output.mir.py"))),
             python::export_from_mir(&cctx.instructions),
+        )
+        .unwrap();
+    }
+    if config.output_format.contains(&OutputFormat::C) {
+        std::fs::write(
+            Path::new(path).join(build_folder.join(Path::new("output.mir.c"))),
+            c::export_from_mir(&cctx.instructions),
         )
         .unwrap();
     }

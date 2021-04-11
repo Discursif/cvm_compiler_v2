@@ -1,0 +1,11 @@
+use "../lib/std";
+
+fn main() {
+    Bytes a = input(); // We get the input
+        print(10); // This print new line (\n)
+
+        if a.len() != 1 { // We check if the given input is of size 1
+            print("Invalid input"~10);
+            exit();
+        }
+}
