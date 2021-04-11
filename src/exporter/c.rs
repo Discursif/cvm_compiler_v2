@@ -94,7 +94,7 @@ pub fn get_vars(asm: &IrAsm, vars: &mut HashSet<usize>) {
             vars.insert(*c);
             vars.insert(*d);
         }
-        IrAsm::Meta(e) => {}
+        IrAsm::Meta(_) => {}
         IrAsm::End => {}
         IrAsm::If(b, c, d, e) => {
             vars.insert(*b);

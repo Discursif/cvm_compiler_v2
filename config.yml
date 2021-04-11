@@ -23,4 +23,5 @@ compiler:
 output_format:
   - Mir
   - C
+  - Rust
 output_folder: cvm/build

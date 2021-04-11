@@ -112,6 +112,7 @@ pub enum OutputFormat {
     Mir,
     Python,
     C,
+    Rust,
 }
 
 impl Default for OutputFormat {
