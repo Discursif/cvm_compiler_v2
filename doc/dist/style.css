@@ -36,6 +36,12 @@ body, html {
   flex-direction: column;
   padding: 0rem 1rem;
 }
+.app .main:after {
+  content: "polaris";
+  line-height: 2rem;
+  display: block;
+  opacity: 0;
+}
 .app .main .main-header {
   display: flex;
   flex-direction: row;
@@ -61,12 +67,26 @@ body, html {
   padding-left: 0.4rem;
 }
 
+.search-hidden {
+  display: none;
+}
+
 .colapsable img {
   transition: transform 0.3s;
   cursor: pointer;
-}
-.colapsable img.open {
   transform: rotate(90deg);
+}
+
+.colapsed > * > img {
+  transform: rotate(0deg);
+}
+
+.colapsed > div:not(.definition) {
+  display: none;
+}
+
+.empty-hidden {
+  display: none;
 }
 
 span.arrow {
@@ -127,11 +147,16 @@ input:focus {
   margin-right: 1rem;
 }
 
-.close-docs {
+.close-docs::after {
+  content: "[ - ]";
   color: #999;
   font-size: 1rem;
   position: relative;
   bottom: 3px;
   user-select: none;
   cursor: pointer;
+}
+
+.doc-hidden .close-docs::after {
+  content: "[ + ]";
 }

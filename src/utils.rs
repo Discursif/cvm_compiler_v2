@@ -156,6 +156,7 @@ impl TryFromRule<(Option<(String, String)>, &CompilationContext)> for Function {
                     arguments,
                     return_type,
                     code: c.extract(&mut context)?,
+                    comments: Vec::new(),
                 }
             }
             _ => unreachable!(),

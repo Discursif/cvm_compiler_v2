@@ -1,3 +1,7 @@
+
+/// String is a register filled of [type:Char]
+/// Safety: String should ONLY contains Ascii characters!
+/// Safety: C exporter will cause UB if your string contains a 0 character
 type String {
     fn join(String a) -> String {
         return self ~ " " ~ a;
@@ -8,10 +12,13 @@ type String {
     fn merge(String other) -> String => return super.merge(other) as String;
     fn merge(Char other) -> String => return super.merge(other) as String;
 
+    /// Creates a new string from bytes
+    /// Equivalent to a `as String` statement
     static fn new(Bytes bytes) -> String {
         return bytes as String;
     }
 
+    /// Will remove spaces at end and start of string
     fn trim() -> String {
         loop {
             if self[0] != " " => break;

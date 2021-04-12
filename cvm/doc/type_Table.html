@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <div class="sidebar">
+            <h3>Search</h3>
+            <input type="text" id="sidebar-search" placeholder="ex: String">
+            <div class="block-elements seperator" id="s-types">
+                <h3>Types</h3>
+                <ul>
+                    <li><a class="link link-type" href="./type_global.html">global</a></li>
+<li><a class="link link-type" href="./type_Boolean.html">Boolean</a></li>
+<li><a class="link link-type" href="./type_String.html">String</a></li>
+<li><a class="link link-type" href="./type_Byte.html">Byte</a></li>
+<li><a class="link link-type" href="./type_Bytes.html">Bytes</a></li>
+<li><a class="link link-type" href="./type_u32.html">u32</a></li>
+<li><a class="link link-type" href="./type_Table.html">Table</a></li>
+<li><a class="link link-type" href="./type_Empty.html">Empty</a></li>
+<li><a class="link link-type" href="./type_Char.html">Char</a></li>
+                </ul>
+            </div>
+            <!-- <div class="block-elements" id="s-funcs">
+                <h3>Functions</h3>
+                <ul>
+                </ul>
+            </div> -->
+        </div>
+        <div class="main">
+            <div class="main-header">
+                <h1>type <a class="link link-type" href="./type_Table.html">Table</a></h1>
+                <input type="text" placeholder="Search..." id="main-search">
+            </div>
+            <div class="meta">
+                <div>parent <a class="link link-type" href="./type_Bytes.html">Bytes</a></div>size 9
+            </div>
+            
+            <div class="colapsable" id="ref-container">
+            <h2><img src="right-arrow.svg" height="16"> References <a class="close-docs"></a></h2>
+            <div class="ref-element">
+        <div class="definition">
+            <a class="link link-ref">empty</a>
+        </div>
+        
+    </div>
+            </div>
+            <div class="colapsable" id="method-container">
+                <h2><img src="right-arrow.svg" height="16"> Methods <a class="close-docs"></a></h2>
+                <div class="method"><div class="definition"><a class="link link-fn">update </a>(<a class="link link-type" href="./type_Byte.html">Byte</a> <a class="link link-var">current</a>, <a class="link link-type" href="./type_Byte.html">Byte</a> <a class="link link-var">number</a>) <span class="arrow">→</span> <a class="link link-type" href="./type_Boolean.html">Boolean</a></div></div><div class="method"><div class="definition"><a class="link link-fn">display </a>() <span class="arrow">→</span> <a class="link link-type" href="./type_Empty.html">Empty</a></div></div><div class="method"><div class="definition"><a class="link link-fn">won </a>() <span class="arrow">→</span> <a class="link link-type" href="./type_Char.html">Char</a></div></div>
+                
+            </div>
+            
+            
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+
+</html>

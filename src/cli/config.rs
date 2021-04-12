@@ -115,6 +115,7 @@ pub enum OutputFormat {
     Rust,
     JS,
     Java,
+    Doc,
 }
 
 impl Default for OutputFormat {
@@ -139,6 +140,8 @@ pub struct ProjectConfig {
     pub output_format: Vec<OutputFormat>,
     #[serde(default = "default_output_folder")]
     pub output_folder: String,
+    #[serde(default = "default_doc_folder")]
+    pub doc_folder: String,
 }
 
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -159,6 +162,10 @@ fn default_output_folder() -> String {
     "build".to_owned()
 }
 
+fn default_doc_folder() -> String {
+    "doc".to_owned()
+}
+
 impl Default for ProjectConfig {
     fn default() -> Self {
         Self {
@@ -167,6 +174,7 @@ impl Default for ProjectConfig {
             output_format: vec![OutputFormat::Binary],
             output_folder: "build".to_owned(),
             compiler: CompilerConfig::default(),
+            doc_folder: "doc".to_owned(),
         }
     }
 }

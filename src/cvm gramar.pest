@@ -87,8 +87,10 @@ instruction = {asm_statement | loop_statement | (continue_instruction~semicolon?
 continue_instruction = {whitespace*~"continue"~whitespace*}
 break_instruction = {whitespace*~"break"~whitespace*}
 
-comment_char = {!"\n" ~ ANY}
-comment = {"//" ~ comment_char* ~ "\n"}
+comment_char = _{!"\n" ~ ANY}
+comment = {"//" ~ (!"/" ~ comment_char) ~ comment_char* ~ "\n"}
+doc_comment = {whitespace* ~ "///" ~ comment_char* ~ "\n" ~ whitespace*}
+
 
 //boolean_test = {(not | empty_operator) ~ expr ~ ((double_equal | not_equal) ~ expr)?}
 
@@ -110,7 +112,7 @@ type_function = {keyword_static? ~ function}
 
 type_ref = {keyword_ref ~ literal ~ equal ~ (string | number_array)~semicolon?}
 
-type_inside = {type_function | type_ref}
+type_inside = {doc_comment | type_function | type_ref}
 
 type_statement = {keyword_type~literal~(double_dots~literal)?~(equal~int)?~left_bracket~type_inside*~right_bracket} 
 
@@ -125,7 +127,7 @@ code_block = {arrow_block | instruction_block}
 
 function = {keyword_fn~literal~left_parenthesis~functions_params~right_parenthesis~(type_arrow~literal)?~code_block}
 
-file_element = {function | type_statement | use_statement}
+file_element = {doc_comment | function | type_statement | use_statement}
 
 file = {file_element*}
 

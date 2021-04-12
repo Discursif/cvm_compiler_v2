@@ -247,7 +247,7 @@ impl Expression {
                     var,
                     if let Some(e) = ctx.ctx.types.get(i) {
                         if let Some(e) = e.variants.get(b) {
-                            e.clone()
+                            e.value.clone()
                         } else {
                             return Err(ParseError::VariantNotFound(
                                 a.clone(),

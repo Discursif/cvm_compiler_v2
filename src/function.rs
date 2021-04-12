@@ -11,6 +11,7 @@ pub struct Function {
     pub arguments: Vec<Variable>,
     pub return_type: String,
     pub code: Vec<Instruction>,
+    pub comments: Vec<String>,
 }
 
 impl Display for Function {
@@ -60,7 +61,7 @@ impl Function {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Functions {
     pub name: String,
     pub functions: Vec<Function>,

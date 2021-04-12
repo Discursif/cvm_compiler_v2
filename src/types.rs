@@ -9,14 +9,22 @@ use crate::{
 pub struct Type {
     pub name: String,
     pub size: Option<u8>,
-    pub variants: HashMap<String, Vec<u8>>,
+    pub variants: HashMap<String, Variant>,
     pub functions: HashMap<String, Functions>,
     pub parent: String,
     pub static_functions: HashMap<String, Functions>,
+    pub comment: Vec<String>,
+}
+
+#[derive(Debug)]
+pub struct Variant {
+    pub value: Vec<u8>,
+    pub comment: Vec<String>,
+    pub name: String,
 }
 
 impl Type {
-    pub fn new(name: String) -> Self {
+    pub fn new(name: String, comment: Vec<String>) -> Self {
         Self {
             variants: HashMap::new(),
             name,
@@ -24,6 +32,7 @@ impl Type {
             size: None,
             functions: HashMap::new(),
             static_functions: HashMap::new(),
+            comment,
         }
     }
 }

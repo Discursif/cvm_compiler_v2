@@ -13,6 +13,7 @@ pub mod asm;
 pub mod cli;
 pub mod cvm_exe;
 pub mod cvmir;
+pub mod docs;
 pub mod error;
 pub mod exporter;
 pub mod expression;
@@ -142,7 +143,7 @@ pub fn compile_file(file: &str, context: &mut CompilationContext) -> Result<(), 
     }
     .next()
     .unwrap();
-    file_parser(json, context, path.as_ref())
+    file_parser(json, context, path.as_ref(), &mut Vec::new())
 }
 
 fn compile_folder(path: &str, file: &str, execute: bool) {
@@ -151,6 +152,10 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
     let build_folder = Path::new(path).join(Path::new(&config.output_folder));
     if !build_folder.exists() {
         std::fs::create_dir_all(&build_folder).unwrap();
+    }
+    let doc_folder = Path::new(path).join(Path::new(&config.doc_folder));
+    if !doc_folder.exists() {
+        std::fs::create_dir_all(&doc_folder).unwrap();
     }
 
     let mut context = CompilationContext::default();
@@ -282,6 +287,9 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
             java::export_from_mir(&cctx.instructions),
         )
         .unwrap();
+    }
+    if config.output_format.contains(&OutputFormat::Doc) {
+        docs::export_doc_to(doc_folder.as_path(), &cctx.ctx);
     }
     let mut counter = Counter::default();
     let mut fors = Vec::new();

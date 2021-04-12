@@ -37,6 +37,11 @@ body, html
         display: flex
         flex-direction: column
         padding: 0rem 1rem
+        &:after
+            content: "polaris"
+            line-height: 2rem
+            display: block
+            opacity: 0
         .main-header
             display: flex
             flex-direction: row
@@ -56,11 +61,20 @@ body, html
             div
                 padding-left: 0.4rem
 
+.search-hidden
+    display: none
+
 .colapsable img
     transition: transform 0.3s
     cursor: pointer
-    &.open
-        transform: rotate(90deg)
+    transform: rotate(90deg)
+
+.colapsed > * > img
+    transform: rotate(0deg)
+.colapsed > div:not(.definition)
+    display: none
+.empty-hidden
+    display: none
 
 span.arrow
     padding: 0rem 0.4rem
@@ -105,10 +119,13 @@ input
 .pdr-0_4
     margin-right: 1rem
 
-.close-docs
+.close-docs::after
+    content: "[ - ]"
     color: #999
     font-size: 1rem
     position: relative
     bottom: 3px
     user-select: none
     cursor: pointer
+.doc-hidden .close-docs::after
+    content: "[ + ]"

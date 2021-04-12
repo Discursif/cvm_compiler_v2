@@ -26,4 +26,6 @@ output_format:
   - Rust
   - JS
   - Java
+  - Doc
 output_folder: cvm/build
+doc_folder: cvm/doc

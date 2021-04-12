@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,21 +8,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="dist/style.css">
 </head>
-
 <body>
     <div class="app">
         <div class="sidebar">
             <h3>Search</h3>
-            <input type="text" name="" id="">
-            <div class="block-elements seperator">
+            <input type="text" id="sidebar-search" placeholder="ex: String">
+            <div class="block-elements seperator" id="s-types">
                 <h3>Types</h3>
                 <ul>
                     <li><a class="link link-type">Byte</a></li>
                     <li><a class="link link-type">String</a></li>
                 </ul>
             </div>
-            <div class="block-elements">
-                <h3>Methods</h3>
+            <div class="block-elements" id="s-funcs">
+                <h3>Functions</h3>
                 <ul>
                     <li><a class="link link-type">to_string</a></li>
                     <li><a class="link link-type">iter</a></li>
@@ -33,33 +31,33 @@
         <div class="main">
             <div class="main-header">
                 <h1>type <a class="link link-type">String</a></h1>
-                <input type="text" placeholder="Search...">
+                <input type="text" placeholder="Search..." id="main-search">
             </div>
             <div class="meta">
                 <div>size 1</div>
                 <div>parent <a class="link link-type">Bytes</a></div>
             </div>
-            <div class="colapsable open">
-                <h2><img src="right-arrow.svg" height="16" class="open"> Documentation</h2>
+            <div class="colapsable">
+                <h2><img src="right-arrow.svg" height="16"> Documentation</h2>
                 <div class="doc">
                     This string type is the default STD type for strings and can only be used on ascii characters
                 </div>
             </div>
-            <div class="colapsable open">
-                <h2><img src="right-arrow.svg" height="16" class="open"> References <a class="close-docs">[ - ]</a></h2>
+            <div class="colapsable" id="ref-container">
+                <h2><img src="right-arrow.svg" height="16"> References <a class="close-docs"></a></h2>
                 <div class="ref-container">
-                    <div class="ref-element colapsable open">
+                    <div class="ref-element colapsable">
                         <div class="definition">
-                            <img src="right-arrow.svg" height="16" class="open"> <a
+                            <img src="right-arrow.svg" height="16"> <a
                                 class="link link-type pdr-0_4">Byte</a><a class="link link-ref">true</a>
                         </div>
                         <div class="doc">
                             <a class="link link-ref">true</a> means it's true
                         </div>
                     </div>
-                    <div class="ref-element colapsable open">
+                    <div class="ref-element colapsable">
                         <div class="definition">
-                            <img src="right-arrow.svg" height="16" class="open"> <a
+                            <img src="right-arrow.svg" height="16"> <a
                                 class="link link-type pdr-0_4">Byte</a><a class="link link-ref">false</a>
                         </div>
                         <div class="doc">
@@ -68,11 +66,11 @@
                     </div>
                 </div>
             </div>
-            <div class="colapsable open">
-                <h2><img src="right-arrow.svg" height="16" class="open"> Methods <a class="close-docs">[ - ]</a></h2>
-                <div class="method colapsable open">
+            <div class="colapsable" id="method-container">
+                <h2><img src="right-arrow.svg" height="16"> Methods <a class="close-docs"></a></h2>
+                <div class="method colapsable">
                     <div class="definition">
-                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        <img src="right-arrow.svg" height="16"> <a class="link link-fn">replace_element
                         </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
                             class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
                             class="arrow">→</span> <a class="link link-type">Bytes</a>
@@ -83,9 +81,9 @@
 
                     </div>
                 </div>
-                <div class="method colapsable open">
+                <div class="method colapsable">
                     <div class="definition">
-                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        <img src="right-arrow.svg" height="16"> <a class="link link-fn">replace_element
                         </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
                             class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
                             class="arrow">→</span> <a class="link link-type">Bytes</a>
@@ -96,9 +94,9 @@
 
                     </div>
                 </div>
-                <div class="method colapsable open">
+                <div class="method colapsable">
                     <div class="definition">
-                        <img src="right-arrow.svg" height="16" class="open"> <a class="link link-fn">replace_element
+                        <img src="right-arrow.svg" height="16"> <a class="link link-fn">replace_element
                         </a>(<a class="link link-type">Byte</a> <a class="link link-var">index</a>, <a
                             class="link link-type">Bytes</a> <a class="link link-var">item</a>) <span
                             class="arrow">→</span> <a class="link link-type">Bytes</a>
@@ -106,11 +104,11 @@
                 </div>
             </div>
 
-            <div class="colapsable open">
-                <h2><img src="right-arrow.svg" height="16" class="open"> Static methods <a class="close-docs">[ - ]</a></h2>
-                <div class="method colapsable open">
+            <div class="colapsable" id="static-method-container">
+                <h2><img src="right-arrow.svg" height="16"> Static methods <a class="close-docs"></a></h2>
+                <div class="method colapsable">
                     <div class="definition">
-                        <img src="right-arrow.svg" height="16" class="open">
+                        <img src="right-arrow.svg" height="16">
                         <a class="link link-fn">replace_element </a>(<a class="link link-type">Byte</a> <a
                             class="link link-var">index</a>, <a class="link link-type">Bytes</a> <a
                             class="link link-var">item</a>) <span class="arrow">→</span> <a

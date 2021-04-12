@@ -1,8 +1,8 @@
-use std::path::Path;
+use std::{iter::once, path::Path};
 
 use pest::iterators::Pair;
 
-use crate::{error::ParseError, utils::PairsTrait};
+use crate::{error::ParseError, types::Variant, utils::PairsTrait};
 
 use super::Instruction;
 use crate::error::to_static;
@@ -192,7 +192,11 @@ pub fn parse_instructions(
         Rule::while_statement => {
             let st = to_static(&cvm);
             let mut cvm = cvm.into_inner();
-            Instruction::While(st,parse_expression(cvm.next().unwrap(), context)?, cvm.extract(context)?)
+            Instruction::While(
+                st,
+                parse_expression(cvm.next().unwrap(), context)?,
+                cvm.extract(context)?,
+            )
         }
         Rule::asm_statement => {
             Instruction::AsmStatement(to_static(&cvm), cvm.into_inner().extract(&mut *context)?)
@@ -210,22 +214,25 @@ pub fn parse_type_function(
     context: &mut CompilationContext,
     type_name: &str,
     type_parent: &str,
+    comments: Vec<String>,
 ) -> Result<()> {
     let mut cvm = cvm.into_inner();
     let a = cvm.next().unwrap();
     let is_static = a.as_rule() == Rule::keyword_static;
     if is_static {
-        let func: Function = cvm.extract((None, &*context))?;
+        let mut func: Function = cvm.extract((None, &*context))?;
+        func.comments = comments;
         context
             .types
             .get_mut(type_name)
             .expect("Can't get type")
             .add_static_function(func);
     } else {
-        let func: Function = a.extract((
+        let mut func: Function = a.extract((
             Some((type_name.to_owned(), type_parent.to_owned())),
             &*context,
         ))?;
+        func.comments = comments;
         context
             .types
             .get_mut(type_name)
@@ -235,17 +242,23 @@ pub fn parse_type_function(
     Ok(())
 }
 
-pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext, file: &Path) -> Result<()> {
+pub fn file_parser(
+    cvm: Pair<Rule>,
+    context: &mut CompilationContext,
+    file: &Path,
+    comment: &mut Vec<String>,
+) -> Result<()> {
     match cvm.as_rule() {
-        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context, file),
+        Rule::file_element => file_parser(cvm.into_inner().next().unwrap(), context, file, comment),
         Rule::file => {
             for x in cvm.into_inner() {
-                file_parser(x, context, file)?;
+                file_parser(x, context, file, comment)?;
             }
             Ok(())
         }
-        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context, file),
+        Rule::line => file_parser(cvm.into_inner().next().unwrap(), context, file, comment),
         Rule::use_statement => {
+            comment.clear();
             let string: Vec<u8> = cvm.into_inner().extract(())?;
             let string = String::from_utf8(string).unwrap();
             let mut buf = file.to_path_buf();
@@ -260,7 +273,14 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext, file: &Pat
             Ok(())
         }
         Rule::function => {
-            context.add_function(cvm.extract((None, &*context))?);
+            let mut func: Function = cvm.extract((None, &*context))?;
+            func.comments = comment.clone();
+            comment.clear();
+            context.add_function(func);
+            Ok(())
+        }
+        Rule::doc_comment => {
+            comment.push(cvm.as_str().to_owned());
             Ok(())
         }
         Rule::type_statement => {
@@ -268,7 +288,8 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext, file: &Pat
             let name = cvm.next().unwrap().as_str().trim();
             context
                 .types
-                .insert(name.to_owned(), Type::new(name.to_owned()));
+                .insert(name.to_owned(), Type::new(name.to_owned(), comment.clone()));
+            comment.clear();
             let p = cvm.next().unwrap();
             let p = if Rule::literal == p.as_rule() {
                 context.types.get_mut(name).unwrap().parent = p.as_str().trim().to_owned();
@@ -284,9 +305,10 @@ pub fn file_parser(cvm: Pair<Rule>, context: &mut CompilationContext, file: &Pat
                 p
             };
             let parent = &context.types.get_mut(name).unwrap().parent.to_owned();
-            parse_type_insides(p, context, name, parent)?;
-            for x in cvm {
-                parse_type_insides(x, context, name, parent)?;
+            //parse_type_insides(p, context, name, parent)?;
+            let mut comments = Vec::new();
+            for x in once(p).chain(cvm.into_iter()) {
+                parse_type_insides(x, context, name, parent, &mut comments)?;
             }
             Ok(())
         }
@@ -301,21 +323,28 @@ pub fn parse_type_insides(
     context: &mut CompilationContext,
     name: &str,
     parent: &str,
+    comments: &mut Vec<String>,
 ) -> Result<()> {
     let inside = inside.into_inner().next().unwrap();
     if inside.as_rule() == Rule::type_function {
-        parse_type_function(inside, context, name, parent)?;
+        parse_type_function(inside, context, name, parent, comments.clone())?;
+        comments.clear();
     } else if inside.as_rule() == Rule::type_ref {
         let mut inside = inside.into_inner();
         let ref_name = inside.next().unwrap().as_str().trim();
         inside.next();
         let ref_value: Vec<u8> = inside.extract(())?;
-        context
-            .types
-            .get_mut(name)
-            .unwrap()
-            .variants
-            .insert(ref_name.to_owned(), ref_value);
+        context.types.get_mut(name).unwrap().variants.insert(
+            ref_name.to_owned(),
+            Variant {
+                value: ref_value,
+                comment: comments.clone(),
+                name: ref_name.to_owned(),
+            },
+        );
+        comments.clear();
+    } else if inside.as_rule() == Rule::doc_comment {
+        comments.push(inside.as_str().to_owned());
     } else {
         panic!("Invalid type_inside token {:?}", inside)
     }

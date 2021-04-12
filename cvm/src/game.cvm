@@ -47,6 +47,9 @@ type Table = 9 {
     }
 }
 
+
+/// This is the main function of this program
+/// This second line is just here to test multi-line doc comment!
 fn main() {
     Table table = Table.empty; // This copies Table.empty into a new var named table
     Char current = "X";
