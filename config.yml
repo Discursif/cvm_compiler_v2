@@ -15,7 +15,7 @@ optimizer:
   compile_time_evaluation: true
   function_inliner: true
   if_optimizer: true
-  loop_break_inline: false
+  loop_break_inline: true
   remap_consts: true
   infer_sizes_from_meta: false
 compiler:
@@ -27,5 +27,8 @@ output_format:
   - JS
   - Java
   - Doc
+  - Binary
+  - Python
+  - Lir
 output_folder: cvm/build
 doc_folder: cvm/doc

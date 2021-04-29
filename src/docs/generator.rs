@@ -148,7 +148,7 @@ fn generate_func_doc(func: &Function) -> String {
                 " colapsable",
                 r#"<img src="right-arrow.svg" height="16"> "#,
                 format!(
-                    "<div class=\"doc\">{}<br>⚠ This function if called will crash the compiler</div>",
+                    "<div class=\"doc\"><span style=\"color:#f1c40f\">⚠ This function if called will crash the compiler</span><br><br>{}</div>",
                     html_from_comments(&func.comments)
                 ),
             )
@@ -167,7 +167,7 @@ fn generate_func_doc(func: &Function) -> String {
             (
                 " colapsable",
                 r#"<img src="right-arrow.svg" height="16"> "#,
-                "<div class=\"doc\">⚠ This function if called will crash the compiler</div>"
+                "<div class=\"doc\"><span style=\"color:#f1c40f\">⚠ This function if called will crash the compiler</span></div>"
                     .to_owned(),
             )
         } else {
@@ -253,6 +253,18 @@ fn html_from_comments(comments: &Vec<String>) -> String {
 
                 x = format!(
                     r#"{}<a class="link link-var">{}</a>{}"#,
+                    &x[..e],
+                    inner,
+                    &after[end + 1..]
+                );
+            }
+            while let Some(e) = x.find("[ref:") {
+                let after = &x[e..];
+                let end = after.find("]").unwrap();
+                let inner = &after[5..end];
+
+                x = format!(
+                    r#"{}<a class="link link-ref">{}</a>{}"#,
                     &x[..e],
                     inner,
                     &after[end + 1..]

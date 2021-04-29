@@ -167,6 +167,7 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         Ok(_) => (),
         Err(e) => {
             println!("{}", e);
+            panic!()
         }
     };
 

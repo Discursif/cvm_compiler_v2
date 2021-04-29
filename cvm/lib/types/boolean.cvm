@@ -1,20 +1,31 @@
+
+/// Boolean object accept only two values 0 and 1
+/// Other values are possible but will cause UB
 type Boolean = 1 {
+
+    /// This reference is equivalent to 1
     ref true = 1;
+    /// This reference is equivalent to 0
     ref false = 0;
 
+    /// If [ref:true] will return "true" and if [ref:false] will return "false"
     fn to_string() -> String {
         if self => return "true" as String;
         return "false" as String;
     }
 
+    /// You can't merge a [type:Boolean] with anything
     fn merge(Bytes other) -> Panic {}
 
+    /// Boolean length will always be equals to 1
     fn len() -> Byte => return 1;
 
+    /// This is the implementation of ! operator if [ref:true] will return [ref:false] and reciprocally
     fn not() -> Boolean {
         return self.equals(Boolean.false);
     }
 
+    /// This is the implementation of && operator and will only return [ref:true] if the current object and the input are set to [ref:true]
     fn double_and(Boolean other) -> Boolean {
         asm {
             CONST $a, 0
@@ -29,6 +40,7 @@ type Boolean = 1 {
         }
     }
 
+    /// This is the implementation of || operator and will only return [ref:true] if the current object or the input are set to [ref:true]
     fn double_or(Boolean other) -> Boolean {
         asm {
             CONST $a, 1
