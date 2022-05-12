@@ -34,7 +34,7 @@ type u32 = 4 {
             Byte t = other[p] + rem;
             Byte ele = self[p] - t;
 
-            rem = (self[p] < t as Byte) as Boolean;
+            rem = (self[p] < t as Byte) as Byte;
 
             out = ele ~ out;
         }

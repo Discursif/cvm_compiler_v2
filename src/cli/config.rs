@@ -116,6 +116,7 @@ pub enum OutputFormat {
     JS,
     Java,
     Doc,
+    OCaml,
 }
 
 impl Default for OutputFormat {

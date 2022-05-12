@@ -30,5 +30,6 @@ output_format:
   - Binary
   - Python
   - Lir
+  - OCaml
 output_folder: cvm/build
 doc_folder: cvm/doc

@@ -49,7 +49,7 @@ use crate::{
     cli::{load_config, CompilerConfig, OutputFormat},
     cvm_exe::CVm,
     cvmir::{clear_unreachable, loop_fn_return_opt},
-    exporter::{c, java, js, python, rust},
+    exporter::{c, java, js, ocaml, python, rust},
 };
 
 const ANY_TYPE: &'static str = "Bytes";
@@ -323,6 +323,13 @@ fn compile_folder(path: &str, file: &str, execute: bool) {
         std::fs::write(
             Path::new(path).join(build_folder.join(Path::new("output.asmcvm"))),
             &out,
+        )
+        .unwrap();
+    }
+    if config.output_format.contains(&OutputFormat::OCaml) {
+        std::fs::write(
+            Path::new(path).join(build_folder.join(Path::new("output.lir.ml"))),
+            &ocaml::export_from_lir(&clean_asm),
         )
         .unwrap();
     }
